@@ -17,11 +17,13 @@ final class TwigTemplateSyntaxTest extends TestCase
     {
         foreach ([
             'main/components.tpl.html',
+            'main/app-navbar.tpl.html',
             'main/macros.tpl.html',
             'module/user/login/login.tpl.html',
             'module/user/login/forgot.tpl.html',
             'module/user/login/reset.tpl.html',
             'module/user/user/list.tpl.html',
+            'module/user/notification/index.tpl.html',
             'module/server/log.tpl.html',
             'module/server/server/list.tpl.html',
             'module/server/status/index.tpl.html',

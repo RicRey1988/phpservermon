@@ -50,21 +50,7 @@
 	{% endif %}
 
 	<main class="main-content" id="main-content">
-		<nav class="nav navbar navbar-expand-lg navbar-light iq-navbar app-navbar" aria-label="Barra superior">
-			<div class="container-fluid navbar-inner">
-				<button type="button" class="btn btn-icon mobile-sidebar-toggle" data-sidebar-toggle
-					aria-label="Abrir menú" aria-expanded="false">
-					<span aria-hidden="true">☰</span>
-				</button>
-				<div>
-					{% if subtitle %}<p class="eyebrow mb-0">PHP Server Monitor</p>{% endif %}
-					{% if subtitle %}<h1 class="h4 mb-0">{{ subtitle }}</h1>{% endif %}
-				</div>
-				<div class="ms-auto d-flex align-items-center gap-2">
-					<span class="badge bg-soft-primary text-primary">{{ version }}</span>
-				</div>
-			</div>
-		</nav>
+		{% include 'main/app-navbar.tpl.html' %}
 
 		<div class="container-fluid content-inner pb-0">
 			<noscript>
@@ -103,6 +89,7 @@
 	<script defer src="src/templates/default/static/plugin/font-awesome/js/fontawesome.min.js" data-auto-replace-svg="nest"></script>
 	<script defer src="src/templates/default/static/plugin/font-awesome/js/brands.min.js"></script>
 	<script src="src/templates/default/static/js/app-shell.js?v={{ version|url_encode }}"></script>
+	{% if notification_navbar is defined %}<script src="src/templates/default/static/js/notifications.js?v={{ version|url_encode }}"></script>{% endif %}
 	{% if needs_dashboard|default(false) %}<script src="src/templates/default/static/js/dashboard.js?v={{ version|url_encode }}"></script>{% endif %}
 </body>
 </html>

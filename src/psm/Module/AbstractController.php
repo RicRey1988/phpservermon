@@ -29,6 +29,7 @@
 namespace psm\Module;
 
 use psm\Service\Database;
+use psm\Service\Notification\UserNotificationRepository;
 use psm\Service\Ui\Appearance;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -241,6 +242,21 @@ abstract class AbstractController implements ControllerInterface
                 'appearance' => $appearance->toArray(),
                 'user_level' => $userLevel,
             );
+            if (
+                $userLevel !== PSM_USER_ANONYMOUS
+                && $this->container !== null
+                && $this->container->has('service.notification.user_repository')
+            ) {
+                $notifications = $this->container->get('service.notification.user_repository');
+                assert($notifications instanceof UserNotificationRepository);
+                $userId = $this->getUser()->getUserId();
+                $latest = $notifications->latestForUser($userId, 5);
+                $tpl_data['notification_navbar'] = [
+                    'latest' => $latest,
+                    'unread' => $notifications->unreadCount($userId),
+                    'url_all' => psm_build_url(['mod' => 'user_notification']),
+                ];
+            }
 
             // add menu to page?
             if ($this->add_menu) {

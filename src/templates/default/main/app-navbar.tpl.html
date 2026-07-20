@@ -1,0 +1,36 @@
+<nav class="nav navbar navbar-expand-lg navbar-light iq-navbar app-navbar" aria-label="Barra superior">
+    <div class="container-fluid navbar-inner">
+        <button type="button" class="btn btn-icon mobile-sidebar-toggle" data-sidebar-toggle aria-label="Abrir menú" aria-expanded="false">
+            <span aria-hidden="true">☰</span>
+        </button>
+        <div>
+            {% if subtitle %}<p class="eyebrow mb-0">PHP Server Monitor</p>{% endif %}
+            {% if subtitle %}<h1 class="h4 mb-0">{{ subtitle }}</h1>{% endif %}
+        </div>
+        <div class="ms-auto d-flex align-items-center gap-2">
+            {% if notification_navbar is defined %}
+            <div class="dropdown notification-navbar">
+                <button class="btn btn-icon position-relative" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Notificaciones">
+                    <i class="fas fa-bell" aria-hidden="true"></i>
+                    {% if notification_navbar.unread > 0 %}<span class="notification-count badge rounded-pill bg-danger">{{ notification_navbar.unread > 99 ? '99+' : notification_navbar.unread }}</span>{% endif %}
+                </button>
+                <div class="dropdown-menu dropdown-menu-end notification-dropdown p-0">
+                    <div class="p-3 border-bottom d-flex justify-content-between align-items-center"><strong>Notificaciones</strong><span class="badge bg-soft-primary text-primary">{{ notification_navbar.unread }} nuevas</span></div>
+                    <div class="notification-dropdown-list">
+                        {% for notification in notification_navbar.latest %}
+                        <a class="dropdown-item py-3{% if notification.read_at is null %} notification-unread{% endif %}" href="{{ notification_navbar.url_all|raw }}">
+                            <strong class="d-block text-truncate">{{ notification.title }}</strong>
+                            <small class="text-muted text-truncate d-block">{{ notification.body }}</small>
+                        </a>
+                        {% else %}
+                        <p class="text-muted text-center small p-4 mb-0">No hay notificaciones.</p>
+                        {% endfor %}
+                    </div>
+                    <a class="dropdown-item text-center border-top py-3" href="{{ notification_navbar.url_all|raw }}">Ver todas</a>
+                </div>
+            </div>
+            {% endif %}
+            <span class="badge bg-soft-primary text-primary">{{ version }}</span>
+        </div>
+    </div>
+</nav>

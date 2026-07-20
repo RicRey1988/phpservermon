@@ -102,6 +102,9 @@ xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/sc
 			<argument type="service" id="service.notification.incident_composer" />
 			<argument type="service" id="notification.registry" />
 		</service>
+		<service id="service.notification.user_repository" class="psm\Service\Notification\UserNotificationRepository" public="true">
+			<argument type="service" id="db" />
+		</service>
 		<!--SERVICES end-->
 
 		<!--UTIL start-->

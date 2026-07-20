@@ -99,6 +99,14 @@ legend { float: none; width: auto; padding: 0 .35rem; font-size: 1rem; font-weig
 .dashboard-stat-card { min-height: 7rem; }
 .stat-icon { width: 2.75rem; height: 2.75rem; flex: 0 0 2.75rem; display: grid; place-items: center; border-radius: .8rem; }
 .dashboard-chart { min-height: 19rem; }
+.notification-count { position: absolute; inset-block-start: -.25rem; inset-inline-end: -.4rem; min-width: 1.35rem; }
+.notification-dropdown { width: min(24rem, calc(100vw - 2rem)); }
+.notification-dropdown-list { max-height: 22rem; overflow-y: auto; }
+.notification-unread { background: rgba(58, 87, 232, .06); }
+.notification-card { border-inline-start: .3rem solid #198754; }
+.notification-card.notification-down { border-inline-start-color: #dc3545; }
+.notification-icon { width: 3rem; height: 3rem; flex: 0 0 3rem; display: grid; place-items: center; border-radius: .85rem; color: #fff; background: #198754; }
+.notification-down .notification-icon { background: #dc3545; }
 .server-facts { display: grid; gap: .65rem; }
 .server-facts > div { display: flex; justify-content: space-between; gap: 1rem; border-bottom: 1px solid var(--psm-border); padding-bottom: .5rem; }
 .server-facts dt { color: #8a92a6; font-size: .8rem; font-weight: 600; }
