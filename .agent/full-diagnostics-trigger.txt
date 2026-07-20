@@ -1,1 +1,0 @@
-Run complete PHPUnit diagnostics after regression contract and semantic hook updates.
