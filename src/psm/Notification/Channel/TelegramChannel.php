@@ -59,6 +59,21 @@ final readonly class TelegramChannel implements NotificationChannelInterface
         return DeliveryResult::success('Telegram notification delivered.');
     }
 
+    public function botUsername(): ?string
+    {
+        if (trim($this->token) === '') {
+            return null;
+        }
+
+        $result = $this->http->post(
+            'https://api.telegram.org/bot' . rawurlencode($this->token) . '/getMe',
+            ['body' => []]
+        );
+        $username = $result->data()['result']['username'] ?? null;
+
+        return $result->isSuccess() && is_string($username) && $username !== '' ? $username : null;
+    }
+
     /** @return list<string> */
     private function split(string $text, int $length): array
     {

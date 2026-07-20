@@ -73,6 +73,17 @@ final class TelegramChannelTest extends TestCase
         }
     }
 
+    public function testFetchesBotUsernameThroughSharedTransport(): void
+    {
+        $client = new MockHttpClient(new MockResponse(
+            '{"ok":true,"result":{"username":"server_monitor_bot"}}',
+            ['http_code' => 200]
+        ));
+        $channel = new TelegramChannel(new RetryingHttpTransport($client, 1), 'token');
+
+        self::assertSame('server_monitor_bot', $channel->botUsername());
+    }
+
     /** @param array<string, mixed> $options
      *  @return array<string, string>
      */

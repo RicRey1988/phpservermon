@@ -29,6 +29,7 @@
 namespace psm\Module\User\Controller;
 
 use psm\Module\AbstractController;
+use psm\Notification\Channel\TelegramChannel;
 use psm\Service\Database;
 
 class ProfileController extends AbstractController
@@ -179,7 +180,6 @@ class ProfileController extends AbstractController
      */
     protected function activateTelegram()
     {
-        $telegram = psm_build_telegram();
         $apiToken = psm_get_conf('telegram_api_token');
 
         if (empty($apiToken)) {
@@ -187,21 +187,18 @@ class ProfileController extends AbstractController
             return;
         }
 
-        $result = $telegram->getBotUsername();
+        $telegram = $this->container->get('notification.registry')->get('telegram');
+        $username = $telegram instanceof TelegramChannel ? $telegram->botUsername() : null;
 
-        if (isset($result['ok']) && $result['ok'] != false) {
-            $url = "https://t.me/" . $result["result"]["username"];
+        if ($username !== null) {
+            $url = "https://t.me/" . rawurlencode($username);
             $this->addMessage(sprintf(psm_get_lang('users', 'telegram_bot_username_found'), $url), 'success');
             return;
         }
 
-        if (isset($result['error_code']) && $result['error_code'] == 401) {
-            $error = psm_get_lang('users', 'telegram_bot_username_error_token');
-        } elseif (isset($result['description'])) {
-            $error = $result['description'];
-        } else {
-            $error = 'Unknown';
-        }
-        $this->addMessage(sprintf(psm_get_lang('users', 'telegram_bot_error'), $error), 'error');
+        $this->addMessage(
+            sprintf(psm_get_lang('users', 'telegram_bot_error'), 'Unable to verify the bot token.'),
+            'error'
+        );
     }
 }

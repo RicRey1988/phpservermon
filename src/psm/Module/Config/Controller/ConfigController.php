@@ -29,6 +29,9 @@
 namespace psm\Module\Config\Controller;
 
 use psm\Module\AbstractController;
+use psm\Notification\DeliveryResult;
+use psm\Notification\NotificationMessage;
+use psm\Notification\Recipient;
 use psm\Service\Database;
 
 class ConfigController extends AbstractController
@@ -348,19 +351,7 @@ class ConfigController extends AbstractController
      */
     protected function testEmail()
     {
-        $mail = psm_build_mail();
-        $message = psm_get_lang('config', 'test_message');
-        $mail->Subject  = psm_get_lang('config', 'test_subject');
-        $mail->Priority = 1;
-        $mail->Body = $message;
-        $mail->AltBody  = str_replace('<br/>', "\n", $message);
-        $user = $this->getUser()->getUser();
-        $mail->AddAddress($user->email, $user->name);
-        if ($mail->Send()) {
-            $this->addMessage(psm_get_lang('config', 'email_sent'), 'success');
-        } else {
-            $this->addMessage(psm_get_lang('config', 'email_error') . ': ' . $mail->ErrorInfo, 'error');
-        }
+        $this->sendTestNotification('email');
     }
 
     /**
@@ -370,21 +361,7 @@ class ConfigController extends AbstractController
      */
     protected function testSMS()
     {
-        $sms = psm_build_sms();
-        if ($sms) {
-            $user = $this->getUser()->getUser();
-            if (empty($user->mobile)) {
-                $this->addMessage(psm_get_lang('config', 'sms_error_nomobile'), 'error');
-            } else {
-                $sms->addRecipients($user->mobile);
-                $result = $sms->sendSMS(psm_get_lang('config', 'test_message'));
-                if ($result === 1) {
-                    $this->addMessage(psm_get_lang('config', 'sms_sent'), 'success');
-                } else {
-                    $this->addMessage(sprintf(psm_get_lang('config', 'sms_error'), $result), 'error');
-                }
-            }
-        }
+        $this->sendTestNotification('sms');
     }
 
     /**
@@ -394,51 +371,7 @@ class ConfigController extends AbstractController
      */
     protected function testDiscord()
     {
-        $user = $this->getUser()->getUser();
-        if (empty($user->discord)) {
-            $this->addMessage(psm_get_lang('config', 'discord_error_nowebhook'), 'error');
-        } else {
-            $success = 0;
-            $result = 'An unknown error has occurred.';
-            try {
-                $curl = curl_init($user->discord);
-                $json = json_decode(
-                    '{"content":""}',
-                    true
-                );
-                $json['content'] = psm_get_lang('config', 'test_message');
-                $msg = "payload_json=" . urlencode(json_encode($json));
-                if(isset($curl)) {
-                    curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
-                    curl_setopt($curl, CURLOPT_TIMEOUT, 30);
-                    curl_setopt($curl, CURLOPT_POSTFIELDS, $msg);
-                    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-                    $result = curl_exec($curl);
-                    $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-                    $err = curl_errno($curl);
-
-                    if ($err != 0 || $httpcode != 204) {
-                        $success = 0;
-                        // $result = ($result == '') ? 'Wrong input, please check if all values are correct!' : $result;
-                        $error = "HTTP_code: " . $httpcode . ".\ncURL error (" . $err . "): " .
-                            curl_strerror($err) . ". \nResult: " . $result;
-                        $result = $error;
-                    } else {
-                        $success = 1;
-                    }
-                    curl_close($curl);
-                }
-            } catch (Exception $e) {
-                $success = 0;
-                $result = $e->getMessage();
-            }
-
-            if ($success === 1) {
-                $this->addMessage(psm_get_lang('config', 'discord_sent'), 'success');
-            } else {
-                $this->addMessage(sprintf(psm_get_lang('config', 'discord_error'), $result), 'error');
-            }
-        }
+        $this->sendTestNotification('discord');
     }
 
     /** Execute webhook test
@@ -447,26 +380,7 @@ class ConfigController extends AbstractController
      */
     protected function testWebhook()
     {
-
-        $user = $this->getUser()->getUser();
-
-
-        if (empty($user->webhook_url)) {
-            $this->addMessage(psm_get_lang('config', 'webhook_error_nourl'), 'error');
-        } elseif (empty($user->webhook_json)) {
-            $this->addMessage(psm_get_lang('config', 'webhook_error_nojson'), 'error');
-        } else {
-            $webhook = psm_build_webhook();
-            $webhook->setUrl($user->webhook_url);
-            $webhook->setJson($user->webhook_json);
-            $message = ['#message' => (psm_get_lang('config', 'test_message'))];
-            $result = $webhook->sendWebhook($message);
-            if ($result==1) {
-                $this->addMessage(psm_get_lang('config', 'webhook_sent'), 'success');
-            } else {
-                $this->addMessage(sprintf(psm_get_lang('config', 'webhook_error'), $result), 'error');
-            }
-        }
+        $this->sendTestNotification('webhook');
     }
 
     /**
@@ -476,36 +390,7 @@ class ConfigController extends AbstractController
      */
     protected function testPushover()
     {
-        $pushover = psm_build_pushover();
-        $pushover->setDebug(true);
-        $user = $this->getUser()->getUser();
-        $apiToken = psm_get_conf('pushover_api_token');
-
-        if (empty($apiToken)) {
-            $this->addMessage(psm_get_lang('config', 'pushover_error_noapp'), 'error');
-        } elseif (empty($user->pushover_key)) {
-            $this->addMessage(psm_get_lang('config', 'pushover_error_nokey'), 'error');
-        } else {
-            $pushover->setPriority(0);
-            $pushover->setTitle(psm_get_lang('config', 'test_subject'));
-            $pushover->setMessage(psm_get_lang('config', 'test_message'));
-            $pushover->setUser($user->pushover_key);
-            if ($user->pushover_device != '') {
-                $pushover->setDevice($user->pushover_device);
-            }
-            $result = $pushover->send();
-
-            if (isset($result['output']->status) && $result['output']->status == 1) {
-                $this->addMessage(psm_get_lang('config', 'pushover_sent'), 'success');
-            } else {
-                if (isset($result['output']->errors->error)) {
-                    $error = $result['output']->errors->error;
-                } else {
-                    $error = 'Unknown';
-                }
-                $this->addMessage(sprintf(psm_get_lang('config', 'pushover_error'), $error), 'error');
-            }
-        }
+        $this->sendTestNotification('pushover');
     }
 
     /**
@@ -515,31 +400,27 @@ class ConfigController extends AbstractController
      */
     protected function testTelegram()
     {
-        $telegram = psm_build_telegram();
+        $this->sendTestNotification('telegram');
+    }
+
+    protected function sendTestNotification(string $channelName): void
+    {
         $user = $this->getUser()->getUser();
-        $apiToken = psm_get_conf('telegram_api_token');
+        $attributes = get_object_vars($user);
+        $recipient = new Recipient((int) ($attributes['user_id'] ?? 0), $attributes);
+        $prefix = '[PRUEBA 4.0.0-hs] ';
+        $message = new NotificationMessage(
+            $prefix . psm_get_lang('config', 'test_subject'),
+            $prefix . psm_get_lang('config', 'test_message')
+        );
 
-        if (empty($apiToken)) {
-            $this->addMessage(psm_get_lang('config', 'telegram_error_notoken'), 'error');
-        } elseif (empty($user->telegram_id)) {
-            $this->addMessage(psm_get_lang('config', 'telegram_error_noid'), 'error');
-        } else {
-            $telegram->setMessage(psm_get_lang('config', 'test_message'));
-            $telegram->setUser($user->telegram_id);
-
-            $result = $telegram->send();
-
-            if (isset($result['ok']) && $result['ok'] != false) {
-                $this->addMessage(psm_get_lang('config', 'telegram_sent'), 'success');
-            } else {
-                if (isset($result['description'])) {
-                    $error = $result['description'];
-                } else {
-                    $error = 'Unknown';
-                }
-                $this->addMessage(sprintf(psm_get_lang('config', 'telegram_error'), $error), 'error');
-            }
+        try {
+            $result = $this->container->get('notification.registry')->get($channelName)->send($message, $recipient);
+        } catch (\Throwable) {
+            $result = DeliveryResult::temporaryFailure('Notification test failed unexpectedly.');
         }
+
+        $this->addMessage($result->message(), $result->isSuccess() ? 'success' : 'error');
     }
 
     protected function getLabels()

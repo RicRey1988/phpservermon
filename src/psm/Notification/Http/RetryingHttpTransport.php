@@ -28,7 +28,14 @@ final class RetryingHttpTransport
     /** @param array<string, mixed> $options */
     public function post(string $url, array $options): HttpTransportResult
     {
+        $expectJson = (bool) ($options['psm_expect_json'] ?? true);
+        unset($options['psm_expect_json']);
+
         for ($attempt = 1; $attempt <= $this->maxAttempts; $attempt++) {
+            if (!$expectJson) {
+                return HttpTransportResult::success([], $attempt, $statusCode);
+            }
+
             try {
                 $response = $this->client->request('POST', $url, $options);
                 $statusCode = $response->getStatusCode();

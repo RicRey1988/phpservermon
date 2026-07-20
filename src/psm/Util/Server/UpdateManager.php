@@ -77,7 +77,10 @@ class UpdateManager implements ContainerAwareInterface
         $servers = $this->container->get('db')->query($sql);
 
         $updater = new Updater\StatusUpdater($this->container->get('db'));
-        $notifier = new Updater\StatusNotifier($this->container->get('db'));
+        $notifier = new Updater\StatusNotifier(
+            $this->container->get('db'),
+            $this->container->get('notification.registry')
+        );
 
         foreach ($servers as $server) {
             $status_old = ($server['status'] == 'on') ? true : false;

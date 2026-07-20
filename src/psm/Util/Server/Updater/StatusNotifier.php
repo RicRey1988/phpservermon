@@ -33,6 +33,11 @@
  * @see \psm\Util\Server\Updater\Autorun
  */
 namespace psm\Util\Server\Updater;
+use psm\Notification\ChannelRegistry;
+use psm\Notification\ChannelRegistryFactory;
+use psm\Notification\DeliveryResult;
+use psm\Notification\NotificationMessage;
+use psm\Notification\Recipient;
 use psm\Service\Database;
 
 class StatusNotifier
@@ -43,6 +48,9 @@ class StatusNotifier
      * @var \psm\Service\Database $db
      */
     protected $db;
+
+    /** @var ChannelRegistry */
+    protected $channels;
 
     /**
      * Send emails?
@@ -127,9 +135,10 @@ class StatusNotifier
      */
     protected $status_new;
 
-    public function __construct(Database $db)
+    public function __construct(Database $db, ?ChannelRegistry $channels = null)
     {
         $this->db = $db;
+        $this->channels = $channels ?? ChannelRegistryFactory::create();
 
         $this->send_emails = (bool)psm_get_conf('email_status');
         $this->send_sms = (bool)psm_get_conf('sms_status');
@@ -403,37 +412,27 @@ class StatusNotifier
      */
     protected function notifyByEmail($users, $combi = array())
     {
-        // build mail object with some default values
-        $mail = psm_build_mail();
-        $mail->Subject = key_exists('subject', $combi) ?
+        $subject = key_exists('subject', $combi) ?
             $combi['subject'] :
             psm_parse_msg($this->status_new, 'email_subject', $this->server);
-        $mail->Priority = 1;
-
-        $publicUrl = PSM_BASE_URL.'/public.php';
-
         $body = key_exists('message', $combi) ?
             $combi['message'] :
-	    psm_parse_msg($this->status_new, 'email_body', $this->server);
-	    if ((bool)psm_get_conf('email_add_url')) $body .= PHP_EOL.PHP_EOL.'<a href="'.$publicUrl.'">'.$publicUrl.'</a>';
-        $mail->Body = $body;
-        $mail->AltBody = str_replace('<br/>', "\n", $body);
-
-        if (psm_get_conf('log_email')) {
-            $log_id = psm_add_log($this->server_id, 'email', $body);
+            psm_parse_msg($this->status_new, 'email_body', $this->server);
+        $url = null;
+        if ((bool) psm_get_conf('email_add_url')) {
+            $baseUrl = defined('PSM_BASE_URL') && is_string(PSM_BASE_URL) && PSM_BASE_URL !== ''
+                ? PSM_BASE_URL
+                : psm_build_url();
+            $url = rtrim($baseUrl, '/') . '/public.php';
+            $body .= PHP_EOL . PHP_EOL . '<a href="' . $url . '">' . $url . '</a>';
         }
 
-        // go through empl
-        foreach ($users as $user) {
-            if (!empty($log_id)) {
-                psm_add_log_user($log_id, $user['user_id']);
-            }
-
-            // we sent a separate email to every single user.
-            $mail->AddAddress($user['email'], $user['name']);
-            $mail->Send();
-            $mail->ClearAddresses();
-        }
+        $this->deliverChannel(
+            'email',
+            $users,
+            new NotificationMessage($subject, $body, $url, !$this->status_new),
+            $body
+        );
     }
 
 
@@ -446,73 +445,17 @@ class StatusNotifier
      */
     protected function notifyByDiscord($users, $combi = array())
     {
-
         $message_log = key_exists('message', $combi) ?
             $combi['message'] :
             psm_parse_msg($this->status_new, 'discord_message', $this->server);
+        $subject = key_exists('subject', $combi) ? $combi['subject'] : '';
 
-
-        // Remove users that have no Discord webhook
-        foreach ($users as $k => $user) {
-            if (trim($user['discord']) == '') {
-                unset($users[$k]);
-            }
-        }
-
-        // Validation
-        if (empty($users)) {
-            return;
-        }
-
-        // fix message for Discord viewing
-        $message = str_replace(array('<b>', '</b>'), array('**', '**'), $message_log);
-        $message = str_replace(array('<ul>', '</ul>'), array('', ''), $message);
-        $message = str_replace(array('<br>', '</li>'), array("\n", "\n"), $message);
-        $message = str_replace('<li>', " * ", $message);
-
-
-        $json = json_decode(
-            '{"content":""}',
-            true
+        $this->deliverChannel(
+            'discord',
+            $users,
+            new NotificationMessage($subject, $message_log, null, !$this->status_new),
+            $message_log
         );
-        $json['content'] = $message;
-
-        // Log
-        if (psm_get_conf('log_discord')) {
-            $log_id = psm_add_log($this->server_id, 'discord', $message_log);
-        }
-
-        foreach ($users as $user) {
-            // Log
-            if (!empty($log_id)) {
-                psm_add_log_user($log_id, $user['user_id']);
-            }
-
-            // set discord webhook and send
-            try {
-                $msg = "payload_json=" . urlencode(json_encode($json));
-                $curl = curl_init(trim($user['discord']));
-                if(isset($curl)) {
-                    curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
-                    curl_setopt($curl, CURLOPT_TIMEOUT, 30);
-                    curl_setopt($curl, CURLOPT_POSTFIELDS, $msg);
-                    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-                    $result = curl_exec($curl);
-                    $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-                    $err = curl_errno($curl);
-
-                    if ($err != 0 || $httpcode != 204) {
-                        // $result = ($result == '') ? 'Wrong input, please check if all values are correct!' : $result;
-                        $error = "HTTP_code: " . $httpcode . ".\ncURL error (" . $err . "): " .
-                            curl_strerror($err) . ". \nResult: " . $result;
-                        $log_id = psm_add_log($this->server_id, 'discord', $error);
-                    }
-                    curl_close($curl);
-                }
-            } catch (Exception $e) {
-                $log_id = psm_add_log($this->server_id, 'discord', $e->getMessage());
-            }
-        }
     }
 
 
@@ -525,61 +468,19 @@ class StatusNotifier
      */
     protected function notifyByPushover($users, $combi = array())
     {
-        // Remove users that have no pushover_key
-        foreach ($users as $k => $user) {
-            if (trim($user['pushover_key']) == '') {
-                unset($users[$k]);
-            }
-        }
-
-        // Validation
-        if (empty($users)) {
-            return;
-        }
-
-        // Pushover
         $message = key_exists('message', $combi) ?
             $combi['message'] :
             psm_parse_msg($this->status_new, 'pushover_message', $this->server);
-
-        $pushover = psm_build_pushover();
-        if ($this->status_new === true) {
-            $pushover->setPriority(0);
-        } else {
-            $pushover->setPriority(2);
-            //Used with Priority = 2; Pushover will resend the notification every 60 seconds until the user accepts.
-            $pushover->setRetry(300);
-            // Used with Priority = 2; Pushover will resend the notification every 60 seconds for 3600 seconds.
-            // After that point, it stops sending notifications.
-            $pushover->setExpire(3600);
-        }
         $title = key_exists('subject', $combi) ?
             $combi['subject'] :
             psm_parse_msg($this->status_new, 'pushover_title', $this->server);
-        $pushover->setHtml(1);
-        $pushover->setTitle($title);
-        $pushover->setMessage(str_replace('<br/>', "\n", $message));
-        $pushover->setUrl(psm_build_url());
-        $pushover->setUrlTitle(psm_get_conf('site_title', psm_get_lang('system', 'title')));
 
-        // Log
-        if (psm_get_conf('log_pushover')) {
-            $log_id = psm_add_log($this->server_id, 'pushover', $message);
-        }
-
-        foreach ($users as $user) {
-            // Log
-            if (!empty($log_id)) {
-                psm_add_log_user($log_id, $user['user_id']);
-            }
-
-            // Set recipient + send
-            $pushover->setUser($user['pushover_key']);
-            if ($user['pushover_device'] != '') {
-                $pushover->setDevice($user['pushover_device']);
-            }
-            $pushover->send();
-        }
+        $this->deliverChannel(
+            'pushover',
+            $users,
+            new NotificationMessage($title, str_replace('<br/>', "\n", $message), psm_build_url(), !$this->status_new),
+            $message
+        );
     }
     /**
      * This functions performs the webhook notifications
@@ -590,15 +491,7 @@ class StatusNotifier
      */
     protected function notifyByWebhook($users, $combi = array())
     {
-        foreach ($users as $k => $user) {
-            if (trim($user['webhook_url']) == '') {
-                unset($users[$k]);
-            }
-        }
-        $webhook = psm_build_webhook();
-
         $subject = key_exists('subject', $combi) ? $combi['subject'] : psm_parse_msg($this->status_new, 'email_subject', $this->server);
-
         $message = key_exists('message', $combi) ?
             $combi['message'] :
             psm_parse_msg($this->status_new, 'webhook_message', $this->server);
@@ -608,29 +501,19 @@ class StatusNotifier
             $combi['subject'] :
             psm_parse_msg($this->status_new, 'webhook_title', $this->server);
 
-        // Log
-        if (psm_get_conf('log_webhook')) {
-            $log_id = psm_add_log($this->server_id, 'webhook', $message);
-        }
-
-        // send notifications to all users
-        foreach ($users as $user) {
-            // Log
-            if (!empty($log_id)) {
-                psm_add_log_user($log_id, $user['user_id']);
-            }
-            $webhook->setUrl($user['webhook_url']);
-            $webhook->setJson($user['webhook_json']);
-            $webhook->sendWebhook([
-                '#message' => $message,
-                '#server_ip' => $this->server['ip'],
-                '#server_label' => $this->server['label'],
-                '#server_error' => $this->server['error'],
-                '#server_last_offline_duration' => $this->status_new ? $this->server['last_offline_duration'] : '',
-                '#status' => $this->status_new ? 'online' : 'offline',
-                '#subject' => $subject
-            ]);
-        }
+        $this->deliverChannel(
+            'webhook',
+            $users,
+            new NotificationMessage($title, $message, null, !$this->status_new, [
+                'server_ip' => $this->server['ip'],
+                'server_label' => $this->server['label'],
+                'server_error' => $this->server['error'],
+                'server_last_offline_duration' => $this->status_new ? $this->server['last_offline_duration'] : '',
+                'status' => $this->status_new ? 'online' : 'offline',
+                'subject' => $subject,
+            ]),
+            $message
+        );
     }
     /**
      * This functions performs the text message notifications
@@ -640,32 +523,15 @@ class StatusNotifier
      */
     protected function notifyByTxtMsg($users)
     {
-        $sms = psm_build_sms();
-        if (!$sms) {
-            return false;
-        }
-
         $message = psm_parse_msg($this->status_new, 'sms', $this->server);
+        $this->deliverChannel(
+            'sms',
+            $users,
+            new NotificationMessage('', $message, null, !$this->status_new),
+            $message
+        );
 
-        // Log
-        if (psm_get_conf('log_sms')) {
-            $log_id = psm_add_log($this->server_id, 'sms', $message);
-        }
-
-        // add all users to the recipients list
-        foreach ($users as $user) {
-            // Log
-            if (!empty($log_id)) {
-                psm_add_log_user($log_id, $user['user_id']);
-            }
-
-            $sms->addRecipients($user['mobile']);
-        }
-
-        // Send sms
-        $result = $sms->sendSMS($message);
-
-        return $result;
+        return true;
     }
 
     /**
@@ -677,38 +543,52 @@ class StatusNotifier
      */
     protected function notifyByTelegram($users, $combi = array())
     {
-        // Remove users that have no telegram_id
-        foreach ($users as $k => $user) {
-            if (trim($user['telegram_id']) == '') {
-                unset($users[$k]);
-            }
-        }
-
-        // Validation
-        if (empty($users)) {
-            return;
-        }
-
-        // Telegram
         $message = key_exists('message', $combi) ?
             $combi['message'] :
             psm_parse_msg($this->status_new, 'telegram_message', $this->server);
-	    if ((bool)psm_get_conf('telegram_add_url')) $message .= '<br>'.PSM_BASE_URL;
-        $telegram = psm_build_telegram();
-        $telegram->setMessage($message);
-
-        // Log
-        if (psm_get_conf('log_telegram')) {
-            $log_id = psm_add_log($this->server_id, 'telegram', $message);
+        $url = null;
+        if ((bool) psm_get_conf('telegram_add_url')) {
+            $url = defined('PSM_BASE_URL') && is_string(PSM_BASE_URL) && PSM_BASE_URL !== ''
+                ? PSM_BASE_URL
+                : psm_build_url();
         }
+        $subject = key_exists('subject', $combi) ? $combi['subject'] : '';
 
+        $this->deliverChannel(
+            'telegram',
+            $users,
+            new NotificationMessage($subject, $message, $url, !$this->status_new),
+            $message
+        );
+    }
+
+    /**
+     * @param array<int, array<string, mixed>> $users
+     */
+    protected function deliverChannel(string $channelName, array $users, NotificationMessage $message, string $logMessage): void
+    {
+        $logId = null;
         foreach ($users as $user) {
-            // Log
-            if (!empty($log_id)) {
-                psm_add_log_user($log_id, $user['user_id']);
+            $recipient = new Recipient((int) $user['user_id'], $user);
+            $result = $this->channels->get($channelName)->send($message, $recipient);
+            if ($result->status() === DeliveryResult::SKIPPED) {
+                continue;
             }
-            $telegram->setUser($user['telegram_id']);
-            $telegram->send();
+
+            if ((bool) psm_get_conf('log_' . $channelName)) {
+                if ($logId === null) {
+                    $logId = psm_add_log($this->server_id, $channelName, $logMessage);
+                }
+                psm_add_log_user($logId, (int) $user['user_id']);
+
+                if (!$result->isSuccess()) {
+                    psm_add_log(
+                        $this->server_id,
+                        $channelName,
+                        'Delivery result: ' . $result->message()
+                    );
+                }
+            }
         }
     }
 
@@ -729,6 +609,6 @@ class StatusNotifier
                 AND `us`.`server_id` = {$server_id}
             )
         ");
-        return $users;
+        return $users instanceof \PDOStatement ? $users->fetchAll(\PDO::FETCH_ASSOC) : [];
     }
 }

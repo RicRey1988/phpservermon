@@ -10,7 +10,8 @@ final readonly class NotificationMessage
         private string $subject,
         private string $body,
         private ?string $url = null,
-        private bool $critical = false
+        private bool $critical = false,
+        private array $context = []
     ) {
     }
 
@@ -32,5 +33,11 @@ final readonly class NotificationMessage
     public function isCritical(): bool
     {
         return $this->critical;
+    }
+
+    /** @return array<string, scalar|null> */
+    public function context(): array
+    {
+        return $this->context;
     }
 }
