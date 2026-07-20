@@ -26,7 +26,7 @@ jobs:
         id: phpunit
         continue-on-error: true
         run: vendor/bin/phpunit --testdox --colors=never > /tmp/phpunit-result.txt 2>&1
-      - name: Persist diagnostic report
+      - name: Persist diagnostic reports
         if: always()
         run: |
           set -euo pipefail
@@ -34,9 +34,44 @@ jobs:
             printf 'Commit: %s\n\n' "$GITHUB_SHA"
             cat /tmp/phpunit-result.txt
           } > .agent/phpunit-diagnostics.txt
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          text = Path('/tmp/phpunit-result.txt').read_text(errors='replace').splitlines()
+          records = []
+          current = None
+          for line in text:
+              if line.startswith(' ✘ '):
+                  if current:
+                      records.append(current)
+                  current = {'name': line[3:].strip(), 'message': '', 'location': ''}
+                  continue
+              if current is None:
+                  continue
+              stripped = line.strip(' │')
+              if not current['message'] and (stripped.startswith('Failed asserting') or stripped.startswith('Error:')):
+                  current['message'] = stripped
+              match = re.search(r'(tests/[^:]+\.php:\d+)', line)
+              if match and not current['location']:
+                  current['location'] = match.group(1)
+          if current:
+              records.append(current)
+
+          output = [f'Failures: {len(records)}', '']
+          for index, record in enumerate(records, 1):
+              output.append(f"{index}. {record['name']}")
+              output.append(f"   {record['location'] or 'location unavailable'}")
+              if record['message']:
+                  output.append(f"   {record['message']}")
+          summary = next((line for line in reversed(text) if line.startswith('Tests:')), '')
+          if summary:
+              output.extend(['', summary])
+          Path('.agent/phpunit-failures.txt').write_text('\n'.join(output) + '\n')
+          PY
           git config user.name 'Hosting Supremo Diagnostics'
           git config user.email 'noreply@hostingsupremo.org'
-          git add .agent/phpunit-diagnostics.txt
+          git add .agent/phpunit-diagnostics.txt .agent/phpunit-failures.txt
           if ! git diff --cached --quiet; then
             git commit -m 'chore: capture PHPUnit diagnostics [skip ci]'
             git push origin HEAD:feature/native-hope-ui-4.3.2-hs
