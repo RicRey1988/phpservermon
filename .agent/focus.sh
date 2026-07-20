@@ -6,7 +6,7 @@ PHPUNIT_REPORT=.agent/phpunit-result.txt
 : > "$PHPUNIT_REPORT"
 printf 'RUN phpunit-full\n' >> "$REPORT"
 set +e
-vendor/bin/phpunit --testdox > "$PHPUNIT_REPORT" 2>&1
+vendor/bin/phpunit --testdox --colors=never > "$PHPUNIT_REPORT" 2>&1
 code=$?
 set -e
 if [ "$code" -ne 0 ]; then
