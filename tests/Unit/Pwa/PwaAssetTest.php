@@ -49,7 +49,7 @@ final class PwaAssetTest extends TestCase
     {
         $worker = $this->read('service-worker.js');
 
-        self::assertStringContainsString("psm-static-4.2.2-hs", $worker);
+        self::assertStringContainsString("psm-static-4.2.3-hs", $worker);
         foreach (['hope-ui.min.css', 'customizer.min.css', 'hope-ui.js', 'plugins/setting.js', 'status.js', 'dashboard.js'] as $asset) {
             self::assertStringContainsString($asset, $worker);
         }

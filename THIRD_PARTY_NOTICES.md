@@ -1,6 +1,6 @@
 # Third-party notices
 
-PHP Server Monitor 4.2.2-hs includes the following front-end works in source or
+PHP Server Monitor 4.2.3-hs includes the following front-end works in source or
 compiled form. Their licenses are compatible with distribution under this
 project's GPL-3.0-or-later license.
 

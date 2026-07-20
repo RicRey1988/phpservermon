@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.2.3-hs] - 2026-07-20
+
+### Fixed
+- Versioned the native server-history runtime so browsers immediately evict
+  the legacy month-cached jQuery asset after an update.
+- Added regression coverage for both the native runtime and its versioned
+  template reference.
+
 ## [4.2.2-hs] - 2026-07-20
 
 ### Fixed

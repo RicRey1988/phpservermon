@@ -1,7 +1,7 @@
 PHP Server Monitor HS
 =====================
 
-Version 4.2.2-hs — latest signed Hosting Supremo release
+Version 4.2.3-hs — latest signed Hosting Supremo release
 
 PHP Server Monitor HS checks websites and network services and presents their
 availability, latency and history in a modern web dashboard. This Hosting
@@ -12,8 +12,8 @@ original PHP Server Monitor project.
 Download
 --------
 
-Download the signed ``4.2.2-hs`` package and review its release notes at
-https://github.com/RicRey1988/phpservermon/releases/tag/v4.2.2-hs. The Release
+Download the signed ``4.2.3-hs`` package and review its release notes at
+https://github.com/RicRey1988/phpservermon/releases/tag/v4.2.3-hs. The Release
 includes the production ZIP, its canonical SHA-256 manifest and a detached
 RSA-SHA256 signature used by the built-in updater.
 
@@ -106,7 +106,7 @@ images and runtime update data, then run::
 The web installer can also apply additive database migrations. The in-app
 updater accepts no arbitrary URL: it can install only a newer stable HS release
 whose three release assets and detached signature pass verification. Version
-``4.2.2-hs`` is published through that signed channel and can be installed from
+``4.2.3-hs`` is published through that signed channel and can be installed from
 the System page by an administrator running an older HS version.
 
 More documentation
