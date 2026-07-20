@@ -17,7 +17,7 @@ final class AppShellTest extends TestCase
         self::assertStringContainsString('data-bs-theme="{{ appearance.resolved_scheme }}"', $body);
         self::assertStringContainsString('href="#main-content"', $body);
         self::assertStringContainsString('<aside class="sidebar', $body);
-        self::assertStringContainsString('<main class="main-content" id="main-content"', $body);
+        self::assertStringContainsString('<main class="main-content min-vh-100 d-flex flex-column" id="main-content"', $body);
         self::assertStringContainsString('static/hope/css/hope-ui.min.css?v={{ version|url_encode }}', $body);
         self::assertStringContainsString('static/hope/js/bootstrap.bundle.min.js?v={{ version|url_encode }}', $body);
         self::assertStringNotContainsString('bootstrap-select', $body);
@@ -34,10 +34,11 @@ final class AppShellTest extends TestCase
         self::assertIsString($body);
         self::assertIsString($navbar);
         self::assertIsString($customizer);
-        self::assertStringContainsString('sidebar sidebar-default sidebar-base navs-rounded-all', $body);
-        self::assertStringContainsString('<main class="main-content"', $body);
+        self::assertStringContainsString('sidebar sidebar-default sidebar-white sidebar-base navs-rounded-all', $body);
+        self::assertStringContainsString('<main class="main-content', $body);
         self::assertStringContainsString('iq-navbar-header', $body);
         self::assertStringContainsString('content-inner mt-n5 py-0', $body);
+        self::assertStringContainsString('input-group search-input', $navbar);
         self::assertStringContainsString('data-theme-quick-toggle', $navbar);
         self::assertStringContainsString('data-bs-target="#hope-ui-settings"', $navbar);
         foreach (['auto', 'dark', 'light'] as $scheme) {
@@ -58,21 +59,36 @@ final class AppShellTest extends TestCase
         self::assertStringContainsString('<i class="icon">', $menu);
         self::assertStringNotContainsString('<span class="icon">', $menu);
         self::assertStringContainsString('<i class="icon">', $body);
+        self::assertStringContainsString("classList.add('sidebar-mini')", $javascript);
+        self::assertStringContainsString("event.key === 'Escape'", $javascript);
         self::assertStringNotContainsString('function initializeSidebar()', $javascript);
         self::assertStringNotContainsString('sidebar-collapsed', $javascript);
+        self::assertStringNotContainsString('sidebar-open', $body . $javascript);
     }
 
-    public function testLightNavbarAndAuthenticationHaveExplicitThemeSafeSurfaces(): void
+    public function testLightNavbarAndAuthenticationUseNativeThemeSafeSurfaces(): void
     {
-        $styles = file_get_contents(dirname(__DIR__, 3) . '/src/templates/default/static/css/hs-monitor.css');
-        self::assertIsString($styles);
+        $root = dirname(__DIR__, 3);
+        $body = file_get_contents($root . '/src/templates/default/main/body.tpl.html');
+        $navbar = file_get_contents($root . '/src/templates/default/main/app-navbar.tpl.html');
+        $login = file_get_contents($root . '/src/templates/default/module/user/login/login.tpl.html');
+        $profile = file_get_contents($root . '/src/templates/default/module/user/profile.tpl.html');
 
-        self::assertStringContainsString('html[data-bs-theme="light"] .iq-navbar .nav-link', $styles);
-        self::assertStringContainsString('.auth-card.card', $styles);
-        self::assertStringContainsString('html[data-bs-theme="dark"] .auth-card.card', $styles);
-        self::assertStringContainsString('legend {', $styles);
-        self::assertStringContainsString('border-bottom:', $styles);
-        self::assertStringContainsString('.push-device-card .card-header > .d-flex', $styles);
+        self::assertIsString($body);
+        self::assertIsString($navbar);
+        self::assertIsString($login);
+        self::assertIsString($profile);
+        self::assertFileDoesNotExist($root . '/src/templates/default/static/css/hs-monitor.css');
+        foreach (['hope-ui.min.css', 'dark.min.css', 'customizer.min.css'] as $asset) {
+            self::assertStringContainsString($asset, $body);
+        }
+        self::assertStringNotContainsString('hs-monitor.css', $body);
+        self::assertStringContainsString('d-inline-flex align-items-center justify-content-center', $navbar);
+        self::assertStringContainsString('data-theme-icon="dark"', $navbar);
+        self::assertStringContainsString('data-theme-icon="light"', $navbar);
+        self::assertStringContainsString('class="card border-0 shadow-none bg-transparent"', $login);
+        self::assertStringContainsString('class="col-lg-6 d-none d-lg-flex align-items-center justify-content-center bg-primary', $login);
+        self::assertStringContainsString('class="card mb-4"', $profile);
     }
 
     public function testFooterIdentifiesHostingSupremoFork(): void
