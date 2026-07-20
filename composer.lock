@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ffa4c8966a0653f7d5119a6bcad4d429",
+    "content-hash": "64b15b0d35e7e61ed986a38b4332b701",
     "packages": [
         {
             "name": "mnsami/composer-custom-directory-installer",
@@ -3584,7 +3584,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": "^8.5",
+        "php": ">=8.5",
         "ext-ctype": "*",
         "ext-curl": "*",
         "ext-filter": "*",

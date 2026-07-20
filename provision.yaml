@@ -1,70 +1,62 @@
 ---
 - hosts: all
-  become: yes
-  become_method: sudo
+  become: true
   tasks:
-  - name: Update OS
-    package:
-     name: '*'
-     state: latest
-  - name: wget percona release installation file
-    shell: cd /root/ && wget https://repo.percona.com/apt/percona-release_latest.$(lsb_release -sc)_all.deb; dpkg -i /root/percona-release_latest.$(lsb_release -sc)_all.deb
+    - name: Add the PHP package repository
+      ansible.builtin.apt_repository:
+        repo: ppa:ondrej/php
 
-  - name: setup percona repositories to percona server 5.7
-    shell: percona-release setup ps57
+    - name: Install the PHP 8.5 development stack
+      ansible.builtin.apt:
+        update_cache: true
+        name:
+          - composer
+          - mysql-server
+          - nginx
+          - php8.5-cli
+          - php8.5-curl
+          - php8.5-fpm
+          - php8.5-mbstring
+          - php8.5-mysql
+          - php8.5-xml
+        state: present
 
-  - name: Update repositories cache
-    apt:
-      update_cache: yes
-
-  - name: ensure nginx is at the latest version
-    apt: name=nginx state=latest
-  - name: start nginx
-    service:
-        name: nginx
+    - name: Start MySQL
+      ansible.builtin.service:
+        name: mysql
         state: started
+        enabled: true
 
-  - name: Add nginx stable repository from PPA and install its signing key on Ubuntu target
-    ansible.builtin.apt_repository:
-      repo: ppa:ondrej/php
+    - name: Create the development database
+      ansible.builtin.command: /vagrant/setup-mysql.sh
+      changed_when: false
 
-  - name: ensure php7.4-fpm is at the latest version
-    apt: name=php7.4-fpm state=latest
+    - name: Install Composer dependencies
+      ansible.builtin.command: /vagrant/setup-php.sh
+      changed_when: false
 
-  - name: install php7.4-curl
-    apt: name=php7.4-curl state=latest
+    - name: Install the nginx virtual host
+      ansible.builtin.copy:
+        src: /vagrant/dev/phpservermon-default
+        dest: /etc/nginx/sites-available/default
+        remote_src: true
+        mode: '0644'
 
-  - name: install php7.4-xml
-    apt: name=php7.4-xml state=latest
+    - name: Install the development configuration
+      ansible.builtin.copy:
+        src: /vagrant/dev/vagrant-config.php
+        dest: /vagrant/config.php
+        remote_src: true
+        mode: '0644'
 
-  - name: install php7.4-pdo
-    apt: name=php7.4-pdo state=latest
+    - name: Start PHP 8.5 FPM
+      ansible.builtin.service:
+        name: php8.5-fpm
+        state: started
+        enabled: true
 
-  - name: install php7.4-mysql
-    apt: name=php7.4-mysql state=latest
-
-  - name: ensure gnupg2 is at the latest version
-    apt: name=gnupg2 state=latest
-
-  - name: ensure percona-server-57 is installed
-    apt: name=percona-server-server-5.7 state=latest
-
-    #  - name: Create a new database with name 'psm'
-    #    shell: mysql -e "CREATE DATABASE psm;"
-  - name: setup mysql
-    shell: /vagrant/setup-mysql.sh
-
-  - name: copy psm nginx vhost
-    shell: /bin/cp -far /vagrant/dev/phpservermon-default /etc/nginx/sites-available/default
-
-  - name: setup php dependencies
-    shell: /vagrant/setup-php.sh
-
-  - name: copy psm config file
-    shell: /bin/cp -far /vagrant/dev/vagrant-config.php /vagrant/config.php
-
-  - name: apply nginx modifications
-    service:
+    - name: Restart nginx
+      ansible.builtin.service:
         name: nginx
         state: restarted
-
+        enabled: true

@@ -61,8 +61,7 @@ namespace {
 
     // check for a cron allowed ip array
     if (!defined('PSM_CRON_ALLOW')) {
-    //serialize for php version lower than 7.0.0
-        define('PSM_CRON_ALLOW', serialize(array()));
+        define('PSM_CRON_ALLOW', array());
     }
 
     $vendor_autoload = PSM_PATH_SRC . '..' . DIRECTORY_SEPARATOR . 'vendor' .
@@ -70,7 +69,7 @@ namespace {
     if (!file_exists($vendor_autoload)) {
         trigger_error(
             "No dependencies found in vendor dir. Did you install the dependencies?
-                Please run \"php composer.phar install\".",
+                Please run \"composer install --no-dev --optimize-autoloader\".",
             E_USER_ERROR
         );
     }

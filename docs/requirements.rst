@@ -4,9 +4,11 @@ Requirements
 ============
 
 * Web server
-* MySQL database
-* For PHP5: 5.5.9+
-* For PHP7: 7.0.8+
-* PHP cURL package
-* PHP PDO mysql driver
-* PHP XML package
+* MySQL or MariaDB database
+* PHP 8.5 or later
+* PHP extensions: ctype, cURL, filter, hash, JSON, libxml, mbstring,
+  OpenSSL, PDO, PDO MySQL and XML
+* Composer 2 for installations made directly from the Git repository
+
+The installer blocks setup when the PHP version or a required extension is
+missing. The same platform check is also applied to scheduled status updates.

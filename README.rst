@@ -5,7 +5,7 @@ PHP Server Monitor
    :alt: Join the chat at https://gitter.im/phpservermon/phpservermon
    :target: https://gitter.im/phpservermon/phpservermon
 
-Version 3.5.3-hs
+Version 4.0.0-hs (unreleased)
 
 .. image:: https://img.shields.io/discord/1359923330798456992?logo=discord&logoColor=white&label=Discord&labelColor=%235865F2&link=https%3A%2F%2Fdiscord.gg%2FRv7nRP4HVq
    :alt: Join the discord at https://discord.gg/Rv7nRP4HVq
@@ -87,7 +87,9 @@ Join the community
 Download
 --------
 
-The latest Hosting Supremo edition can be downloaded from https://github.com/RicRey1988/phpservermon/releases.
+The current Hosting Supremo development version is available from
+https://github.com/RicRey1988/phpservermon. Version 4.0.0-hs does not have a
+release package yet.
 
 
 Requirements
@@ -95,8 +97,7 @@ Requirements
 
 * Web server
 * MySQL database
-* For PHP5: 5.5.9+
-* For PHP7: 7.0.8+
+* PHP 8.5 or later
 * PHP Extensions (modules)
 
   * ext-curl
@@ -105,10 +106,10 @@ Requirements
   * ext-hash
   * ext-json
   * ext-libxml
+  * ext-mbstring
   * ext-openssl
   * ext-pdo
-  * ext-pcre
-  * ext-sockets
+  * ext-pdo_mysql
   * ext-xml
 
 Install
@@ -120,7 +121,7 @@ In a nutshell: unzip, upload, run install.php, enjoy.
 If you have downloaded the source from GitHub (and not a pre-built package), the dependencies are not included.
 To be able to run an installation from the repo, you need to run the following command to install the dependencies::
 
-     php composer.phar install
+     composer install --no-dev --optimize-autoloader
 
 If you are familiar with Vagrant (https://www.vagrantup.com)::
 

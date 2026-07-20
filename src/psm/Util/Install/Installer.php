@@ -80,13 +80,12 @@ class Installer
             return false;
         }
 
-        // different DB version, check if the version requires any changes
+        // A newer database may belong to a newer checkout. Never rewrite its
+        // version marker while older code is running.
         if (version_compare($version_db, PSM_VERSION, '<')) {
             return true;
-        } else {
-            // change database version to current version so this check won't be required next time
-            psm_update_conf('version', PSM_VERSION);
         }
+
         return false;
     }
 
@@ -176,7 +175,7 @@ class Installer
                     ('log_webhook', '1'),
                     ('log_telegram', '1'),
                     ('discord_status', '0'),
-                    ('log_jdiscord', '1'),
+                    ('log_discord', '1'),
                     ('log_retention_period', '365'),
                     ('version', '" . PSM_VERSION . "'),
                     ('version_update_check', '" . PSM_VERSION . "'),
@@ -360,9 +359,11 @@ class Installer
         if (version_compare($version_from, '3.5.0', '<')) {
             $this->upgrade350();
         }
-        if (version_compare($version_from, '3.6.0', '<')) {
-            $this->upgrade360();
+        if (version_compare($version_from, '4.0.0-hs', '<')) {
+            $this->upgrade400hs();
         }
+
+        // Only mark the upgrade complete after every migration statement succeeds.
         psm_update_conf('version', $version_to);
     }
 
@@ -707,41 +708,98 @@ class Installer
     }
 
     /**
-     * Patch for v3.6.0 release
-     * Added support for Discord and webhooks
-     * Password_reset_hash varchar 40 -> 64 to allow for SHA256 hash
+     * Return metadata for one existing column, or null when it is absent.
      */
-    protected function upgrade360()
+    protected function columnInfo($table, $column)
     {
-        $queries = array();
+        $result = $this->db->execute(
+            "SHOW COLUMNS FROM `" . PSM_DB_PREFIX . $table . "` LIKE ?",
+            array($column)
+        );
 
-        $queries[] = "ALTER TABLE `" . PSM_DB_PREFIX . "users` 
-            ADD  `webhook_url` VARCHAR( 255 ) NOT NULL AFTER `telegram_id`;";
-        $queries[] = "ALTER TABLE `" . PSM_DB_PREFIX . "users` 
-            ADD  `webhook_json` VARCHAR( 255 ) NOT NULL AFTER `telegram_id`;";
-        $queries[] = "ALTER TABLE `" . PSM_DB_PREFIX . "log` 
-            CHANGE `type` `type` ENUM('status','email','sms','discord','webhook','pushover','telegram')
-            CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;";
-        $queries[] = "ALTER TABLE `" . PSM_DB_PREFIX . "servers` 
-            ADD `webhook` ENUM( 'yes','no' ) NOT NULL DEFAULT 'yes' AFTER `telegram`;";
-        $queries[] = "ALTER TABLE `" . PSM_DB_PREFIX . "servers` 
-            ADD `custom_header` TEXT NULL DEFAULT NULL AFTER `last_output`;";
-        $queries[] = "INSERT INTO `" . PSM_DB_PREFIX . "config` (`key`, `value`) VALUE
-                    ('discord_status', '0'),
-                    ('log_discord', '1'),
-                    ('webhook_status', '0'),
-                    ('log_webhook', '1')";
-        $queries[] = "ALTER TABLE `" . PSM_DB_PREFIX . "users` 
-            ADD `discord` VARCHAR( 255 ) NOT NULL AFTER `mobile`;";
-        $queries[] = "ALTER TABLE `" . PSM_DB_PREFIX . "servers` 
-            ADD `discord` ENUM( 'yes','no' ) NOT NULL DEFAULT 'yes' AFTER  `sms`;";
-        $queries[] = "INSERT INTO `" . PSM_DB_PREFIX . "users` (
-            `user_name`, `level`, `name`, `email`)
-            VALUES ('__PUBLIC__', 30, 'Public page', 'publicpage@psm.psm')";
-        $queries[] = "ALTER TABLE `" . PSM_DB_PREFIX . "users`
-            CHANGE `password_reset_hash` `password_reset_hash`  VARCHAR( 64 ) DEFAULT NULL COMMENT 'user''s password reset code';";
-        $this->execSQL($queries);
+        return isset($result[0]) ? $result[0] : null;
+    }
 
-        $this->log('Public page is now available. Added user \'__PUBLIC__\'. See documentation for more info.');
+    /**
+     * Add a column without failing when an HS installation already has it.
+     */
+    protected function addColumnIfMissing($table, $column, $definition)
+    {
+        if ($this->columnInfo($table, $column) === null) {
+            $this->execSQL(
+                "ALTER TABLE `" . PSM_DB_PREFIX . $table . "` ADD `" . $column . "` " . $definition
+            );
+        }
+    }
+
+    /**
+     * Upgrade for the 4.0.0-hs PHP 8.5 baseline.
+     *
+     * This migration is deliberately additive and idempotent because HS 3.5.3
+     * installations may already contain part of the upstream 3.6 schema.
+     */
+    protected function upgrade400hs()
+    {
+        $this->addColumnIfMissing(
+            'users',
+            'discord',
+            "VARCHAR(255) NOT NULL DEFAULT '' AFTER `mobile`"
+        );
+        $this->addColumnIfMissing(
+            'users',
+            'webhook_url',
+            "VARCHAR(255) NOT NULL DEFAULT '' AFTER `telegram_id`"
+        );
+        $this->addColumnIfMissing(
+            'users',
+            'webhook_json',
+            "VARCHAR(255) NOT NULL DEFAULT '{\"text\":\"servermon: #message\"}' AFTER `webhook_url`"
+        );
+        $this->addColumnIfMissing(
+            'servers',
+            'discord',
+            "ENUM('yes','no') NOT NULL DEFAULT 'yes' AFTER `sms`"
+        );
+        $this->addColumnIfMissing(
+            'servers',
+            'webhook',
+            "ENUM('yes','no') NOT NULL DEFAULT 'yes' AFTER `telegram`"
+        );
+        $this->addColumnIfMissing(
+            'servers',
+            'custom_header',
+            "TEXT NULL DEFAULT NULL AFTER `last_output`"
+        );
+
+        $passwordResetHash = $this->columnInfo('users', 'password_reset_hash');
+        if (
+            $passwordResetHash !== null
+            && preg_match('/^(?:var)?char\((\d+)\)$/i', $passwordResetHash['Type'], $matches)
+            && (int) $matches[1] < 64
+        ) {
+            $this->execSQL(
+                "ALTER TABLE `" . PSM_DB_PREFIX . "users` MODIFY `password_reset_hash` VARCHAR(64) DEFAULT NULL " .
+                "COMMENT 'user''s password reset code'"
+            );
+        }
+
+        $logType = $this->columnInfo('log', 'type');
+        if (
+            $logType !== null
+            && (!str_contains($logType['Type'], "'discord'") || !str_contains($logType['Type'], "'webhook'"))
+        ) {
+            $this->execSQL(
+                "ALTER TABLE `" . PSM_DB_PREFIX . "log` MODIFY `type` " .
+                "ENUM('status','email','sms','discord','webhook','pushover','telegram') NOT NULL"
+            );
+        }
+
+        $this->execSQL(
+            "INSERT IGNORE INTO `" . PSM_DB_PREFIX . "config` (`key`, `value`) VALUES " .
+            "('discord_status', '0'), " .
+            "('log_discord', '1'), " .
+            "('webhook_status', '0'), " .
+            "('log_webhook', '1')"
+        );
     }
 }

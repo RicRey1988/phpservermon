@@ -109,7 +109,7 @@ The second part is the actual message. There are a few variables you can use in 
 After upgrading, my email stopped working.
 ------------------------------------------
 
-Run 'php composer.phar update' and you should be good to go!
+Run ``composer install --no-dev --optimize-autoloader`` with PHP 8.5 or later.
 
 Setting up a public page.
 -------------------------

@@ -50,8 +50,6 @@ For a regular upgrade, follow these steps:
 * Follow the steps
 * Enjoy
 
-Alternatively you can use updater.sh script.
-
 From 2.0
 --------
 
@@ -73,7 +71,10 @@ Installing from GitHub
 If you have downloaded the source from GitHub (and not a pre-built package), the dependencies are not included.
 To be able to run an installation from the repo, you need to run the following command to install the dependencies::
 
-     php composer.phar install
+     composer install --no-dev --optimize-autoloader
+
+Composer must run with PHP 8.5 or later. Do not copy a ``vendor`` directory
+created on an older PHP runtime.
 
 
 Setting up a cronjob
@@ -104,12 +105,9 @@ By default `off` servers are checked every 5 seconds. If you want to change it a
 
 	define('CRON_DOWN_INTERVAL', 1); // every 1 second call update
 
-The update script has been designed to prevent itself from running multiple times. It has a maximum timeout of 10 minutes.
-After that the script is assumed dead and the cronjob will run again.
-If you want to change the 10 minutes timeout, find the constant "PSM_CRON_TIMEOUT" in src/includes/psmconfig.inc.php.
-You can also provide it as an argument (in seconds!). The following example would change to timeout to 10 seconds::
-
-     php status.cron.php --timeout=10
+The updater uses an operating-system file lock, so overlapping cron executions
+exit safely instead of processing the same servers twice. A failed server check
+does not prevent the remaining servers from being processed.
 
 By default, no URLs are generated for notifications created in the cronjob.
 To specify the base url to your monitor installation, use the "--uri" argument, like so::
@@ -137,24 +135,24 @@ If you're work with cPanel you can follow these steps:
 
 Cronjob over web
 ----------------
-To allow scheduled status updates over the web, the commandline check is extended with a check on allowed IP address(es). 
+Command-line cron is recommended. Web cron is disabled by default. If shell
+access is unavailable, explicitly enable it and configure a long random key::
 
-In config.php add following line::
+     define('PSM_WEBCRON_ENABLED', true);
+     define('PSM_WEBCRON_KEY', 'replace-with-a-long-random-secret');
 
-     // PHP 7.0.0 and higher
-     define('PSM_CRON_ALLOW', array("xxx.xxx.xxx.xxx", "yyy.yyy.yyy.yyy", "zzz.zzz.zzz.zzz"));
-     // lower versions
-     define('PSM_CRON_ALLOW', serialize(array("xxx.xxx.xxx.xxx", "yyy.yyy.yyy.yyy", "zzz.zzz.zzz.zzz")));
+Then request
+``https://yourmonitor.example/cron/status.cron.php?webcron_key=YOURKEY``.
+The key is compared in constant time.
 
-After that, you can hit the url http(s)://"yourmonitor.com"/cron/status.cron.php over the web from your allowed IP.
+An explicit source-IP allowlist may be enabled instead of, or together with,
+the key::
 
-Alternatively, define a secret key to allow the update over the web:
+     define('PSM_WEBCRON_ENABLED', true);
+     define('PSM_WEBCRON_ENABLE_IP_WHITELIST', true);
+     define('PSM_CRON_ALLOW', array('192.0.2.10', '2001:db8::10'));
 
-In config.php add following line::
-
-     define('PSM_WEBCRON_KEY', 'YOURKEY');
-
-After that, you can hit the url http(s)://"yourmonitor.com"/cron/status.cron.php?webcron_key=YOURKEY .
+Only the direct connection address is trusted; forwarded-IP headers are not.
 
 Troubleshooting
 +++++++++++++++
