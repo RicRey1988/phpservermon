@@ -14,20 +14,12 @@ final class PhpInfoServiceTest extends TestCase
     {
         $data = (new PhpInfoService(new PlatformRequirements()))->collect();
 
-        self::assertSame([
-            'application_version',
-            'php_version',
-            'sapi',
-            'os',
-            'php_ini',
-            'memory_limit',
-            'upload_max_filesize',
-            'post_max_size',
-            'max_execution_time',
-            'timezone',
-            'opcache',
-            'platform',
-        ], array_keys($data));
+        self::assertSame(['runtime', 'limits', 'acceleration', 'platform'], array_keys($data));
+        self::assertSame(PSM_VERSION, $data['runtime']['application_version']);
+        self::assertArrayHasKey('php_version', $data['runtime']);
+        self::assertArrayHasKey('session_lifetime', $data['limits']);
+        self::assertArrayHasKey('loaded_extensions', $data['runtime']);
+        self::assertArrayHasKey('opcache', $data['acceleration']);
         self::assertArrayNotHasKey('environment', $data);
         self::assertStringNotContainsString('DB_', json_encode($data, JSON_THROW_ON_ERROR));
         self::assertArrayNotHasKey('variables', $data);

@@ -1,7 +1,7 @@
 PHP Server Monitor HS
 =====================
 
-Version 4.3.1-hs — latest signed Hosting Supremo release
+Version 4.3.2-hs — latest signed Hosting Supremo release
 
 PHP Server Monitor HS checks websites and network services and presents their
 availability, latency and history in a modern web dashboard. This Hosting
@@ -12,8 +12,8 @@ original PHP Server Monitor project.
 Download
 --------
 
-Download the signed ``4.3.1-hs`` package and review its release notes at
-https://github.com/RicRey1988/phpservermon/releases/tag/v4.3.1-hs. The Release
+Download the signed ``4.3.2-hs`` package and review its release notes at
+https://github.com/RicRey1988/phpservermon/releases/tag/v4.3.2-hs. The Release
 includes the production ZIP, its canonical SHA-256 manifest and a detached
 RSA-SHA256 signature used by the built-in updater.
 
@@ -32,7 +32,14 @@ Highlights
 * Responsive contracts cover widths 360, 390, 768, 1024, 1366 and 1600 in
   both light and dark modes without page overflow.
 * Immediate manual status refresh, uptime and latency statistics, incident
-  history, channel delivery state and clear online/offline indicators.
+  history, channel delivery state and prominent, accessible online/offline
+  banners that refresh immediately.
+* Persistent one-year authenticated sessions with rotating secure tokens;
+  explicit logout still revokes access. Password and light/dark controls keep
+  visible Hope UI icons in both themes.
+* Administrators can upload a custom system logo and each user can upload a
+  profile photo. Both are normalized to deterministic WebP files and fall back
+  to the HS mark or user initial.
 * Normalized server images uploaded with drag and drop, a safe fixed display
   size and a bundled generic fallback when no image exists.
 * Email, Telegram, Web Push, SMS, Discord, Webhook and Pushover notifications.
@@ -44,8 +51,10 @@ Highlights
   authenticated responses are never cached.
 * Administrator invitation links with expiry, revocation and single-use
   registration.
-* Safe system diagnostics for PHP, extensions, database, disk, cron, delivery
-  queue and scheduled jobs without exposing credentials or request data.
+* Grouped safe PHP runtime, limit, OPcache and compatibility information plus
+  diagnostics for extensions, database, disk, permissions, cron, delivery
+  queue and jobs. Permission failures identify the PHP user, affected path and
+  corrective command without exposing credentials or request data.
 * A signed updater restricted to newer ``-hs`` releases from the Hosting
   Supremo fork. It verifies the pinned RSA signature, GitHub asset digest,
   package hash and safe archive paths before entering maintenance mode.
@@ -93,7 +102,8 @@ outside version control and configure the CLI cron job, for example::
 
 After installation, an administrator can generate VAPID credentials in the
 PWA/Web Push configuration and each user can subscribe the current device from
-their profile.
+their profile. The generator accepts a plain email or ``mailto:`` contact and
+creates the key pair without requiring a public key first.
 
 How Web Push works
 ------------------
@@ -127,7 +137,7 @@ images and runtime update data, then run::
 The web installer can also apply additive database migrations. The in-app
 updater accepts no arbitrary URL: it can install only a newer stable HS release
 whose three release assets and detached signature pass verification. Version
-``4.3.1-hs`` is published through that signed channel and can be installed from
+``4.3.2-hs`` is published through that signed channel and can be installed from
 the System page by an administrator running an older HS version.
 
 More documentation

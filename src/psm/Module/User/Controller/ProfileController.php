@@ -33,6 +33,8 @@ use psm\Notification\Channel\TelegramChannel;
 use psm\Service\Database;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use psm\Service\UserMedia\IdentityImageManager;
+use psm\Service\UserMedia\UserMediaStorage;
 
 class ProfileController extends AbstractController
 {
@@ -126,6 +128,12 @@ class ProfileController extends AbstractController
             'push_unsubscribe_url' => psm_build_url(['mod' => 'user_push', 'action' => 'unsubscribe'], true, false),
             'push_test_url' => psm_build_url(['mod' => 'user_push', 'action' => 'test'], true, false),
         );
+        $identityStorage = $this->container->get('service.user_media.storage');
+        assert($identityStorage instanceof UserMediaStorage);
+        $tpl_data['profile_avatar_url'] = $identityStorage->avatarUrl(
+            $this->getUser()->getUserId(),
+            (string) $this->getUser()->getUserPref('avatar_file', '')
+        );
         foreach ($this->profile_fields as $field) {
             $tpl_data[$field] = (isset($user->$field)) ? $user->$field : '';
         }
@@ -181,6 +189,22 @@ class ProfileController extends AbstractController
         unset($clean['password_repeat']);
 
         $this->db->save(PSM_DB_PREFIX . 'users', $clean, array('user_id' => $this->getUser()->getUserId()));
+        try {
+            $identityManager = $this->container->get('service.user_media.manager');
+            assert($identityManager instanceof IdentityImageManager);
+            $removeAvatar = isset($_POST['remove_profile_avatar']);
+            $avatar = $identityManager->applyAvatar(
+                $this->getUser()->getUserId(),
+                $_FILES['profile_avatar'] ?? [],
+                $removeAvatar
+            );
+            if ($avatar !== null || $removeAvatar) {
+                $this->getUser()->setUserPref('avatar_file', $avatar ?? '');
+            }
+        } catch (\Throwable $exception) {
+            $this->addMessage('No se pudo actualizar la foto de perfil: ' . $exception->getMessage(), 'error');
+            return $this->executeIndex();
+        }
         $this->container->get('event')->dispatch(
             \psm\Module\User\UserEvents::USER_EDIT,
             new \psm\Module\User\Event\UserEvent($this->getUser()->getUserId())

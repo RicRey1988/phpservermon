@@ -31,6 +31,7 @@ namespace psm\Module;
 use psm\Service\Database;
 use psm\Service\Notification\UserNotificationRepository;
 use psm\Service\Ui\Appearance;
+use psm\Service\UserMedia\UserMediaStorage;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -243,6 +244,11 @@ abstract class AbstractController implements ControllerInterface
                 'appearance' => $appearance->toArray(),
                 'user_level' => $userLevel,
             );
+            if ($this->container !== null && $this->container->has('service.user_media.storage')) {
+                $identityStorage = $this->container->get('service.user_media.storage');
+                assert($identityStorage instanceof UserMediaStorage);
+                $tpl_data['site_logo_url'] = $identityStorage->logoUrl((string) psm_get_conf('site_logo', ''));
+            }
             if ($userLevel !== PSM_USER_ANONYMOUS) {
                 $navbarUser = $this->getUser()->getUser();
                 $navbarName = trim((string) ($navbarUser->name ?? $navbarUser->user_name ?? 'Usuario'));
@@ -250,6 +256,12 @@ abstract class AbstractController implements ControllerInterface
                 $tpl_data['navbar_user_initial'] = function_exists('mb_substr')
                     ? mb_strtoupper(mb_substr($navbarName, 0, 1))
                     : strtoupper(substr($navbarName, 0, 1));
+                if (isset($identityStorage)) {
+                    $tpl_data['navbar_avatar_url'] = $identityStorage->avatarUrl(
+                        $this->getUser()->getUserId(),
+                        (string) $this->getUser()->getUserPref('avatar_file', '')
+                    );
+                }
                 $tpl_data['navbar_profile_url'] = psm_build_url(['mod' => 'user_profile']);
                 $tpl_data['navbar_logout_url'] = psm_build_url(['logout' => 1]);
                 $tpl_data['appearance_save_url'] = psm_build_url(

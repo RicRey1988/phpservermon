@@ -1,22 +1,22 @@
 'use strict';
 
-const STATIC_CACHE = 'psm-static-4.3.1-hs-r1';
+const STATIC_CACHE = 'psm-static-4.3.2-hs-r1';
 const STATIC_ROOT = '/src/templates/default/static/';
 const STATIC_ASSETS = [
   './offline.html',
   './manifest.webmanifest',
-  './src/templates/default/static/hope/css/hope-ui.min.css?v=4.3.1-hs',
-  './src/templates/default/static/hope/css/dark.min.css?v=4.3.1-hs',
-  './src/templates/default/static/hope/css/customizer.min.css?v=4.3.1-hs',
-  './src/templates/default/static/hope/js/bootstrap.bundle.min.js?v=4.3.1-hs',
-  './src/templates/default/static/hope/js/hope-ui.js?v=4.3.1-hs',
-  './src/templates/default/static/hope/js/plugins/setting.js?v=4.3.1-hs',
-  './src/templates/default/static/css/hs-monitor.css?v=4.3.1-hs&ui=1',
+  './src/templates/default/static/hope/css/hope-ui.min.css?v=4.3.2-hs',
+  './src/templates/default/static/hope/css/dark.min.css?v=4.3.2-hs',
+  './src/templates/default/static/hope/css/customizer.min.css?v=4.3.2-hs',
+  './src/templates/default/static/hope/js/bootstrap.bundle.min.js?v=4.3.2-hs',
+  './src/templates/default/static/hope/js/hope-ui.js?v=4.3.2-hs',
+  './src/templates/default/static/hope/js/plugins/setting.js?v=4.3.2-hs',
+  './src/templates/default/static/css/hs-monitor.css?v=4.3.2-hs&ui=1',
   './src/templates/default/static/hope/images/auth/01.png',
-  './src/templates/default/static/js/app-shell.js?v=4.3.1-hs',
-  './src/templates/default/static/js/status.js?v=4.3.1-hs',
-  './src/templates/default/static/js/dashboard.js?v=4.3.1-hs',
-  './src/templates/default/static/js/pwa.js?v=4.3.1-hs',
+  './src/templates/default/static/js/app-shell.js?v=4.3.2-hs',
+  './src/templates/default/static/js/status.js?v=4.3.2-hs',
+  './src/templates/default/static/js/dashboard.js?v=4.3.2-hs',
+  './src/templates/default/static/js/pwa.js?v=4.3.2-hs',
   './src/templates/default/static/images/pwa/icon-192.png',
   './src/templates/default/static/images/pwa/icon-512.png',
   './src/templates/default/static/images/pwa/icon-maskable-512.png'

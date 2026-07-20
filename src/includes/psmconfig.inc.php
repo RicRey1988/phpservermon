@@ -30,7 +30,7 @@
 /**
  * Current PSM version
  */
-define('PSM_VERSION', '4.3.1-hs');
+define('PSM_VERSION', '4.3.2-hs');
 
 /**
  * URL to check for updates. Will not be checked if turned off on config page.
@@ -84,7 +84,7 @@ define('PSM_LOGIN_HASH_COST_FACTOR', '10');
  * COOKIE_DOMAIN: The domain where the cookie is valid for, like '.mydomain.com'
  * COOKIE_SECRET_KEY: Put a random value here to make your app more secure. When changed, all cookies are reset.
  */
-define('PSM_LOGIN_COOKIE_RUNTIME', 1209600);
+define('PSM_LOGIN_COOKIE_RUNTIME', 31536000);
 define('PSM_LOGIN_COOKIE_DOMAIN', null);
 if (!defined('PSM_LOGIN_COOKIE_SECRET_KEY')) {
     $cookieSecretMaterial = implode("\0", array(

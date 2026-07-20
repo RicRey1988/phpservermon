@@ -1,5 +1,26 @@
 # Changelog
 
+## [4.3.2-hs] - 2026-07-20
+
+### Added
+- Custom system logo and per-user profile photo uploads, normalized to safe,
+  deterministic WebP files with accessible fallbacks.
+- Grouped PHP runtime, upload/session limits, OPcache and platform information.
+- Actionable filesystem diagnostics that identify the PHP user, affected path
+  and controlled group-permission remedy.
+
+### Changed
+- Authenticated sessions persist for one year with rotating secure tokens and
+  remain explicitly revocable through Logout.
+- Estado cards now show prominent semantic online, offline, warning and paused
+  banners that update immediately after an XHR check.
+
+### Fixed
+- VAPID key generation is no longer blocked by validation of the empty public
+  key field and accepts plain contact email addresses.
+- Password visibility and quick light/dark controls now have explicit SVG
+  contrast and display rules in both themes.
+
 ## [4.3.1-hs] - 2026-07-20
 
 ### Fixed

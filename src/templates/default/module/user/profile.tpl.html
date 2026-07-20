@@ -1,9 +1,13 @@
 {% import 'main/macros.tpl.html' as macro %}
-<form name="edit_profile" class="col-12 col-xl-8" action="{{ form_action|raw }}" id="edit_profile" method="post">
+<form name="edit_profile" class="col-12 col-xl-8" action="{{ form_action|raw }}" id="edit_profile" method="post" enctype="multipart/form-data">
 	{{ macro.input_csrf() }}
 	<!-- General settings -->
 	<fieldset>
 		<legend>{{ label_general }}</legend>
+		<div class="dropzone-field mb-4">
+			{% if profile_avatar_url %}<img class="dropzone-preview identity-preview identity-preview--avatar" src="{{ profile_avatar_url }}" alt="Foto de perfil actual">{% else %}<span class="avatar avatar-xl bg-soft-primary text-primary" aria-hidden="true">{{ user_name|slice(0,1)|upper }}</span>{% endif %}
+			<div class="dropzone-copy"><label class="form-label fw-semibold" for="profile_avatar">Foto de perfil</label><input class="form-control" type="file" id="profile_avatar" name="profile_avatar" accept="image/png,image/jpeg,image/webp,image/gif"><div class="form-text">La imagen se recorta y normaliza de forma segura a WebP.</div>{% if profile_avatar_url %}<div class="form-check mt-2"><input class="form-check-input" type="checkbox" id="remove_profile_avatar" name="remove_profile_avatar" value="1"><label class="form-check-label" for="remove_profile_avatar">Quitar foto</label></div>{% endif %}</div>
+		</div>
 		<!-- Username -->
 		{{ macro.input_field("text", "user_name", null, "user_name", label_user_name, user_name, label_user_name, "64", null, null, null, null, true, true, "username") }}
 		<!-- Name -->

@@ -1,7 +1,7 @@
 {% import 'main/macros.tpl.html' as macro %}
 <div class="auth-shell auth-layout auth-layout-single">
   <section class="auth-form-pane"><form class="auth-card card" method="post">{{ macro.input_csrf() }}<div class="card-body p-0">
-    <a href="index.php" class="navbar-brand d-inline-flex align-items-center gap-3 mb-5"><span class="brand-mark">HS</span><span class="h4 mb-0">Server Monitor</span></a>
+    <a href="index.php" class="navbar-brand d-inline-flex align-items-center gap-3 mb-5">{% if site_logo_url %}<img class="brand-logo brand-logo--auth" src="{{ site_logo_url }}" alt="">{% else %}<span class="brand-mark">HS</span>{% endif %}<span class="h4 mb-0">{{ title }}</span></a>
     <h1 class="h2 text-center mb-2">{{ title_forgot }}</h1><p class="text-muted text-center mb-4">Escribe tu usuario y te enviaremos las instrucciones configuradas.</p>
     <div class="mb-4"><label class="form-label" for="input-username">{{ label_username }}</label><input type="text" name="user_name" id="input-username" class="form-control form-control-lg" value="{{ value_user_name }}" autocomplete="username" required autofocus></div>
     <button class="btn btn-lg btn-primary w-100" type="submit">{{ label_submit }}</button><a class="btn btn-link w-100 mt-2" href="index.php">Volver al inicio de sesión</a>

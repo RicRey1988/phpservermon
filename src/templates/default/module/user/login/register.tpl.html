@@ -1,7 +1,7 @@
 {% import 'main/macros.tpl.html' as macro %}
 <div class="auth-shell auth-layout">
   <section class="auth-form-pane"><form class="auth-card card" action="" method="post" autocomplete="on">{{ macro.input_csrf() }}<div class="card-body p-0">
-    <a href="index.php" class="navbar-brand d-inline-flex align-items-center gap-3 mb-4"><span class="brand-mark">HS</span><span class="h4 mb-0">Server Monitor</span></a>
+    <a href="index.php" class="navbar-brand d-inline-flex align-items-center gap-3 mb-4">{% if site_logo_url %}<img class="brand-logo brand-logo--auth" src="{{ site_logo_url }}" alt="">{% else %}<span class="brand-mark">HS</span>{% endif %}<span class="h4 mb-0">{{ title }}</span></a>
     <h1 class="h2 text-center mb-2">Crear cuenta</h1><p class="text-muted text-center mb-4">Completa tu perfil para <strong>{{ email }}</strong>.</p>
     <input type="hidden" name="invitation_token" value="{{ invitation_token }}">
     <div class="mb-3"><label class="form-label" for="name">Nombre</label><input class="form-control form-control-lg" id="name" name="name" type="text" value="{{ value_name }}" maxlength="255" required autocomplete="name"></div>

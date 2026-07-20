@@ -1,5 +1,5 @@
 {% import 'main/macros.tpl.html' as macro %}
-<form name="edit_config" class="config-form" action="index.php?mod=config&action=save" id="edit_config" method="post">
+<form name="edit_config" class="config-form" action="index.php?mod=config&action=save" id="edit_config" method="post" enctype="multipart/form-data">
     <!-- Nav tabs -->
     <div class="config-layout">
     <ul class="nav nav-pills config-tabs" id="config_tab" role="tablist" aria-orientation="vertical">
@@ -62,6 +62,10 @@
                 {{ macro.input_checkbox("show_update", "show_update[]", label_show_update, show_update_checked) }}
                 <!-- Site title -->
                 {{ macro.input_field("text", "site_title", null, "site_title", label_site_title, site_title, label_site_title, "255", null, null, null, null, true) }}
+                <div class="dropzone-field mb-4">
+                    {% if site_logo_url %}<img class="dropzone-preview identity-preview" src="{{ site_logo_url }}" alt="Logo actual">{% else %}<span class="brand-mark brand-mark-lg mb-0" aria-hidden="true">HS</span>{% endif %}
+                    <div class="dropzone-copy"><label class="form-label fw-semibold" for="site_logo">Logo del sistema</label><input class="form-control" type="file" id="site_logo" name="site_logo" accept="image/png,image/jpeg,image/webp,image/gif"><div class="form-text">PNG, JPEG, WebP o GIF. Se normaliza de forma segura a WebP.</div>{% if site_logo_url %}<div class="form-check mt-2"><input class="form-check-input" type="checkbox" id="remove_site_logo" name="remove_site_logo" value="1"><label class="form-check-label" for="remove_site_logo">Restaurar el logo HS predeterminado</label></div>{% endif %}</div>
+                </div>
                 <!-- Language -->
                 {{ macro.input_select("language", "language", label_language, languages, language_current) }}
                 <!-- Auto refresh -->
@@ -263,7 +267,7 @@
                 {{ macro.input_field("text", "webpush_vapid_subject", null, "webpush_vapid_subject", "Contacto VAPID", webpush_vapid_subject, "mailto:admin@example.com", "255", "webpush_subject_help", "Use mailto:correo@dominio o una URL HTTPS.") }}
                 {{ macro.input_field("text", "webpush_vapid_public_key", null, "webpush_vapid_public_key", "Clave pública VAPID", webpush_vapid_public_key, "Genere las claves para completar este campo", "255", "webpush_public_help", "La clave privada se guarda cifrada y nunca se muestra.", null, null, true) }}
                 <div class="d-flex flex-wrap gap-2">
-                    <button type="submit" class="btn btn-outline-primary" formaction="{{ vapid_generate_url }}">Generar nuevas claves VAPID</button>
+                    <button type="submit" class="btn btn-outline-primary" formaction="{{ vapid_generate_url }}" formnovalidate>Generar nuevas claves VAPID</button>
                     {{ macro.button_save("webpush_submit", label_save) }}
                 </div>
                 <div class="alert alert-warning mt-3 mb-0"><strong>Importante:</strong> al regenerar las claves, los navegadores ya registrados deberán activar sus notificaciones nuevamente.</div>
@@ -273,24 +277,13 @@
             <fieldset>
                 <legend>{{ label_tab_php_info }}</legend>
                 <p>{{ label_php_info_safe }}</p>
-                <dl class="php-info-grid row row-cols-1 row-cols-lg-2 g-3 mb-0">
-                    {% for key, value in php_info %}
-                    <div class="col"><div class="card h-100"><div class="card-body">
-                        <dt class="text-uppercase small text-muted mb-2">{{ key|e }}</dt>
-                        <dd class="mb-0 text-break">
-                            {% if key == 'platform' %}
-                                <span class="badge bg-{{ value.satisfied ? 'success' : 'danger' }}">{{ value.satisfied ? 'OK' : 'ERROR' }}</span>
-                                {{ value|json_encode|e }}
-                            {% elseif key == 'opcache' %}
-                                <span class="badge bg-{{ value.enabled ? 'success' : 'warning' }}">{{ value.enabled ? 'ON' : 'OFF' }}</span>
-                                {{ value|json_encode|e }}
-                            {% else %}
-                                {{ value|e }}
-                            {% endif %}
-                        </dd>
-                    </div></div></div>
+                <div class="php-info-grid row row-cols-1 row-cols-xl-2 g-4">
+                    {% for group, values in php_info %}
+                    <div class="col"><section class="card h-100 php-info-card"><div class="card-header"><h3 class="h5 mb-0">{{ {'runtime':'Entorno de ejecución','limits':'Límites y cargas','acceleration':'Rendimiento','platform':'Compatibilidad'}[group]|default(group|title) }}</h3></div><div class="card-body"><dl class="server-facts mb-0">
+                        {% for key, value in values %}<div><dt>{{ key|replace({'_':' '})|title }}</dt><dd class="text-break">{% if value is iterable %}{% if value.enabled is defined %}<span class="badge bg-{{ value.enabled ? 'success' : 'warning' }} me-1">{{ value.enabled ? 'ACTIVO' : 'INACTIVO' }}</span>{% endif %}<code>{{ value|json_encode|e }}</code>{% else %}{{ value|e }}{% endif %}</dd></div>{% endfor %}
+                    </dl></div></section></div>
                     {% endfor %}
-                </dl>
+                </div>
             </fieldset>
         </div>
     </div>

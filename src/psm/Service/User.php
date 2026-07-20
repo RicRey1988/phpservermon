@@ -32,6 +32,7 @@ namespace psm\Service;
 
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorage;
 
 /**
  * This is a heavily modified version of the php-login-advanced project by Panique.
@@ -95,7 +96,13 @@ class User
 
         if (!psm_is_cli()) {
             if ($session == null) {
-                $session = new Session();
+                $session = new Session(new NativeSessionStorage([
+                    'cookie_lifetime' => PSM_LOGIN_COOKIE_RUNTIME,
+                    'gc_maxlifetime' => PSM_LOGIN_COOKIE_RUNTIME,
+                    'cookie_secure' => true,
+                    'cookie_httponly' => true,
+                    'cookie_samesite' => 'Lax',
+                ]));
                 $session->start();
             }
             $this->session = $session;
@@ -277,11 +284,7 @@ class User
         } // not authenticated
 
         $this->setUserLoggedIn($user->user_id, true);
-
-        // if user has check the "remember me" checkbox, then generate token and write cookie
-        if ($user_rememberme) {
-            $this->newRememberMeCookie();
-        }
+        $this->newRememberMeCookie();
 
         // recalculate the user's password hash
         // DELETE this if-block if you like, it only exists to recalculate

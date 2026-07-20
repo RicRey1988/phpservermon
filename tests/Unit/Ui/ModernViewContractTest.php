@@ -59,6 +59,9 @@ final class ModernViewContractTest extends TestCase
 
         self::assertStringContainsString('[data-card-search]', $javascript);
         self::assertStringContainsString('[data-password-toggle]', $javascript);
+        self::assertStringContainsString('formnovalidate', $this->read('module/config/config.tpl.html'));
+        self::assertStringContainsString('[data-password-toggle] svg', $styles);
+        self::assertStringContainsString('html[data-bs-theme="light"] .theme-icon-dark', $styles);
         self::assertStringContainsString('.auth-layout', $styles);
         self::assertStringContainsString('.user-card', $styles);
         self::assertStringContainsString('.timeline-item', $styles);

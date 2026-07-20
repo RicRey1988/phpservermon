@@ -51,6 +51,9 @@ final class StatusDashboardTest extends TestCase
         self::assertStringContainsString('src="{{ server.image_url }}"', $cards);
         self::assertStringContainsString('width="96" height="96"', $cards);
         self::assertStringContainsString('status-card-title', $cards);
+        self::assertStringContainsString('status-banner', $cards);
+        self::assertStringContainsString('data-server-status-icon', $cards);
+        self::assertStringContainsString('data-server-status-label', $cards);
         self::assertStringNotContainsString('text-truncate', $cards);
         self::assertStringContainsString('aria-label="{{ server.status_label }}"', $cards);
         self::assertStringContainsString('data-server-id="{{ server.server_id }}"', $cards);

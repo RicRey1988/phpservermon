@@ -21,6 +21,9 @@ final class SystemHealthServiceTest extends TestCase
         self::assertArrayHasKey('runtime', $checks);
         self::assertArrayHasKey('filesystem', $checks);
         self::assertArrayHasKey('cron', $checks);
+        self::assertStringContainsString('Usuario PHP:', $checks['filesystem'][0]['detail']);
+        self::assertStringContainsString('chgrp', $checks['filesystem'][0]['detail']);
+        self::assertStringContainsString($root, $checks['filesystem'][0]['detail']);
         self::assertStringNotContainsString('PASSWORD', strtoupper($encoded));
         self::assertStringNotContainsString('TOKEN=', strtoupper($encoded));
         unlink($root . '/logs/status.cron.lock');

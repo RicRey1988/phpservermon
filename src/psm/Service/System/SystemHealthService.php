@@ -135,12 +135,28 @@ final readonly class SystemHealthService
     private function writableCheck(string $label, string $path): array
     {
         $writable = is_dir($path) && is_writable($path);
+        $phpUser = $this->effectiveUser();
+        $quotedPath = "'" . str_replace("'", "'\\''", $path) . "'";
+        $remedy = 'sudo chgrp -R ' . $phpUser . ' ' . $quotedPath . ' && sudo chmod -R g+rwX ' . $quotedPath;
         return [
             'label' => $label,
             'status' => $writable ? 'ok' : 'error',
             'value' => $writable ? 'Escribible' : 'Sin escritura',
-            'detail' => $writable ? 'Permisos correctos.' : 'El usuario de PHP necesita permisos de escritura.',
+            'detail' => ($writable ? 'Permisos correctos. ' : 'PHP no puede crear actualizaciones, caché o registros. ')
+                . 'Usuario PHP: ' . $phpUser . '. Ruta: ' . $path . '. '
+                . ($writable ? 'Comando de recuperación si cambian: ' : 'Solución recomendada: ') . $remedy,
         ];
+    }
+
+    private function effectiveUser(): string
+    {
+        if (function_exists('posix_geteuid') && function_exists('posix_getpwuid')) {
+            $account = posix_getpwuid(posix_geteuid());
+            if (is_array($account) && $account['name'] !== '') {
+                return preg_replace('/[^a-zA-Z0-9_.-]/', '', $account['name']) ?: 'www-data';
+            }
+        }
+        return preg_replace('/[^a-zA-Z0-9_.-]/', '', get_current_user()) ?: 'www-data';
     }
 
     private function bytes(float $bytes): string

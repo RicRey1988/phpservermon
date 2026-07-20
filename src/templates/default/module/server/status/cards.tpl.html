@@ -1,6 +1,7 @@
 {% macro server_card(server, compact, label_last_online, label_last_offline, label_last_check, label_rtime) %}
 <article class="card status-card status-{{ server.status_tone }}{% if compact %} status-card--compact{% endif %}" data-server-id="{{ server.server_id }}">
     <div class="card-body d-flex flex-column min-w-0">
+        <div class="status-banner status-banner--{{ server.status_tone }}" role="status" aria-label="Estado: {{ server.status_label }}"><span class="status-banner-icon" data-server-status-icon aria-hidden="true">{{ server.status_tone == 'online' ? '✓' : (server.status_tone == 'offline' ? '×' : (server.status_tone == 'warning' ? '!' : 'Ⅱ')) }}</span><strong data-server-status-label>{{ server.status_label|upper }}</strong><span class="status-pulse" aria-hidden="true"></span></div>
         <div class="server-image-box mb-3">
             <img src="{{ server.image_url }}" width="96" height="96" alt="" loading="lazy" decoding="async">
         </div>

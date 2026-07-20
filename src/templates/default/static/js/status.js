@@ -6,6 +6,16 @@
             document.querySelectorAll('[data-server-id="' + server.server_id + '"]').forEach(function (card) {
                 ['online', 'warning', 'offline', 'paused'].forEach(function (tone) { card.classList.remove('status-' + tone); });
                 card.classList.add('status-' + server.status_tone);
+                var banner = card.querySelector('.status-banner');
+                var bannerLabel = card.querySelector('[data-server-status-label]');
+                var bannerIcon = card.querySelector('[data-server-status-icon]');
+                if (banner) {
+                    ['online', 'warning', 'offline', 'paused'].forEach(function (tone) { banner.classList.remove('status-banner--' + tone); });
+                    banner.classList.add('status-banner--' + server.status_tone);
+                    banner.setAttribute('aria-label', 'Estado: ' + server.status_label);
+                }
+                if (bannerLabel) { bannerLabel.textContent = String(server.status_label).toUpperCase(); }
+                if (bannerIcon) { bannerIcon.textContent = ({ online: '✓', offline: '×', warning: '!', paused: 'Ⅱ' })[server.status_tone] || '?'; }
                 var badge = card.querySelector('.status-badge');
                 if (badge) {
                     ['online', 'warning', 'offline', 'paused'].forEach(function (tone) { badge.classList.remove('status-badge--' + tone); });

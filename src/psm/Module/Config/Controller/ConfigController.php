@@ -34,6 +34,8 @@ use psm\Notification\NotificationMessage;
 use psm\Notification\Recipient;
 use psm\Service\Database;
 use Minishlink\WebPush\VAPID;
+use psm\Service\UserMedia\IdentityImageManager;
+use psm\Service\UserMedia\UserMediaStorage;
 
 class ConfigController extends AbstractController
 {
@@ -153,6 +155,9 @@ class ConfigController extends AbstractController
         foreach ($config_db as $entry) {
             $config[$entry['key']] = $entry['value'];
         }
+        $identityStorage = $this->container->get('service.user_media.storage');
+        assert($identityStorage instanceof UserMediaStorage);
+        $tpl_data['site_logo_url'] = $identityStorage->logoUrl($config['site_logo'] ?? null);
 
         // generate language array
         $lang_keys = psm_get_langs();
@@ -313,6 +318,19 @@ class ConfigController extends AbstractController
             foreach ($clean as $key => $value) {
                 psm_update_conf($key, $value);
             }
+            if (isset($_POST['general_submit'])) {
+                try {
+                    $identityManager = $this->container->get('service.user_media.manager');
+                    assert($identityManager instanceof IdentityImageManager);
+                    $removeLogo = isset($_POST['remove_site_logo']);
+                    $logo = $identityManager->applyLogo($_FILES['site_logo'] ?? [], $removeLogo);
+                    if ($logo !== null || $removeLogo) {
+                        psm_update_conf('site_logo', $logo ?? '');
+                    }
+                } catch (\Throwable $exception) {
+                    $this->addMessage('No se pudo actualizar el logo: ' . $exception->getMessage(), 'error');
+                }
+            }
             $this->addMessage(psm_get_lang('config', 'updated'), 'success');
 
             if (!empty($_POST['test_email'])) {
@@ -363,6 +381,9 @@ class ConfigController extends AbstractController
             return $this->runAction('index');
         }
         $subject = trim((string) psm_POST('webpush_vapid_subject', ''));
+        if (filter_var($subject, FILTER_VALIDATE_EMAIL) !== false) {
+            $subject = 'mailto:' . $subject;
+        }
         if ($subject === '') {
             $user = get_object_vars($this->getUser()->getUser());
             $email = filter_var((string) ($user['email'] ?? ''), FILTER_VALIDATE_EMAIL);
