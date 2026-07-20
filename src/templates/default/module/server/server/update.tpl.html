@@ -1,6 +1,6 @@
 {% import 'main/icons.tpl.html' as hope %}
 {% import 'main/macros.tpl.html' as macro %}
-<form name="edit_server" action="{{ url_save|raw }}" class="server-form col-12 col-xxl-9 mx-auto" id="edit_server" method="post"
+<form name="edit_server" action="{{ url_save|raw }}" class="col-12 col-xxl-9 mx-auto" data-server-form id="edit_server" method="post"
 	 enctype="multipart/form-data" autocomplete="off">
 	<fieldset class="card mb-4" data-form-section="identification-check">
 		<legend class="card-header h5 float-none w-100 mb-0">{{ titlemode }}</legend>
@@ -203,7 +203,7 @@
     <fieldset class="card mb-4">
         <legend class="card-header h5 float-none w-100 mb-0">{{ label_delete }}</legend>
         <div class="card-body">
-        <a class="btn btn-danger show-modal" href="{{ url_delete|raw }}" title="{{ label_delete }}" data-modal-id="delete"
+        <a class="btn btn-danger" data-modal-trigger href="{{ url_delete|raw }}" title="{{ label_delete }}" data-modal-id="delete"
 			data-modal-param="{{ edit_value_label }}">
             {{ hope.icon('trash') }} {{ label_delete }}
         </a>

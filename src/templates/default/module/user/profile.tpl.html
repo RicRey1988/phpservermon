@@ -37,7 +37,7 @@
 		<div class="col">
 			<fieldset class="card h-100">
 				<legend class="card-header h5 float-none w-100 mb-0">{{ label_telegram }}</legend>
-				<div class="card-body"><p class="text-muted">{{ label_telegram_description|raw }}</p><a class="btn btn-primary mb-3" href="{{ telegram_get_chat_id_url }}">{{ label_telegram_get_chat_id }}</a>{{ macro.input_field("text", "telegram_id", null, "telegram_id", label_telegram_chat_id, telegram_id, label_telegram_chat_id, "255", "telegram_id_help", label_telegram_id_description) }}<button type="button" class="btn btn-outline-primary show-modal" data-bs-toggle="modal" data-modal-id="activateTelegram">{{ label_activate_telegram }}</button>{{ macro.input_hidden("activate_telegram", "0") }}</div>
+				<div class="card-body"><p class="text-muted">{{ label_telegram_description|raw }}</p><a class="btn btn-primary mb-3" href="{{ telegram_get_chat_id_url }}">{{ label_telegram_get_chat_id }}</a>{{ macro.input_field("text", "telegram_id", null, "telegram_id", label_telegram_chat_id, telegram_id, label_telegram_chat_id, "255", "telegram_id_help", label_telegram_id_description) }}<button type="button" class="btn btn-outline-primary" data-modal-trigger data-bs-toggle="modal" data-modal-id="activateTelegram">{{ label_activate_telegram }}</button>{{ macro.input_hidden("activate_telegram", "0") }}</div>
 			</fieldset>
 		</div>
 		<div class="col">

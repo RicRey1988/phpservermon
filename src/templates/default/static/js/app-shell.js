@@ -183,7 +183,7 @@
 	}
 
 	function initializeModals() {
-		each('.show-modal', function (origin) {
+		each('[data-modal-trigger]', function (origin) {
 			origin.addEventListener('click', function (event) {
 				event.preventDefault();
 				var modalId = origin.dataset.modalId || 'main';

@@ -41,8 +41,8 @@ final class StatusDashboardTest extends TestCase
         $header = $this->read('src/templates/default/module/server/statistics/header.tpl.html');
 
         self::assertStringContainsString('data-status-board', $index);
-        self::assertStringNotContainsString('dashboard-summary', $index);
-        self::assertStringContainsString('dashboard-summary', $statistics);
+        self::assertStringNotContainsString('data-dashboard-summary', $index);
+        self::assertStringContainsString('data-dashboard-summary', $statistics);
         self::assertStringContainsString('uptime-chart', $statistics);
         self::assertStringContainsString('latency-chart', $statistics);
         self::assertStringContainsString('type="application/json"', $statistics);

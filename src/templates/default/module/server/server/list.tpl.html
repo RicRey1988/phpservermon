@@ -46,7 +46,7 @@
                 {% if user_level == 10 %}
                 <div class="position-relative d-flex gap-2">
                     <a class="btn btn-outline-primary flex-grow-1 position-relative" href="{{ server.url_edit|raw }}">{{ hope.icon('edit','me-1') }}{{ label_edit }}</a>
-                    <a class="btn btn-outline-danger show-modal position-relative" href="{{ server.url_delete|raw }}" data-modal-id="delete" data-modal-param="{{ server.label }}">{{ hope.icon('trash') }}<span class="visually-hidden">{{ label_delete }}</span></a>
+                    <a class="btn btn-outline-danger position-relative" data-modal-trigger href="{{ server.url_delete|raw }}" data-modal-id="delete" data-modal-param="{{ server.label }}">{{ hope.icon('trash') }}<span class="visually-hidden">{{ label_delete }}</span></a>
                 </div>
                 {% endif %}
             </div>

@@ -1,6 +1,6 @@
 {% import 'main/icons.tpl.html' as hope %}
 <section data-statistics-dashboard data-statistics-range="{{ range }}">
-    <div class="dashboard-summary row row-cols-1 row-cols-sm-2 row-cols-xl-4 g-4 mb-4" aria-label="Resumen de monitoreo">
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-4 g-4 mb-4" data-dashboard-summary aria-label="Resumen de monitoreo">
         {% set summary_cards = [
             {key:'online',label:'En línea',value:dashboard.summary.online,icon:'check-circle',tone:'primary',caption:'Servidores operativos'},
             {key:'active_incidents',label:'Incidentes activos',value:dashboard.summary.active_incidents,icon:'exclamation-triangle',tone:'danger',caption:'Requieren atención'},

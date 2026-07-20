@@ -5,7 +5,7 @@
 		{% if item.type == 'link' %}
 			<a class="btn btn-outline-primary {{ item.class_active }}" href="{{ item.url|raw }}">{{ hope.icon(item.icon,'me-1') }}{{ item.label }}</a>
 		{% elseif item.type == 'button' %}
-			<a class="btn btn-{{ item.btn_class }} {{ item.class_active }}" title="{{ item.title }}" href="{{ item.url|raw }}"{% if item.modal_id != null %} data-bs-toggle="modal" data-modal-id="{{ item.modal_id }}"{% endif %}>{{ hope.icon(item.icon,'me-1') }}{{ item.label }}</a>
+			<a class="btn btn-{{ item.btn_class }} {{ item.class_active }}" title="{{ item.title }}" href="{{ item.url|raw }}"{% if item.modal_id != null %} data-modal-trigger data-bs-toggle="modal" data-modal-id="{{ item.modal_id }}"{% endif %}>{{ hope.icon(item.icon,'me-1') }}{{ item.label }}</a>
 		{% elseif item.type == 'dropdown' %}
 			<div class="dropdown">
 				<button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">{{ hope.icon(item.icon,'me-1') }}{{ item.label }}</button>

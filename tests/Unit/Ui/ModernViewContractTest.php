@@ -86,7 +86,7 @@ final class ModernViewContractTest extends TestCase
         self::assertStringContainsString('data-status-board', $status);
         self::assertStringNotContainsString('uptime-chart', $status);
         self::assertStringNotContainsString('latency-chart', $status);
-        self::assertStringNotContainsString('dashboard-summary', $status);
+        self::assertStringNotContainsString('data-dashboard-summary', $status);
     }
 
     public function testStatisticsOwnsKpisAndCharts(): void
@@ -95,7 +95,7 @@ final class ModernViewContractTest extends TestCase
         self::assertStringContainsString('data-statistics-dashboard', $statistics);
         self::assertStringContainsString('uptime-chart', $statistics);
         self::assertStringContainsString('latency-chart', $statistics);
-        self::assertStringContainsString('dashboard-summary', $statistics);
+        self::assertStringContainsString('data-dashboard-summary', $statistics);
     }
 
     public function testServerFormAndInstallerExposeModernSections(): void
@@ -104,7 +104,7 @@ final class ModernViewContractTest extends TestCase
         $installer = $this->read('module/install/main.tpl.html');
         $database = $this->read('module/install/config_new.tpl.html');
 
-        self::assertStringContainsString('class="server-form', $server);
+        self::assertStringContainsString('data-server-form', $server);
         self::assertGreaterThanOrEqual(6, substr_count($server, 'data-form-section'));
         self::assertStringNotContainsString('custom-select', $server);
         self::assertStringContainsString('data-install-stepper', $installer);

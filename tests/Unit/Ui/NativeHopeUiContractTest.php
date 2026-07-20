@@ -102,10 +102,10 @@ final class NativeHopeUiContractTest extends TestCase
             $this->read('src/templates/default/static/js/notifications.js'),
         ]);
 
-        foreach (['sidebar-open', 'status-banner', 'status-badge--', 'history-panel', 'notification-unread'] as $selector) {
+        foreach (['sidebar-open', 'status-banner', 'status-badge--', 'history-panel', 'notification-unread', 'show-modal'] as $selector) {
             self::assertStringNotContainsString($selector, $javascript);
         }
-        foreach (['data-status-board', 'data-server-card', 'data-notification-item'] as $hook) {
+        foreach (['data-status-board', 'data-server-card', 'data-notification-item', 'data-modal-trigger'] as $hook) {
             self::assertStringContainsString($hook, $this->applicationTemplateContents() . $javascript);
         }
     }

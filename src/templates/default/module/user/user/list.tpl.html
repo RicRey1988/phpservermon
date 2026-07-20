@@ -38,7 +38,7 @@
         </div>
         <div class="d-flex gap-2 mt-auto">
           <a class="btn btn-outline-primary flex-grow-1" href="{{ user.url_edit|raw }}">{{ hope.icon('edit','me-1') }}{{ label_edit }}</a>
-          <a class="btn btn-outline-danger show-modal" href="{{ user.url_delete|raw }}" data-modal-id="delete" data-modal-param="{{ user.user_name }}">{{ hope.icon('trash') }}<span class="visually-hidden">{{ label_delete }}</span></a>
+          <a class="btn btn-outline-danger" data-modal-trigger href="{{ user.url_delete|raw }}" data-modal-id="delete" data-modal-param="{{ user.user_name }}">{{ hope.icon('trash') }}<span class="visually-hidden">{{ label_delete }}</span></a>
         </div>
       </div>
     </article>
