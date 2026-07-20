@@ -5,3 +5,4 @@ parameters:
         - src/psm/Util/Cron
         - src/psm/Util/Install/PlatformRequirements.php
         - src/psm/Service/PhpInfoService.php
+        - src/psm/Service/Statistics
