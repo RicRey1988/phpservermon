@@ -29,20 +29,37 @@
 
 namespace psm\Util\Server;
 
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Run an update on all servers.
  */
-class UpdateManager implements ContainerAwareInterface
+class UpdateManager
 {
-    use ContainerAwareTrait;
+    private ContainerInterface $container;
 
-    public function __construct(ContainerInterface $container)
-    {
+    /** @var callable */
+    private $updaterFactory;
+
+    /** @var callable */
+    private $notifierFactory;
+
+    /** @var callable */
+    private $archiveFactory;
+
+    public function __construct(
+        ContainerInterface $container,
+        ?callable $updaterFactory = null,
+        ?callable $notifierFactory = null,
+        ?callable $archiveFactory = null
+    ) {
         $this->container = $container;
+        $this->updaterFactory = $updaterFactory
+            ?? static fn ($db) => new Updater\StatusUpdater($db);
+        $this->notifierFactory = $notifierFactory
+            ?? fn ($db) => new Updater\StatusNotifier($db, $this->container->get('notification.registry'));
+        $this->archiveFactory = $archiveFactory
+            ?? static fn ($db) => new ArchiveManager($db);
     }
 
     /**
@@ -50,6 +67,7 @@ class UpdateManager implements ContainerAwareInterface
      *
      * @param boolean $skip_perms if TRUE, no user permissions will be taken in account and all servers will be updated
      * @param string|null $status If all servers (null), or just `on` or `off` should be checked.
+     * @return UpdateSummary
      */
     public function run($skip_perms = false, $status = null)
     {
@@ -76,25 +94,37 @@ class UpdateManager implements ContainerAwareInterface
 
         $servers = $this->container->get('db')->query($sql);
 
-        $updater = new Updater\StatusUpdater($this->container->get('db'));
-        $notifier = new Updater\StatusNotifier(
-            $this->container->get('db'),
-            $this->container->get('notification.registry')
-        );
+        $database = $this->container->get('db');
+        $updater = ($this->updaterFactory)($database);
+        $notifier = ($this->notifierFactory)($database);
+        $processed = 0;
+        $failed = 0;
+        $errors = [];
 
         foreach ($servers as $server) {
-            $status_old = ($server['status'] == 'on') ? true : false;
-            $status_new = $updater->
-            update($server['server_id']);
-            // notify the nerds if applicable
-            $notifier->notify($server['server_id'], $status_old, $status_new);
-            // clean-up time!! archive all records
-            $archive = new ArchiveManager($this->container->get('db'));
-            $archive->archive($server['server_id']);
-            $archive->cleanup($server['server_id']);
+            $serverId = (int) $server['server_id'];
+            try {
+                $statusOld = $server['status'] === 'on';
+                $statusNew = (bool) $updater->update($serverId);
+                $notifier->notify($serverId, $statusOld, $statusNew);
+                $archive = ($this->archiveFactory)($database);
+                $archive->archive($serverId);
+                $archive->cleanup($serverId);
+                $processed++;
+            } catch (\Throwable) {
+                $failed++;
+                $errors[$serverId] = 'Server update failed.';
+            }
         }
         if ($notifier->combine) {
-            $notifier->notifyCombined();
+            try {
+                $notifier->notifyCombined();
+            } catch (\Throwable) {
+                $failed++;
+                $errors[0] = 'Combined notification delivery failed.';
+            }
         }
+
+        return new UpdateSummary($processed, $failed, $errors);
     }
 }

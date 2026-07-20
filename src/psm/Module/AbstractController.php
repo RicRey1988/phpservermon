@@ -29,12 +29,17 @@
 namespace psm\Module;
 
 use psm\Service\Database;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 abstract class AbstractController implements ControllerInterface
 {
-    use ContainerAwareTrait;
+    protected ?ContainerInterface $container = null;
+
+    public function setContainer(?ContainerInterface $container = null): void
+    {
+        $this->container = $container;
+    }
 
     /**
      * Current action

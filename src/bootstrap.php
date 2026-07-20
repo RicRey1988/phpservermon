@@ -33,6 +33,7 @@ namespace {
     define('PSM_PATH_CONFIG', PSM_PATH_SRC . 'config' . DIRECTORY_SEPARATOR);
     define('PSM_PATH_LANG', PSM_PATH_SRC . 'lang' . DIRECTORY_SEPARATOR);
     define('PSM_PATH_SMS_GATEWAY', PSM_PATH_SRC . 'psm' . DIRECTORY_SEPARATOR . 'Txtmsg' . DIRECTORY_SEPARATOR);
+    define('PSM_PATH_LOGS', dirname(PSM_PATH_SRC) . DIRECTORY_SEPARATOR . 'logs' . DIRECTORY_SEPARATOR);
 
     // user levels
     define('PSM_USER_ADMIN', 10);
