@@ -603,10 +603,11 @@ namespace {
             $phpmailer->IsSMTP();
             $phpmailer->Host = psm_get_conf('email_smtp_host');
             $phpmailer->Port = (int)psm_get_conf('email_smtp_port');
-            $phpmailer->SMTPSecure = psm_get_conf('email_smtp_security');
-            if (psm_get_conf('email_smtp_security') == ''){
-                $phpmailer->SMTPAutoTLS = false;
-            }
+            $phpmailer->SMTPSecure = \psm\Notification\SmtpSecurityResolver::resolve(
+                (string) psm_get_conf('email_smtp_security'),
+                $phpmailer->Port
+            );
+            $phpmailer->SMTPAutoTLS = $phpmailer->SMTPSecure !== '';
             $smtp_user = psm_get_conf('email_smtp_username');
             $smtp_pass = psm_password_decrypt(
                 psm_get_conf('password_encrypt_key'),
@@ -950,8 +951,11 @@ namespace {
     }
 
     function formatLanguage(string $formatSTRF,int $timestamp) : string {
-        $format = strftimeFormatToDateFormat($formatSTRF);
-        
+        // Keep the validation behaviour of the legacy converter, but format
+        // directives independently so literal text (for example Spanish
+        // "de") is never interpreted as PHP date tokens.
+        strftimeFormatToDateFormat($formatSTRF);
+
         $dt = new DateTime();
         $dt->setTimestamp($timestamp);
 
@@ -962,29 +966,51 @@ namespace {
             $curTz = new DateTimeZone('UTC');
         }
 
-        $formatPattern = strtr($format,array(
-            'D' => '{#1}',
-            'l' => '{#2}',
-            'M' => '{#3}',
-            'F' => '{#4}',
-        ));
-        $strDate = $dt->format($formatPattern);
-        $regEx = '~\{#\d\}~';
-        while(preg_match($regEx,$strDate,$match)) {
-            $IntlFormat = strtr($match[0],array(
-              '{#1}' => 'E',
-              '{#2}' => 'EEEE',
-              '{#3}' => 'MMM',
-              '{#4}' => 'MMMM',
-            ));
-            $fmt = datefmt_create($language, IntlDateFormatter::FULL, IntlDateFormatter::FULL,
-                $curTz, IntlDateFormatter::GREGORIAN, $IntlFormat
-            );
-            $replace = $fmt ? datefmt_format( $fmt ,$dt) : "???";
-            $strDate = str_replace($match[0], $replace, $strDate);
-        }
+        $phpFormats = [
+            '%d' => 'd', '%e' => 'j', '%u' => 'N', '%w' => 'w', '%W' => 'W',
+            '%m' => 'm', '%y' => 'y', '%Y' => 'Y', '%D' => 'm/d/y', '%F' => 'Y-m-d',
+            '%x' => 'm/d/y', '%H' => 'H', '%k' => 'G', '%I' => 'h', '%l' => 'g',
+            '%M' => 'i', '%p' => 'A', '%P' => 'a', '%r' => 'h:i:s A', '%R' => 'H:i',
+            '%S' => 's', '%T' => 'H:i:s', '%X' => 'H:i:s', '%z' => 'O', '%Z' => 'T',
+            '%c' => 'D M j H:i:s Y', '%s' => 'U',
+        ];
+        $intlFormats = ['%a' => 'EEE', '%A' => 'EEEE', '%b' => 'MMM', '%h' => 'MMM', '%B' => 'MMMM'];
 
-        return $strDate;
+        return (string) preg_replace_callback('/%[a-zA-Z%]/', static function (array $match) use (
+            $dt,
+            $language,
+            $curTz,
+            $phpFormats,
+            $intlFormats
+        ): string {
+            $token = $match[0];
+            if ($token === '%%') {
+                return '%';
+            }
+            if ($token === '%n') {
+                return "\n";
+            }
+            if ($token === '%t') {
+                return "\t";
+            }
+            if (isset($phpFormats[$token])) {
+                return $dt->format($phpFormats[$token]);
+            }
+            if (isset($intlFormats[$token])) {
+                $formatter = datefmt_create(
+                    $language,
+                    IntlDateFormatter::FULL,
+                    IntlDateFormatter::FULL,
+                    $curTz,
+                    IntlDateFormatter::GREGORIAN,
+                    $intlFormats[$token]
+                );
+
+                return $formatter ? (string) datefmt_format($formatter, $dt) : '???';
+            }
+
+            return $token;
+        }, $formatSTRF);
     }
 
 }

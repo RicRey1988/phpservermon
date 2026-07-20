@@ -32,6 +32,8 @@ namespace psm\Module\Server\Controller;
 
 use psm\Module\AbstractController;
 use psm\Service\Database;
+use psm\Util\Cron\CronLock;
+use psm\Util\Server\ManualUpdateCoordinator;
 
 class UpdateController extends AbstractController
 {
@@ -46,7 +48,15 @@ class UpdateController extends AbstractController
     protected function executeIndex()
     {
         $autorun = $this->container->get('util.server.updatemanager');
-        $autorun->run();
+        set_time_limit(65);
+        $coordinator = new ManualUpdateCoordinator(
+            new CronLock(PSM_PATH_LOGS . 'status.cron.lock'),
+            static fn () => $autorun->run()
+        );
+        $result = $coordinator->run();
+        if ($result === ManualUpdateCoordinator::BUSY) {
+            $this->addMessage('The status update is still running. Please refresh the page shortly.', 'warning');
+        }
 
         header('Location: ' . psm_build_url(array(
             'mod' => 'server_status'

@@ -96,7 +96,14 @@ final readonly class TelegramChannel implements NotificationChannelInterface
         }
 
         if ($result->isTemporaryFailure()) {
-            return DeliveryResult::temporaryFailure('Telegram is temporarily unavailable.');
+            $reason = $result->statusCode() === null
+                ? 'network error'
+                : 'HTTP ' . $result->statusCode();
+            return DeliveryResult::temporaryFailure(sprintf(
+                'Telegram is temporarily unavailable (%s after %d attempts).',
+                $reason,
+                $result->attempts()
+            ));
         }
 
         return DeliveryResult::permanentFailure('Telegram rejected the notification.');

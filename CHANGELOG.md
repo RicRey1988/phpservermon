@@ -1,5 +1,19 @@
 # Changelog
 
+## [4.0.2-hs] - Unreleased
+
+### Fixed
+- Manual status refresh now shares the cron lock, waits for an active cron run
+  and displays its completed result instead of racing it with conflicting writes.
+- Server images use a fixed 64 x 64 box and the custom stylesheet URL is
+  versioned so month-long browser caches cannot retain the old unbounded layout.
+- SMTP submission on port 587 automatically uses STARTTLS (and port 465 uses
+  implicit TLS) when no encryption mode was saved.
+- Telegram transient errors identify safe HTTP/network diagnostics and retry
+  counts without exposing the bot token.
+- Localized dates preserve literal language text instead of interpreting it as
+  PHP date tokens such as the server timezone.
+
 ## [4.0.1-hs] - Unreleased
 
 ### Fixed

@@ -14,6 +14,7 @@ body {
 
 #flow-layout .card-header {
     background-color: unset;
+    overflow: hidden;
 }
 
 .list-group-item {
@@ -125,8 +126,9 @@ a.btn {
 
 .server-icon--card {
     display: block;
-    height: 50px;
-    max-width: 100%;
+    width: 64px;
+    height: 64px;
+    max-width: 64px;
     margin: 0 auto 0.5rem;
 }
 

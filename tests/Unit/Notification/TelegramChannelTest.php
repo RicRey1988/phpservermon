@@ -84,6 +84,27 @@ final class TelegramChannelTest extends TestCase
         self::assertSame('server_monitor_bot', $channel->botUsername());
     }
 
+    public function testTemporaryFailureExplainsHttpStatusAndRetryCountWithoutSecrets(): void
+    {
+        $client = new MockHttpClient([
+            new MockResponse('', ['http_code' => 503]),
+            new MockResponse('', ['http_code' => 503]),
+        ]);
+        $channel = new TelegramChannel(
+            new RetryingHttpTransport($client, 2, static function (): void {}),
+            'private-token'
+        );
+
+        $result = $channel->send(
+            new NotificationMessage('', 'test'),
+            new Recipient(1, ['telegram_id' => '123'])
+        );
+
+        self::assertStringContainsString('HTTP 503', $result->message());
+        self::assertStringContainsString('2 attempts', $result->message());
+        self::assertStringNotContainsString('private-token', $result->message());
+    }
+
     /** @param array<string, mixed> $options
      *  @return array<string, string>
      */

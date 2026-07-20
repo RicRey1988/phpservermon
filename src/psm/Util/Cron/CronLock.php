@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace psm\Util\Cron;
 
-final class CronLock
+use psm\Util\Server\UpdateLockInterface;
+
+final class CronLock implements UpdateLockInterface
 {
     /** @var resource|null */
     private $handle = null;
