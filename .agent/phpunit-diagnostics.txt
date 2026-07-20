@@ -1,0 +1,1117 @@
+Commit: 451b71a36e6d64e249e52f5bb70ed5bc6c4230af
+
+PHPUnit 12.5.31 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.5.8
+Configuration: /home/runner/work/phpservermon-Redesigned-by-hostingsupremo/phpservermon-Redesigned-by-hostingsupremo/phpunit.xml.dist
+
+.........................................F.....................  63 / 215 ( 29%)
+...............F......F...............................F.FF.F... 126 / 215 ( 58%)
+......FF.......F....................F.......................... 189 / 215 ( 87%)
+..........................                                      215 / 215 (100%)
+
+Time: 00:01.013, Memory: 30.00 MB
+
+App Shell (Tests\Unit\Ui\AppShell)
+ ✘ Shell uses hope ui bootstrap five and accessible landmarks
+   │
+   │ Failed asserting that '<!doctype html>\n
+   │ <html lang="{{ language_current }}" dir="{{ appearance.direction }}" data-bs-theme="{{ appearance.resolved_scheme }}" data-ui-scheme="{{ appearance.scheme }}" data-color-root="{{ appearance.accent }}">\n
+   │ <head>\n
+   │     <meta charset="utf-8">\n
+   │     <title>{{ title }}{% if subtitle %} - {{ subtitle }}{% endif %}</title>\n
+   │     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">\n
+   │     <meta name="description" content="PHP Server Monitor - {{ subtitle }}">\n
+   │     <meta name="robots" content="noindex,nofollow">\n
+   │     <meta name="theme-color" content="#3a57e8">\n
+   │     <link rel="manifest" href="manifest.webmanifest">\n
+   │     <link rel="icon" type="image/x-icon" href="favicon.ico">\n
+   │     <link rel="icon" type="image/png" href="favicon.png">\n
+   │     <link rel="apple-touch-icon" href="phpservermon.png">\n
+   │     <script>(function(){var r=document.documentElement,s=r.dataset.uiScheme;if(s==='auto'&&window.matchMedia){r.dataset.bsTheme=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}r.classList.toggle('dark',r.dataset.bsTheme==='dark');}());</script>\n
+   │     <link href="src/templates/default/static/hope/css/hope-ui.min.css?v={{ version|url_encode }}" rel="stylesheet">\n
+   │     <link href="src/templates/default/static/hope/css/dark.min.css?v={{ version|url_encode }}" rel="stylesheet">\n
+   │     <link href="src/templates/default/static/hope/css/customizer.min.css?v={{ version|url_encode }}" rel="stylesheet">\n
+   │ </head>\n
+   │ <body class="{{ appearance.body_classes }}" data-authenticated="{{ user_level != 30 ? 'true' : 'false' }}" data-appearance-url="{{ appearance_save_url|default('')|raw }}" data-appearance-csrf="{{ appearance_csrf|default('') }}">\n
+   │     <a class="visually-hidden-focusable" href="#main-content">Ir al contenido principal</a>\n
+   │ \n
+   │     {% import 'main/icons.tpl.html' as hope %}\n
+   │     {% if html_menu is defined and html_menu %}\n
+   │     <aside class="sidebar sidebar-default sidebar-white sidebar-base navs-rounded-all {{ appearance.sidebar_classes }}" data-sidebar-preferred-mini="{{ 'mini' in appearance.sidebar_types ? 'true' : 'false' }}" aria-label="Navegación principal">\n
+   │         <div class="sidebar-header d-flex align-items-center justify-content-start">\n
+   │             <a href="index.php" class="navbar-brand d-flex align-items-center gap-2">\n
+   │                 {% if site_logo_url %}\n
+   │                 <img src="{{ site_logo_url }}" width="40" height="40" class="img-fluid rounded-3" alt=""><span class="visually-hidden">{{ title }}</span>\n
+   │                 {% else %}\n
+   │                 <span class="avatar-40 rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center fw-bold" aria-hidden="true">HS</span>\n
+   │                 {% endif %}\n
+   │                 <h4 class="logo-title mb-0">{{ title }}</h4>\n
+   │             </a>\n
+   │             <button type="button" class="sidebar-toggle" data-toggle="sidebar" data-active="true" aria-label="Contraer menú" aria-expanded="true"><i class="icon">{{ hope.icon('arrow-left') }}</i></button>\n
+   │         </div>\n
+   │         <div class="sidebar-body pt-0 data-scrollbar"><div class="sidebar-list">{{ html_menu|raw }}</div></div>\n
+   │         <div class="sidebar-footer"></div>\n
+   │     </aside>\n
+   │     {% endif %}\n
+   │ \n
+   │     <main class="main-content min-vh-100 d-flex flex-column" id="main-content">\n
+   │         {% if html_menu is defined and html_menu %}\n
+   │         <div class="position-relative iq-banner">\n
+   │             {% include 'main/app-navbar.tpl.html' %}\n
+   │             <div class="iq-navbar-header p-3 p-md-4">\n
+   │                 <div class="container-fluid iq-container">\n
+   │                     <div class="row"><div class="col-md-12"><div class="d-flex flex-wrap justify-content-between align-items-center gap-3">\n
+   │                         <div><p class="text-white-50 mb-1">PHP Server Monitor</p><h1 class="text-white h2 mb-0">{{ subtitle|default(title) }}</h1></div>\n
+   │                         {% if header_accessories is defined %}<div>{{ header_accessories|raw }}</div>{% endif %}\n
+   │                     </div></div></div>\n
+   │                 </div>\n
+   │                 <div class="iq-header-img"><img src="src/templates/default/static/hope/images/dashboard/top-header.png" alt="" class="theme-color-default-img img-fluid w-100" onerror="this.hidden=true"></div>\n
+   │             </div>\n
+   │         </div>\n
+   │ \n
+   │         <div class="container-fluid content-inner mt-n5 py-0 flex-grow-1">\n
+   │             <noscript><div class="alert alert-warning" role="alert">PHP Server Monitor funciona mejor con JavaScript activado.</div></noscript>\n
+   │             <div aria-live="polite" aria-atomic="true">{% for msg in messages %}<div class="alert alert-{{ msg.class }} alert-dismissible fade show" role="alert"><strong>{{ msg.message|raw }}</strong><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button></div>{% endfor %}</div>\n
+   │             {% if html_sidebar is defined %}<div class="mb-3">{{ html_sidebar|raw }}</div>{% endif %}\n
+   │             <div id="content">{{ html_content|raw }}</div>\n
+   │         </div>\n
+   │ \n
+   │         {% if add_footer %}<footer class="footer mt-auto border-top bg-body" role="contentinfo"><div class="container-fluid d-flex flex-wrap justify-content-between gap-2"><span>PHP Server Monitor {{ version }} · <a href="https://github.com/RicRey1988/phpservermon" target="_blank" rel="noopener noreferrer">Mejorado por Hosting Supremo</a> <span class="text-danger">{{ update_available|raw }}</span></span><a href="#main-content">{{ label_back_to_top }}</a></div></footer>{% endif %}\n
+   │         {% else %}\n
+   │         <div class="position-fixed top-0 start-50 translate-middle-x mt-3 w-100 px-3" aria-live="polite">{% for msg in messages %}<div class="alert alert-{{ msg.class }} alert-dismissible fade show shadow mx-auto" role="alert"><strong>{{ msg.message|raw }}</strong><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button></div>{% endfor %}</div>\n
+   │         <div id="content" class="min-vh-100">{{ html_content|raw }}</div>\n
+   │         {% endif %}\n
+   │     </main>\n
+   │ \n
+   │     {% if html_menu is defined and html_menu %}{% include 'main/appearance-customizer.tpl.html' %}{% endif %}\n
+   │     {{ html_modal|default('')|raw }}\n
+   │     <script src="src/templates/default/static/hope/js/bootstrap.bundle.min.js?v={{ version|url_encode }}"></script>\n
+   │     {% if needs_charts|default(false) %}<script src="src/templates/default/static/hope/js/apexcharts.min.js?v={{ version|url_encode }}"></script>{% endif %}\n
+   │     <script src="src/templates/default/static/hope/js/hope-ui.js?v={{ version|url_encode }}"></script>\n
+   │     <script src="src/templates/default/static/hope/js/plugins/setting.js?v={{ version|url_encode }}"></script>\n
+   │     <script src="src/templates/default/static/js/app-shell.js?v={{ version|url_encode }}"></script>\n
+   │     {% if notification_navbar is defined %}<script src="src/templates/default/static/js/notifications.js?v={{ version|url_encode }}"></script>{% endif %}\n
+   │     <script src="src/templates/default/static/js/pwa.js?v={{ version|url_encode }}"></script>\n
+   │     {% if needs_status|default(false) %}<script src="src/templates/default/static/js/status.js?v={{ version|url_encode }}"></script>{% endif %}\n
+   │     {% if needs_dashboard|default(false) %}<script src="src/templates/default/static/js/dashboard.js?v={{ version|url_encode }}"></script>{% endif %}\n
+   │ </body>\n
+   │ </html>\n
+   │ ' [UTF-8](length: 7250) contains "<main class="main-content" id="main-content"" [ASCII](length: 44).
+   │
+   │ /home/runner/work/phpservermon-Redesigned-by-hostingsupremo/phpservermon-Redesigned-by-hostingsupremo/tests/Unit/Ui/AppShellTest.php:20
+   │
+ ✘ Shell uses authentic hope ui hierarchy and controls
+   │
+   │ Failed asserting that '<!doctype html>\n
+   │ <html lang="{{ language_current }}" dir="{{ appearance.direction }}" data-bs-theme="{{ appearance.resolved_scheme }}" data-ui-scheme="{{ appearance.scheme }}" data-color-root="{{ appearance.accent }}">\n
+   │ <head>\n
+   │     <meta charset="utf-8">\n
+   │     <title>{{ title }}{% if subtitle %} - {{ subtitle }}{% endif %}</title>\n
+   │     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">\n
+   │     <meta name="description" content="PHP Server Monitor - {{ subtitle }}">\n
+   │     <meta name="robots" content="noindex,nofollow">\n
+   │     <meta name="theme-color" content="#3a57e8">\n
+   │     <link rel="manifest" href="manifest.webmanifest">\n
+   │     <link rel="icon" type="image/x-icon" href="favicon.ico">\n
+   │     <link rel="icon" type="image/png" href="favicon.png">\n
+   │     <link rel="apple-touch-icon" href="phpservermon.png">\n
+   │     <script>(function(){var r=document.documentElement,s=r.dataset.uiScheme;if(s==='auto'&&window.matchMedia){r.dataset.bsTheme=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}r.classList.toggle('dark',r.dataset.bsTheme==='dark');}());</script>\n
+   │     <link href="src/templates/default/static/hope/css/hope-ui.min.css?v={{ version|url_encode }}" rel="stylesheet">\n
+   │     <link href="src/templates/default/static/hope/css/dark.min.css?v={{ version|url_encode }}" rel="stylesheet">\n
+   │     <link href="src/templates/default/static/hope/css/customizer.min.css?v={{ version|url_encode }}" rel="stylesheet">\n
+   │ </head>\n
+   │ <body class="{{ appearance.body_classes }}" data-authenticated="{{ user_level != 30 ? 'true' : 'false' }}" data-appearance-url="{{ appearance_save_url|default('')|raw }}" data-appearance-csrf="{{ appearance_csrf|default('') }}">\n
+   │     <a class="visually-hidden-focusable" href="#main-content">Ir al contenido principal</a>\n
+   │ \n
+   │     {% import 'main/icons.tpl.html' as hope %}\n
+   │     {% if html_menu is defined and html_menu %}\n
+   │     <aside class="sidebar sidebar-default sidebar-white sidebar-base navs-rounded-all {{ appearance.sidebar_classes }}" data-sidebar-preferred-mini="{{ 'mini' in appearance.sidebar_types ? 'true' : 'false' }}" aria-label="Navegación principal">\n
+   │         <div class="sidebar-header d-flex align-items-center justify-content-start">\n
+   │             <a href="index.php" class="navbar-brand d-flex align-items-center gap-2">\n
+   │                 {% if site_logo_url %}\n
+   │                 <img src="{{ site_logo_url }}" width="40" height="40" class="img-fluid rounded-3" alt=""><span class="visually-hidden">{{ title }}</span>\n
+   │                 {% else %}\n
+   │                 <span class="avatar-40 rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center fw-bold" aria-hidden="true">HS</span>\n
+   │                 {% endif %}\n
+   │                 <h4 class="logo-title mb-0">{{ title }}</h4>\n
+   │             </a>\n
+   │             <button type="button" class="sidebar-toggle" data-toggle="sidebar" data-active="true" aria-label="Contraer menú" aria-expanded="true"><i class="icon">{{ hope.icon('arrow-left') }}</i></button>\n
+   │         </div>\n
+   │         <div class="sidebar-body pt-0 data-scrollbar"><div class="sidebar-list">{{ html_menu|raw }}</div></div>\n
+   │         <div class="sidebar-footer"></div>\n
+   │     </aside>\n
+   │     {% endif %}\n
+   │ \n
+   │     <main class="main-content min-vh-100 d-flex flex-column" id="main-content">\n
+   │         {% if html_menu is defined and html_menu %}\n
+   │         <div class="position-relative iq-banner">\n
+   │             {% include 'main/app-navbar.tpl.html' %}\n
+   │             <div class="iq-navbar-header p-3 p-md-4">\n
+   │                 <div class="container-fluid iq-container">\n
+   │                     <div class="row"><div class="col-md-12"><div class="d-flex flex-wrap justify-content-between align-items-center gap-3">\n
+   │                         <div><p class="text-white-50 mb-1">PHP Server Monitor</p><h1 class="text-white h2 mb-0">{{ subtitle|default(title) }}</h1></div>\n
+   │                         {% if header_accessories is defined %}<div>{{ header_accessories|raw }}</div>{% endif %}\n
+   │                     </div></div></div>\n
+   │                 </div>\n
+   │                 <div class="iq-header-img"><img src="src/templates/default/static/hope/images/dashboard/top-header.png" alt="" class="theme-color-default-img img-fluid w-100" onerror="this.hidden=true"></div>\n
+   │             </div>\n
+   │         </div>\n
+   │ \n
+   │         <div class="container-fluid content-inner mt-n5 py-0 flex-grow-1">\n
+   │             <noscript><div class="alert alert-warning" role="alert">PHP Server Monitor funciona mejor con JavaScript activado.</div></noscript>\n
+   │             <div aria-live="polite" aria-atomic="true">{% for msg in messages %}<div class="alert alert-{{ msg.class }} alert-dismissible fade show" role="alert"><strong>{{ msg.message|raw }}</strong><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button></div>{% endfor %}</div>\n
+   │             {% if html_sidebar is defined %}<div class="mb-3">{{ html_sidebar|raw }}</div>{% endif %}\n
+   │             <div id="content">{{ html_content|raw }}</div>\n
+   │         </div>\n
+   │ \n
+   │         {% if add_footer %}<footer class="footer mt-auto border-top bg-body" role="contentinfo"><div class="container-fluid d-flex flex-wrap justify-content-between gap-2"><span>PHP Server Monitor {{ version }} · <a href="https://github.com/RicRey1988/phpservermon" target="_blank" rel="noopener noreferrer">Mejorado por Hosting Supremo</a> <span class="text-danger">{{ update_available|raw }}</span></span><a href="#main-content">{{ label_back_to_top }}</a></div></footer>{% endif %}\n
+   │         {% else %}\n
+   │         <div class="position-fixed top-0 start-50 translate-middle-x mt-3 w-100 px-3" aria-live="polite">{% for msg in messages %}<div class="alert alert-{{ msg.class }} alert-dismissible fade show shadow mx-auto" role="alert"><strong>{{ msg.message|raw }}</strong><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button></div>{% endfor %}</div>\n
+   │         <div id="content" class="min-vh-100">{{ html_content|raw }}</div>\n
+   │         {% endif %}\n
+   │     </main>\n
+   │ \n
+   │     {% if html_menu is defined and html_menu %}{% include 'main/appearance-customizer.tpl.html' %}{% endif %}\n
+   │     {{ html_modal|default('')|raw }}\n
+   │     <script src="src/templates/default/static/hope/js/bootstrap.bundle.min.js?v={{ version|url_encode }}"></script>\n
+   │     {% if needs_charts|default(false) %}<script src="src/templates/default/static/hope/js/apexcharts.min.js?v={{ version|url_encode }}"></script>{% endif %}\n
+   │     <script src="src/templates/default/static/hope/js/hope-ui.js?v={{ version|url_encode }}"></script>\n
+   │     <script src="src/templates/default/static/hope/js/plugins/setting.js?v={{ version|url_encode }}"></script>\n
+   │     <script src="src/templates/default/static/js/app-shell.js?v={{ version|url_encode }}"></script>\n
+   │     {% if notification_navbar is defined %}<script src="src/templates/default/static/js/notifications.js?v={{ version|url_encode }}"></script>{% endif %}\n
+   │     <script src="src/templates/default/static/js/pwa.js?v={{ version|url_encode }}"></script>\n
+   │     {% if needs_status|default(false) %}<script src="src/templates/default/static/js/status.js?v={{ version|url_encode }}"></script>{% endif %}\n
+   │     {% if needs_dashboard|default(false) %}<script src="src/templates/default/static/js/dashboard.js?v={{ version|url_encode }}"></script>{% endif %}\n
+   │ </body>\n
+   │ </html>\n
+   │ ' [UTF-8](length: 7250) contains "sidebar sidebar-default sidebar-base navs-rounded-all" [ASCII](length: 53).
+   │
+   │ /home/runner/work/phpservermon-Redesigned-by-hostingsupremo/phpservermon-Redesigned-by-hostingsupremo/tests/Unit/Ui/AppShellTest.php:37
+   │
+ ✔ Sidebar uses hope ui native mini markup and single controller
+ ✘ Light navbar and authentication have explicit theme safe surfaces
+   │
+   │ Failed asserting that false is of type string.
+   │
+   │ /home/runner/work/phpservermon-Redesigned-by-hostingsupremo/phpservermon-Redesigned-by-hostingsupremo/tests/Unit/Ui/AppShellTest.php:68
+   │
+ ✔ Footer identifies hosting supremo fork
+ ✔ Profile contains all appearance controls
+ ✔ Modal markup uses bootstrap five attributes
+ ✔ Status auto refresh does not depend on jquery
+
+Appearance Service (Tests\Unit\Ui\AppearanceService)
+ ✔ Invalid stored values fall back to safe defaults
+ ✔ Accepted values are preserved
+ ✔ Service reads and normalizes current user preferences
+ ✔ Service stores only normalized values
+
+Branding Contract (Tests\Unit\Ui\BrandingContract)
+ ✔ Logo and avatar are configurable and rendered with fallbacks
+
+Composite Template Rendering (Tests\Unit\Ui\CompositeTemplateRendering)
+ ✘ Server editor renders enabled notification warnings without missing macros
+   │
+   │ Failed asserting that '<form name="edit_server" action="" class="server-form col-12 col-xxl-9 mx-auto" id="edit_server" method="post"\n
+   │ 	 enctype="multipart/form-data" autocomplete="off">\n
+   │ 	<fieldset class="card mb-4" data-form-section="identification-check">\n
+   │ 		<legend class="card-header h5 float-none w-100 mb-0"></legend>\n
+   │ 		<div class="card-body">\n
+   │ 		<div class="col">\n
+   │ 			<!-- Label -->\n
+   │ 			    <div class="mb-3 ">\n
+   │         <label class="form-label" for="label"></label>\n
+   │                 <input type="text" class="form-control" id="label"\n
+   │             name="label"                                    maxlength="255"                                    required                                    autofocus>\n
+   │             </div>\n
+   │ \n
+   │ 			<!-- IP -->\n
+   │ 			    <div class="mb-3 ">\n
+   │         <label class="form-label" for="ip"></label>\n
+   │                 <input type="text" class="form-control" id="ip"\n
+   │             name="ip"                                    maxlength="255"                                    required                                    >\n
+   │             </div>\n
+   │ \n
+   │ 			<!-- Type -->\n
+   │ 			<div class="mb-3">\n
+   │ 				<label class="form-label" for="type"></label>\n
+   │ 				<select id="type" name="type" class="form-select" required>\n
+   │ 					<option value=""></option>\n
+   │ 					<option value="ping" ></option>\n
+   │ 					<option value="service" ></option>\n
+   │ 					<option value="website" ></option>\n
+   │ 				</select>\n
+   │ 			</div>\n
+   │ 			<!-- Port -->\n
+   │ 			<div class="mb-3" data-server-type="service">\n
+   │ 				<label class="form-label" for="popular_ports"></label>\n
+   │ 				<select id="popular_ports" name="popular_ports" class="form-select">\n
+   │ 					<option selected  disabled></option>\n
+   │ 					<option  value="custom"></option>\n
+   │ 					<optgroup label="">\n
+   │ 						<option value="80">HTTP (80)</option>\n
+   │ 						<option value="443">HTTPS (443)</option>\n
+   │ 						<option value="21">FTP (21)</option>\n
+   │ 						<option value="25">SMTP (25)</option>\n
+   │ 						<option value="465">SMTP Secure (465)</option>\n
+   │ 						<option value="110">POP3 (110)</option>\n
+   │ 						<option value="995">POP3 Secure (995)</option>\n
+   │ 						<option value="143">IMAP (143)</option>\n
+   │ 						<option value="993">IMAP over SSL (993)</option>\n
+   │ 						<option value="22">SSH (22)</option>\n
+   │ 						<option value="389">LDAP (389)</option>\n
+   │ 						<option value="3306">MySQL (3306)</option>\n
+   │ 						<option value="115">SFTP (115)</option>\n
+   │ 						<option value="43">WHOIS (43)</option>\n
+   │ 						<option value="53">BIND (53)</option>\n
+   │ 						<option value="3389">RDP (3389)</option>\n
+   │ 					</optgroup>\n
+   │ 				</select>\n
+   │ 			</div>\n
+   │ 			<!-- Custom port -->\n
+   │             <div data-server-type="service" data-port-custom>    <div class="mb-3 ">\n
+   │         <label class="form-label" for="port"></label>\n
+   │                 <input type="number" class="form-control" id="port"\n
+   │             name="port"                                    maxlength="5"                                                                        >\n
+   │             </div>\n
+   │ </div>\n
+   │             <!-- SSL Cert check -->\n
+   │             <div data-server-type="website">    <div class="mb-3 ">\n
+   │         <label class="form-label" for="ssl_cert_expiry_days"></label>\n
+   │                 <input type="number" class="form-control" id="ssl_cert_expiry_days"\n
+   │             name="ssl_cert_expiry_days"                                    maxlength="5"            aria-describedby="ssl_cert_help"                                                            >\n
+   │                                             </div>\n
+   │ </div>\n
+   │ 			<!-- Request method -->\n
+   │ 			<div class="mb-3" data-server-type="website">\n
+   │ 				<label class="form-label" for="popular_request_methods"></label>\n
+   │ 				<select id="popular_request_methods" name="popular_request_methods" class="form-select">\n
+   │ 					<option value=""></option>\n
+   │ 					<optgroup label="">\n
+   │ 						<option value="GET">GET</option>\n
+   │ 						<option value="HEAD">HEAD</option>\n
+   │ 						<option value="POST">POST</option>\n
+   │ 						<option value="PUT">PUT</option>\n
+   │ 						<option value="DELETE">DELETE</option>\n
+   │ 						<option value="CONNECT">CONNECT</option>\n
+   │ 						<option value="OPTIONS">OPTIONS</option>\n
+   │ 						<option value="TRACE">TRACE</option>\n
+   │ 						<option value="PATCH">PATCH</option>\n
+   │ 					</optgroup>\n
+   │ 					<option  value="custom"></option>\n
+   │ 				</select>\n
+   │ 			</div>\n
+   │ 			<!-- Custom request method -->\n
+   │ 			<div data-server-type="website" data-request-method-custom>    <div class="mb-3 ">\n
+   │         <label class="form-label" for="request_method"></label>\n
+   │                 <input type="text" class="form-control" id="request_method"\n
+   │             name="request_method"                                    maxlength="50"                                                                        >\n
+   │             </div>\n
+   │ </div>\n
+   │ 			<!-- Post field -->\n
+   │ 			<div data-server-type="website">    <div class="mb-3 ">\n
+   │         <label class="form-label" for="post_field"></label>\n
+   │                 <input type="text" class="form-control" id="post_field"\n
+   │             name="post_field"            placeholder="param1=val1&amp;param2=val2&amp;..."                        maxlength="255"            aria-describedby="post_field_help"                                                            >\n
+   │                                             </div>\n
+   │ </div>\n
+   │ 			<!-- Pattern -->\n
+   │ 			<div data-server-type="website">    <div class="mb-3 ">\n
+   │         <label class="form-label" for="pattern"></label>\n
+   │                 <input type="text" class="form-control" id="pattern"\n
+   │             name="pattern"                                    maxlength="255"            aria-describedby="pattern_help"                                                            >\n
+   │                                             </div>\n
+   │ </div>\n
+   │ 			<!-- Pattern online/offline (Didn't use the macro because of the custom col.) -->\n
+   │ 			<div class="row g-3 mb-3" data-server-type="website">\n
+   │ 				<label for="pattern_online" class="col-form-label col-md-6"></label>\n
+   │ 				<div class="col-md-6">\n
+   │ 					<select id="pattern_online" name="pattern_online" class="form-select" aria-describedby="pattern_online_help">\n
+   │ 						<option value="yes" ></option>\n
+   │ 						<option value="no" ></option>\n
+   │ 					</select>\n
+   │ 				</div>\n
+   │ 				<small id="pattern_online_help" class="form-text text-muted p-1"></small>\n
+   │ 			</div>\n
+   │ 			<!-- Redirect check (Didn't use the macro because of the custom col.) -->\n
+   │ 			<div class="row g-3 mb-3" data-server-type="website">\n
+   │ 				<label for="redirect_check" class="col-form-label col-md-7"></label>\n
+   │ 				<div class="col-md-5">\n
+   │ 					<select id="redirect_check" name="redirect_check" class="form-select" aria-describedby="redirect_check_help">\n
+   │ 						<option value="ok" ></option>\n
+   │ 						<option value="bad" ></option>\n
+   │ 					</select>\n
+   │ 				</div>\n
+   │ 				<small id="redirect_check_help" class="form-text text-muted p-1"></small>\n
+   │ 			</div>\n
+   │ 			<!-- Allow HTTP codes -->\n
+   │ 			<div data-server-type="website">    <div class="mb-3 ">\n
+   │         <label class="form-label" for="allow_http_status"></label>\n
+   │                 <input type="text" class="form-control" id="allow_http_status"\n
+   │             name="allow_http_status"            placeholder="401|403"                        maxlength="255"            aria-describedby="allow_http_status_help"                                                            >\n
+   │                                             </div>\n
+   │ </div>\n
+   │ 			<!-- Header (Didn't use the macro because of the custom col.) -->\n
+   │ 			<div class="row g-3 mb-3" data-server-type="website">\n
+   │ 				<div class="col-md-6">\n
+   │ 					<label class="form-label" for="header_name"></label>\n
+   │ 					<input type="text" class="form-control" name="header_name" id="header_name" value=""\n
+   │ 					 maxlength="255" aria-describedby="header_name_help">\n
+   │ 					<small id="header_name_help" class="form-text text-muted"></small>\n
+   │ 				</div>\n
+   │ 				<div class="col-md-6">\n
+   │ 					<label class="form-label" for="header_value"></label>\n
+   │ 					<input type="text" class="form-control" name="header_value" id="header_value" value=""\n
+   │ 					 maxlength="255" aria-describedby="header_value_help">\n
+   │ 					<small id="header_value_help" class="form-text text-muted"></small>\n
+   │ 				</div>\n
+   │ 			</div>\n
+   │ 			<!-- Warning threshold -->\n
+   │ 			    <div class="mb-3 ">\n
+   │         <label class="form-label" for="warning_threshold"></label>\n
+   │                 <input type="number" class="form-control" id="warning_threshold"\n
+   │             name="warning_threshold"            placeholder="0"                        maxlength="5"            aria-describedby="warning_threshold_help"                                                            >\n
+   │                                             </div>\n
+   │ \n
+   │ 			<!-- Timeout -->\n
+   │ 			    <div class="mb-3 ">\n
+   │         <label class="form-label" for="timeout"></label>\n
+   │                 <input type="number" class="form-control" id="timeout"\n
+   │             name="timeout"                                    maxlength="10"            aria-describedby="timeout_help"                                                            >\n
+   │                                             </div>\n
+   │ \n
+   │ 		</div>\n
+   │ 	</div>\n
+   │ 	</fieldset>\n
+   │ 	<fieldset class="card mb-4" data-form-section="image">\n
+   │ 		<legend class="card-header h5 float-none w-100 mb-0">Imagen del servidor</legend>\n
+   │ 		<div class="card-body">\n
+   │ 		<div class="row g-3 align-items-center" data-dropzone tabindex="0" role="button" aria-controls="server_image">\n
+   │ 			<div class="col-12 col-md-auto"><img class="img-thumbnail" src="" width="112" height="112" alt="Vista previa" data-image-preview></div>\n
+   │ 			<div class="col">\n
+   │ 				<svg class="icon-20 icon-32 text-primary mb-2" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">\n
+   │ <path d="M7 18H6a4 4 0 0 1-.5-8A6.5 6.5 0 0 1 18 8.5 4.5 4.5 0 0 1 18 18h-1M12 20V10m0 0-3 3m3-3 3 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>\n
+   │ </svg>\n
+   │ \n
+   │ 				<label class="form-label d-block mb-1" for="server_image">Arrastra una imagen aquí o selecciónala</label>\n
+   │ 				<input class="form-control" type="file" id="server_image" name="server_image" accept="image/jpeg,image/png,image/webp" data-image-input>\n
+   │ 				<small class="text-muted">JPEG, PNG o WebP; máximo 5 MiB. Se normalizará automáticamente.</small>\n
+   │ 			</div>\n
+   │ 		</div>\n
+   │ 				<input type="hidden" name="remove_image" value="0">\n
+   │ 			</div>\n
+   │ 	</fieldset>\n
+   │ 	<fieldset class="card mb-4" data-form-section="http-headers">\n
+   │ 		<legend class="card-header h5 float-none w-100 mb-0"> ()</legend>\n
+   │ 		<div class="card-body">\n
+   │ 		<div class="col">\n
+   │ 			    <div class="mb-3 ">\n
+   │         <label class="form-label" for="custom_header"></label>\n
+   │                 <input type="text" class="form-control" id="custom_header"\n
+   │             name="custom_header"            placeholder="Cookie:..."                                    aria-describedby="custom_header_help"                                                            >\n
+   │                                             </div>\n
+   │ \n
+   │ 		</div>\n
+   │ 	</div>\n
+   │ 	</fieldset>\n
+   │ 	<fieldset class="card mb-4" data-server-type="website" data-form-section="authentication">\n
+   │ 		<legend class="card-header h5 float-none w-100 mb-0"> ()</legend>\n
+   │ 		<div class="card-body">\n
+   │ 		<div class="col">\n
+   │ 			<!-- Website username -->\n
+   │ 			    <div class="mb-3 ">\n
+   │         <label class="form-label" for="website_username"></label>\n
+   │                 <input type="text" class="form-control" id="website_username"\n
+   │             name="website_username"                                    maxlength="255"            aria-describedby="website_username_help"            readonly onfocus="this.removeAttribute('readonly');"                                    autocomplete="1"            >\n
+   │                                             </div>\n
+   │ \n
+   │ 			<!-- website password -->\n
+   │ 			    <div class="mb-3 ">\n
+   │         <label class="form-label" for="website_password"></label>\n
+   │                 <input type="password" class="form-control" id="website_password"\n
+   │             name="website_password"                                    maxlength="255"            aria-describedby="website_password_help"            readonly onfocus="this.removeAttribute('readonly');"                                    autocomplete="1"            >\n
+   │                                             </div>\n
+   │ \n
+   │ 		</div>\n
+   │ 	</div>\n
+   │ 	</fieldset>\n
+   │ 	<fieldset class="card mb-4" data-form-section="channels">\n
+   │ 		<legend class="card-header h5 float-none w-100 mb-0"></legend>\n
+   │ 		<div class="card-body">\n
+   │ 		<div class="col">\n
+   │ 			<!-- Monitor -->\n
+   │ 			        <div class="row g-3 align-items-center mb-3">\n
+   │                 <label for="active" class="col-form-label col-md-3"></label>\n
+   │         <div class="col-md-9">\n
+   │             <select id="active" name="active" class="form-select">\n
+   │                 <option value="yes" ></option>\n
+   │                 <option value="no" ></option>\n
+   │             </select>\n
+   │         </div>\n
+   │     </div>\n
+   │ \n
+   │ 			<!-- Email -->\n
+   │ 			        <div class="row g-3 align-items-center mb-3">\n
+   │                 <div class="col-12"><div class="alert alert-warning mb-0" role="alert">\n
+   │             <svg class="icon-20 me-1" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">\n
+   │ <path d="M12 3 2.5 20h19L12 3Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M12 9v5m0 3h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>\n
+   │ </svg>\n
+   │  Email no configurado\n
+   │         </div></div>\n
+   │                 <label for="email" class="col-form-label col-md-3"></label>\n
+   │         <div class="col-md-9">\n
+   │             <select id="email" name="email" class="form-select">\n
+   │                 <option value="yes" ></option>\n
+   │                 <option value="no" ></option>\n
+   │             </select>\n
+   │         </div>\n
+   │     </div>\n
+   │ \n
+   │ 			<!-- SMS -->\n
+   │ 			        <div class="row g-3 align-items-center mb-3">\n
+   │                 <div class="col-12"><div class="alert alert-warning mb-0" role="alert">\n
+   │             <svg class="icon-20 me-1" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">\n
+   │ <path d="M12 3 2.5 20h19L12 3Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M12 9v5m0 3h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>\n
+   │ </svg>\n
+   │  \n
+   │         </div></div>\n
+   │                 <label for="sms" class="col-form-label col-md-3"></label>\n
+   │         <div class="col-md-9">\n
+   │             <select id="sms" name="sms" class="form-select">\n
+   │                 <option value="yes" ></option>\n
+   │                 <option value="no" ></option>\n
+   │             </select>\n
+   │         </div>\n
+   │     </div>\n
+   │ \n
+   │ 			<!-- Pushover -->\n
+   │ 			        <div class="row g-3 align-items-center mb-3">\n
+   │                 <div class="col-12"><div class="alert alert-warning mb-0" role="alert">\n
+   │             <svg class="icon-20 me-1" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">\n
+   │ <path d="M12 3 2.5 20h19L12 3Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M12 9v5m0 3h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>\n
+   │ </svg>\n
+   │  \n
+   │         </div></div>\n
+   │                 <label for="pushover" class="col-form-label col-md-3"></label>\n
+   │         <div class="col-md-9">\n
+   │             <select id="pushover" name="pushover" class="form-select">\n
+   │                 <option value="yes" ></option>\n
+   │                 <option value="no" ></option>\n
+   │             </select>\n
+   │         </div>\n
+   │     </div>\n
+   │ \n
+   │ 			<!-- Telegram -->\n
+   │ 			        <div class="row g-3 align-items-center mb-3">\n
+   │                 <div class="col-12"><div class="alert alert-warning mb-0" role="alert">\n
+   │             <svg class="icon-20 me-1" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">\n
+   │ <path d="M12 3 2.5 20h19L12 3Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M12 9v5m0 3h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>\n
+   │ </svg>\n
+   │  \n
+   │         </div></div>\n
+   │                 <label for="telegram" class="col-form-label col-md-3"></label>\n
+   │         <div class="col-md-9">\n
+   │             <select id="telegram" name="telegram" class="form-select">\n
+   │                 <option value="yes" ></option>\n
+   │                 <option value="no" ></option>\n
+   │             </select>\n
+   │         </div>\n
+   │     </div>\n
+   │ \n
+   │             <!-- Discord -->\n
+   │                     <div class="row g-3 align-items-center mb-3">\n
+   │                 <div class="col-12"><div class="alert alert-warning mb-0" role="alert">\n
+   │             <svg class="icon-20 me-1" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">\n
+   │ <path d="M12 3 2.5 20h19L12 3Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M12 9v5m0 3h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>\n
+   │ </svg>\n
+   │  \n
+   │         </div></div>\n
+   │                 <label for="discord" class="col-form-label col-md-3"></label>\n
+   │         <div class="col-md-9">\n
+   │             <select id="discord" name="discord" class="form-select">\n
+   │                 <option value="yes" ></option>\n
+   │                 <option value="no" ></option>\n
+   │             </select>\n
+   │         </div>\n
+   │     </div>\n
+   │ \n
+   │             <!-- Webhook -->\n
+   │                     <div class="row g-3 align-items-center mb-3">\n
+   │                 <div class="col-12"><div class="alert alert-warning mb-0" role="alert">\n
+   │             <svg class="icon-20 me-1" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">\n
+   │ <path d="M12 3 2.5 20h19L12 3Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M12 9v5m0 3h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>\n
+   │ </svg>\n
+   │  \n
+   │         </div></div>\n
+   │                 <label for="webhook" class="col-form-label col-md-3"></label>\n
+   │         <div class="col-md-9">\n
+   │             <select id="webhook" name="webhook" class="form-select">\n
+   │                 <option value="yes" ></option>\n
+   │                 <option value="no" ></option>\n
+   │             </select>\n
+   │         </div>\n
+   │     </div>\n
+   │ \n
+   │ 		</div>\n
+   │     </div>\n
+   │     </fieldset>\n
+   │ 	<fieldset class="card mb-4" data-form-section="access">\n
+   │ 		<legend class="card-header h5 float-none w-100 mb-0"></legend>\n
+   │ 		<div class="card-body">\n
+   │ 		<!-- Permissions -->\n
+   │ 		    <div class="mb-3">\n
+   │         <label class="form-label" for="user_id"></label>\n
+   │         <select class="form-select" id="user_id" name="user_id[]" aria-describedby="user_id-help" multiple size="7">\n
+   │                     </select>\n
+   │         <small class="form-text" id="user_id-help"> - </small>\n
+   │     </div>\n
+   │ \n
+   │     </div>\n
+   │     </fieldset>\n
+   │     <fieldset class="card mb-4" data-form-section="actions">\n
+   │         <legend class="card-header h5 float-none w-100 mb-0"></legend>\n
+   │         <div class="card-body">\n
+   │             <button class="btn btn-success" type="submit" ></button>\n
+   │ \n
+   │         <a class="btn btn-outline-secondary" href=""></a>\n
+   │     </div>\n
+   │     </fieldset>\n
+   │     	    <input type="hidden" name="csrf" value="" />\n
+   │ \n
+   │ </form>\n
+   │ ' [UTF-8](length: 18721) contains "class="hope-icon" [ASCII](length: 16).
+   │
+   │ /home/runner/work/phpservermon-Redesigned-by-hostingsupremo/phpservermon-Redesigned-by-hostingsupremo/tests/Unit/Ui/CompositeTemplateRenderingTest.php:37
+   │
+ ✘ Server detail renders tuple data as scalar values
+   │
+   │ Failed asserting that '    <input type="hidden" name="csrf" value="" />\n
+   │ \n
+   │ \n
+   │ <section class="row g-4" data-server-detail>\n
+   │     <div class="col-12 col-xl-4">\n
+   │         <article class="card h-100 overflow-hidden border-top border-4 border-success">\n
+   │             <div class="card-body text-center">\n
+   │                 <span class="d-inline-flex align-items-center justify-content-center rounded border bg-body p-3 mb-3"><img class="img-fluid" src="" width="160" height="160" alt="" loading="lazy" decoding="async"></span>\n
+   │                 <span class="badge bg-success mb-2">on</span>\n
+   │                 <h2 class="h4 text-break mb-1"></h2>\n
+   │                 <p class="text-muted text-break mb-0">:443</p>\n
+   │             </div>\n
+   │                     </article>\n
+   │     </div>\n
+   │     <div class="col-12 col-xl-8">\n
+   │         <div class="row row-cols-1 row-cols-sm-2 g-4 h-100">\n
+   │             <div class="col"><article class="card h-100"><div class="card-body d-flex align-items-center gap-3"><span class="avatar-40 rounded-circle bg-soft-success text-success d-inline-flex align-items-center justify-content-center"><svg class="icon-20 " width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">\n
+   │ <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="m8 12 2.5 2.5L16.5 9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>\n
+   │ </svg>\n
+   │ </span><div><p class="text-muted mb-1"></p><strong class="h5">on</strong></div></div></article></div>\n
+   │             <div class="col"><article class="card h-100"><div class="card-body d-flex align-items-center gap-3"><span class="avatar-40 rounded-circle bg-soft-info text-info d-inline-flex align-items-center justify-content-center"><svg class="icon-20 " width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">\n
+   │ <path d="M4.6 8A8 8 0 1 1 4 14m.6-6H9M4.6 8V3.6M12 7.5V12l3 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>\n
+   │ </svg>\n
+   │ </span><div><p class="text-muted mb-1"></p><strong class="h5">100 </strong></div></div></article></div>\n
+   │             <div class="col"><article class="card h-100"><div class="card-body"><p class="text-muted mb-1"></p><strong></strong></div></article></div>\n
+   │             <div class="col"><article class="card h-100"><div class="card-body"><p class="text-muted mb-1"></p><strong></strong></div></article></div>\n
+   │         </div>\n
+   │     </div>\n
+   │ \n
+   │     <div class="col-12">\n
+   │         <article class="card overflow-hidden">\n
+   │             <div class="card-header p-0"><ul class="nav nav-tabs nav-fill flex-nowrap overflow-auto" role="tablist">\n
+   │                                                 <li class="nav-item" role="presentation"><button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview-panel" type="button" role="tab" aria-controls="overview-panel" aria-selected="true"><svg class="icon-20 me-1" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">\n
+   │ <circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg>\n
+   │ Resumen</button></li>\n
+   │                                                 <li class="nav-item" role="presentation"><button class="nav-link" id="history-tab" data-bs-toggle="tab" data-bs-target="#history-panel" data-history-tab type="button" role="tab" aria-controls="history-panel" aria-selected="false"><svg class="icon-20 me-1" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">\n
+   │ <path d="M4 19V5m0 14h16M7 15l3-3 3 2 5-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>\n
+   │ </svg>\n
+   │ Historial</button></li>\n
+   │                                                 <li class="nav-item" role="presentation"><button class="nav-link" id="incidents-tab" data-bs-toggle="tab" data-bs-target="#incidents-panel" type="button" role="tab" aria-controls="incidents-panel" aria-selected="false"><svg class="icon-20 me-1" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">\n
+   │ <path d="M4.6 8A8 8 0 1 1 4 14m.6-6H9M4.6 8V3.6M12 7.5V12l3 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>\n
+   │ </svg>\n
+   │ Registro</button></li>\n
+   │                                                 <li class="nav-item" role="presentation"><button class="nav-link" id="output-tab" data-bs-toggle="tab" data-bs-target="#output-panel" type="button" role="tab" aria-controls="output-panel" aria-selected="false"><svg class="icon-20 me-1" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">\n
+   │ <circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg>\n
+   │ Salida</button></li>\n
+   │                                                 <li class="nav-item" role="presentation"><button class="nav-link" id="notifications-tab" data-bs-toggle="tab" data-bs-target="#notifications-panel" type="button" role="tab" aria-controls="notifications-panel" aria-selected="false"><svg class="icon-20 me-1" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">\n
+   │ <path d="M6 10a6 6 0 0 1 12 0v4l2 3H4l2-3v-4Zm4 10h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>\n
+   │ </svg>\n
+   │ Notificaciones</button></li>\n
+   │                                                 <li class="nav-item" role="presentation"><button class="nav-link" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings-panel" type="button" role="tab" aria-controls="settings-panel" aria-selected="false"><svg class="icon-20 me-1" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">\n
+   │ <path d="M9.5 3h5l.6 2.1 1.8 1 2.1-.6 2.5 4.3-1.5 1.6v2.1l1.5 1.6-2.5 4.3-2.1-.6-1.8 1-.6 2.2h-5l-.6-2.2-1.8-1-2.1.6-2.5-4.3L4 13.5v-2.1L2.5 9.8 5 5.5l2.1.6 1.8-1L9.5 3Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><circle cx="12" cy="12.5" r="3" stroke="currentColor" stroke-width="1.7"/>\n
+   │ </svg>\n
+   │ Ajustes</button></li>\n
+   │                             </ul></div>\n
+   │             <div class="card-body tab-content">\n
+   │                 <div class="tab-pane fade show active" id="overview-panel" role="tabpanel" aria-labelledby="overview-tab" tabindex="0">\n
+   │                     <div class="row g-4">\n
+   │                         <div class="col-12 col-lg-6"><h3 class="h5 mb-3">Identificación</h3><ul class="list-group list-group-flush"><li class="list-group-item px-0 d-flex justify-content-between gap-3"><span class="text-muted"></span><strong class="text-break text-end"></strong></li><li class="list-group-item px-0 d-flex justify-content-between gap-3"><span class="text-muted"></span><strong>443</strong></li><li class="list-group-item px-0 d-flex justify-content-between gap-3"><span class="text-muted"></span><strong>service</strong></li><li class="list-group-item px-0 d-flex justify-content-between gap-3"><span class="text-muted"></span><strong>on</strong></li></ul></div>\n
+   │                         <div class="col-12 col-lg-6"><h3 class="h5 mb-3">Actividad</h3><ul class="list-group list-group-flush"><li class="list-group-item px-0 d-flex justify-content-between gap-3"><span class="text-muted"></span><strong class="text-end"></strong></li><li class="list-group-item px-0 d-flex justify-content-between gap-3"><span class="text-muted"></span><strong class="text-end"></strong></li><li class="list-group-item px-0 d-flex justify-content-between gap-3"><span class="text-muted"></span><strong class="text-end"></strong></li><li class="list-group-item px-0 d-flex justify-content-between gap-3"><span class="text-muted"></span><strong class="text-end">100 </strong></li></ul></div>\n
+   │                     </div>\n
+   │                 </div>\n
+   │                 <div class="tab-pane fade" id="history-panel" role="tabpanel" aria-labelledby="history-tab" tabindex="0"></div>\n
+   │                 <div class="tab-pane fade" id="incidents-panel" role="tabpanel" aria-labelledby="incidents-tab" tabindex="0">\n
+   │                     <div class="text-center text-muted py-5"><svg class="icon-20 icon-32 mb-3" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">\n
+   │ <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="m8 12 2.5 2.5L16.5 9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>\n
+   │ </svg>\n
+   │ <p class="mb-0"></p></div>                </div>\n
+   │                 <div class="tab-pane fade" id="output-panel" role="tabpanel" aria-labelledby="output-tab" tabindex="0">\n
+   │                     <div class="row g-4"><div class="col-12"><h3 class="h6"></h3><pre class="bg-dark text-light rounded p-3 overflow-auto mb-0"></pre></div><div class="col-12 col-xl-6"><h3 class="h6">Última salida</h3><pre class="bg-dark text-light rounded p-3 overflow-auto mb-0"></pre><button type="button" class="btn btn-link px-0" data-bs-toggle="modal" data-bs-target="#modal_last_output">Mostrar todo</button></div><div class="col-12 col-xl-6"><h3 class="h6">Último error</h3><pre class="bg-dark text-light rounded p-3 overflow-auto mb-0"></pre></div></div>\n
+   │                 </div>\n
+   │                 <div class="tab-pane fade" id="notifications-panel" role="tabpanel" aria-labelledby="notifications-tab" tabindex="0"><div class="row row-cols-1 row-cols-sm-2 row-cols-xl-3 g-3"><div class="col"><div class="card shadow-none border h-100"><div class="card-body d-flex justify-content-between align-items-center gap-3"><span><svg class="icon-20 me-2 text-primary" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">\n
+   │ <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="2.5" stroke="currentColor" stroke-width="1.7"/>\n
+   │ </svg>\n
+   │ Monitoreo</span><span class="badge bg-success">Sí</span></div></div></div><div class="col"><div class="card shadow-none border h-100"><div class="card-body d-flex justify-content-between align-items-center gap-3"><span><svg class="icon-20 me-2 text-primary" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">\n
+   │ <circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg>\n
+   │ Email</span><span class="badge bg-secondary">No</span></div></div></div><div class="col"><div class="card shadow-none border h-100"><div class="card-body d-flex justify-content-between align-items-center gap-3"><span><svg class="icon-20 me-2 text-primary" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">\n
+   │ <circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg>\n
+   │ SMS</span><span class="badge bg-secondary">No</span></div></div></div><div class="col"><div class="card shadow-none border h-100"><div class="card-body d-flex justify-content-between align-items-center gap-3"><span><svg class="icon-20 me-2 text-primary" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">\n
+   │ <circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg>\n
+   │ Pushover</span><span class="badge bg-secondary">No</span></div></div></div><div class="col"><div class="card shadow-none border h-100"><div class="card-body d-flex justify-content-between align-items-center gap-3"><span><svg class="icon-20 me-2 text-primary" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">\n
+   │ <circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg>\n
+   │ Telegram</span><span class="badge bg-success">Sí</span></div></div></div><div class="col"><div class="card shadow-none border h-100"><div class="card-body d-flex justify-content-between align-items-center gap-3"><span><svg class="icon-20 me-2 text-primary" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">\n
+   │ <circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg>\n
+   │ Discord</span><span class="badge bg-secondary">No</span></div></div></div><div class="col"><div class="card shadow-none border h-100"><div class="card-body d-flex justify-content-between align-items-center gap-3"><span><svg class="icon-20 me-2 text-primary" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">\n
+   │ <circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg>\n
+   │ Webhook</span><span class="badge bg-secondary">No</span></div></div></div></div></div>\n
+   │                 <div class="tab-pane fade" id="settings-panel" role="tabpanel" aria-labelledby="settings-tab" tabindex="0"><div class="row g-4"><div class="col-12 col-lg-6"><ul class="list-group list-group-flush"><li class="list-group-item px-0 d-flex justify-content-between gap-3"><span class="text-muted"></span><strong>service</strong></li><li class="list-group-item px-0 d-flex justify-content-between gap-3"><span class="text-muted"></span><strong></strong></li><li class="list-group-item px-0 d-flex justify-content-between gap-3"><span class="text-muted"></span><strong> </strong></li></ul></div></div></div>\n
+   │             </div>\n
+   │         </article>\n
+   │     </div>\n
+   │ </section>\n
+   │ \n
+   │ <div class="modal fade" id="modal_last_output" tabindex="-1" aria-labelledby="modal_last_output_label" aria-hidden="true"><div class="modal-dialog modal-xl modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h2 class="modal-title h5" id="modal_last_output_label">Última salida</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div><div class="modal-body"><pre class="bg-dark text-light rounded p-3 overflow-auto mb-0">ok</pre></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button></div></div></div></div><div class="modal fade" id="modal_last_error" tabindex="-1" aria-labelledby="modal_last_error_label" aria-hidden="true"><div class="modal-dialog modal-xl modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h2 class="modal-title h5" id="modal_last_error_label">Último error</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div><div class="modal-body"><pre class="bg-dark text-light rounded p-3 overflow-auto mb-0"></pre></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button></div></div></div></div>' [UTF-8](length: 15359) contains "class="hope-icon" [ASCII](length: 16).
+   │
+   │ /home/runner/work/phpservermon-Redesigned-by-hostingsupremo/phpservermon-Redesigned-by-hostingsupremo/tests/Unit/Ui/CompositeTemplateRenderingTest.php:74
+   │
+ ✔ Appearance customizer renders tuple data as scalar values
+
+Cron Lock (Tests\Unit\Cron\CronLock)
+ ✔ Lock is exclusive and can be reacquired after release
+
+Dashboard Statistics (Tests\Unit\Statistics\DashboardStatistics)
+ ✔ Range starts at the expected boundary with data set "day"
+ ✔ Range starts at the expected boundary with data set "week"
+ ✔ Range starts at the expected boundary with data set "month"
+ ✔ Range starts at the expected boundary with data set "quarter"
+ ✔ Day snapshot aggregates summary hourly uptime and latency
+ ✔ Long range combines live and archived daily buckets without double counting
+ ✔ Empty checks produce null availability and latency
+
+Documentation Contract
+ ✔ Readme documents the hs product with data set "version"
+ ✔ Readme documents the hs product with data set "php"
+ ✔ Readme documents the hs product with data set "images"
+ ✔ Readme documents the hs product with data set "cards"
+ ✔ Readme documents the hs product with data set "hope-version"
+ ✔ Readme documents the hs product with data set "quick-theme"
+ ✔ Readme documents the hs product with data set "settings-gear"
+ ✔ Readme documents the hs product with data set "separate-statistics"
+ ✔ Readme documents the hs product with data set "responsive-widths"
+ ✔ Readme documents the hs product with data set "no-datatables"
+ ✔ Readme documents the hs product with data set "statistics"
+ ✔ Readme documents the hs product with data set "pwa"
+ ✔ Readme documents the hs product with data set "web-push"
+ ✔ Readme documents the hs product with data set "incidents"
+ ✔ Readme documents the hs product with data set "cron"
+ ✔ Readme documents the hs product with data set "invitations"
+ ✔ Readme documents the hs product with data set "diagnostics"
+ ✔ Readme documents the hs product with data set "updater"
+ ✔ Readme documents the hs product with data set "release"
+ ✔ Readme documents the hs product with data set "fork"
+ ✔ Readme documents the hs product with data set "gd"
+ ✔ Readme documents the hs product with data set "zip"
+ ✔ Readme describes the published release
+ ✔ Runtime references use the hs repository
+
+Form Field Coverage (Tests\Unit\Ui\FormFieldCoverage)
+ ✔ Every controller owned field remains in its template with data set "server"
+ ✔ Every controller owned field remains in its template with data set "user"
+ ✔ Every controller owned field remains in its template with data set "config"
+
+Gd Image Processor (Tests\Unit\ServerImage\GdImageProcessor)
+ ✔ Normalizes supported images to bounded webp with data set "jpeg"
+ ✔ Normalizes supported images to bounded webp with data set "png"
+ ✔ Normalizes supported images to bounded webp with data set "webp"
+ ✔ Rejects malformed and polyglot files
+ ✔ Rejects files over five mib before decode
+
+Git Hub Release Client (Tests\Unit\System\GitHubReleaseClient)
+ ✔ Accepts only hs release with git hub sha 256 digest
+ ✔ Rejects unverified or non hs release assets
+ ✔ Ignores an older legacy release before requiring signed assets
+
+Hope Asset Policy (Tests\Unit\Ui\HopeAssetPolicy)
+ ✔ Slim hope runtime and notices are present
+ ✔ Authentic hope ui customizer assets are present
+ ✔ Templates do not initialize data tables
+ ✘ Application loads only native hope ui and hs component styles
+   │
+   │ Failed asserting that file "/home/runner/work/phpservermon-Redesigned-by-hostingsupremo/phpservermon-Redesigned-by-hostingsupremo/src/templates/default/static/css/hs-monitor.css" exists.
+   │
+   │ /home/runner/work/phpservermon-Redesigned-by-hostingsupremo/phpservermon-Redesigned-by-hostingsupremo/tests/Unit/Ui/HopeAssetPolicyTest.php:64
+   │
+ ✔ Shell uses local hope svg icon library
+ ✔ Application templates do not use font awesome markup
+ ✔ Hope runtime does not depend on data tables or jquery
+
+Incident Manager (Tests\Unit\Incident\IncidentManager)
+ ✔ Unchanged and warning states do not create incidents
+ ✔ Confirmed down opens once and recovery resolves the same incident
+ ✔ Recovery without an open incident creates no event
+ ✔ Separate down recovery cycles create separate incidents
+ ✔ Opening error is sanitized and truncated
+
+Incident Notification Dispatcher (Tests\Unit\Notification\IncidentNotificationDispatcher)
+ ✔ Repository resets stale leases and uses idempotent enqueue
+ ✔ Enqueue creates one unique delivery and in app alert per recipient transition
+ ✔ Temporary failures use bounded retry schedule and then become permanent
+ ✔ Successful and permanent rows are never sent again
+ ✔ Combined mode sends one message and completes every underlying row
+
+Installer Schema (Tests\Unit\Util\Install\InstallerSchema)
+ ✔ Fresh install contains hs fields and no jabber
+ ✔ 400 hs migration is additive and runs before version update
+ ✔ 410 hs adds server images idempotently
+ ✔ Fresh and upgrade schemas contain incident delivery notification and push tables
+
+Invitation Repository (Tests\Unit\User\InvitationRepository)
+ ✔ Creates only a hash and returns one time raw token
+ ✔ Lookup and acceptance are hash based and single use
+
+Localized Date Format (Tests\Unit\LocalizedDateFormat)
+ ✔ Spanish literal text is not parsed as php date tokens
+
+Manifest Verifier (Tests\Unit\Update\ManifestVerifier)
+ ✔ Verifies exact bytes signature version and archive hash
+ ✔ Rejects tampered manifest
+
+Manual Update Coordinator (Tests\Unit\Server\ManualUpdateCoordinator)
+ ✔ Runs update immediately when lock is free
+ ✔ Waits for cron and uses its fresh result instead of racing it
+ ✔ Reports busy when running update does not finish in time
+
+Manual Update Response (Tests\Unit\Server\ManualUpdateResponse)
+ ✔ Run action is post only csrf scoped and returns detailed json
+ ✔ Snapshot is read only and never invokes the update manager
+ ✘ Dashboard button posts then applies returned cards immediately
+   │
+   │ Failed asserting that '(function () {\n
+   │     'use strict';\n
+   │ \n
+   │     function replaceStatus(html) {\n
+   │         var fresh = new DOMParser().parseFromString(html, 'text/html').querySelector('[data-status-board]');\n
+   │         var current = document.querySelector('[data-status-board]');\n
+   │         if (fresh && current) { current.replaceWith(fresh); }\n
+   │     }\n
+   │ \n
+   │     function refreshStatus() {\n
+   │         var url = new URL('index.php', window.location.href);\n
+   │         url.search = '';\n
+   │         url.searchParams.set('mod', 'server_status');\n
+   │         url.searchParams.set('action', 'snapshot');\n
+   │         url.searchParams.set('xhr', '1');\n
+   │         return fetch(url.toString(), { headers: { 'X-Requested-With': 'XMLHttpRequest' }, credentials: 'same-origin', cache: 'no-store' })\n
+   │             .then(function (response) {\n
+   │                 if (!response.ok) { throw new Error('No se pudo actualizar el estado.'); }\n
+   │                 return response.json();\n
+   │             })\n
+   │             .then(function (payload) { replaceStatus(payload.html || ''); });\n
+   │     }\n
+   │ \n
+   │     function runManualUpdate(button) {\n
+   │         var token = document.querySelector('[data-status-board] input[name="csrf"]');\n
+   │         var label = button.querySelector('[data-update-label]');\n
+   │         var original = label ? label.textContent : '';\n
+   │         button.disabled = true;\n
+   │         button.setAttribute('aria-busy', 'true');\n
+   │         if (label) { label.textContent = 'Comprobando…'; }\n
+   │         fetch(button.dataset.updateUrl, {\n
+   │             method: 'POST',\n
+   │             headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' },\n
+   │             body: new URLSearchParams({ csrf: token ? token.value : '', range: '24h' }).toString(),\n
+   │             credentials: 'same-origin',\n
+   │             cache: 'no-store'\n
+   │         }).then(function (response) {\n
+   │             return response.json().then(function (payload) { return { response: response, payload: payload }; });\n
+   │         }).then(function (result) {\n
+   │             if (!result.response.ok && !result.payload.busy) { throw new Error('Algunas comprobaciones fallaron.'); }\n
+   │             if (result.payload.busy) {\n
+   │                 if (label) { label.textContent = 'Comprobación ocupada'; }\n
+   │                 return;\n
+   │             }\n
+   │             return refreshStatus().then(function () {\n
+   │                 if (label) { label.textContent = 'Estado actualizado'; }\n
+   │             });\n
+   │         }).catch(function (error) {\n
+   │             if (label) { label.textContent = error.message; }\n
+   │         }).finally(function () {\n
+   │             button.disabled = false;\n
+   │             button.removeAttribute('aria-busy');\n
+   │             window.setTimeout(function () { if (label) { label.textContent = original; } }, 2500);\n
+   │         });\n
+   │     }\n
+   │ \n
+   │     function initialize() {\n
+   │         var root = document.querySelector('[data-status-board]');\n
+   │         if (!root) { return; }\n
+   │         var button = document.querySelector('[data-run-update]');\n
+   │         if (button) { button.addEventListener('click', function () { runManualUpdate(button); }); }\n
+   │         var seconds = Number(root.dataset.autoRefreshSeconds || 0);\n
+   │         if (seconds > 0) { window.setInterval(function () { refreshStatus().catch(function () {}); }, seconds * 1000); }\n
+   │     }\n
+   │ \n
+   │     document.addEventListener('DOMContentLoaded', initialize);\n
+   │ }());\n
+   │ ' [UTF-8](length: 3229) contains "applyCards" [ASCII](length: 10).
+   │
+   │ /home/runner/work/phpservermon-Redesigned-by-hostingsupremo/phpservermon-Redesigned-by-hostingsupremo/tests/Unit/Server/ManualUpdateResponseTest.php:57
+   │
+
+Modern View Contract (Tests\Unit\Ui\ModernViewContract)
+ ✔ Reusable component library exists
+ ✔ Authentication forms use visible accessible controls
+ ✔ User collection and logs use cards rather than tables
+ ✔ Application shell provides modern form interactions
+ ✔ Server and configuration views use cards and accessible tabs
+ ✔ Estado renders servers without historical statistics
+ ✔ Statistics owns kpis and charts
+ ✔ Server form and installer expose modern sections
+ ✔ Modern views do not use bootstrap four data attributes
+ ✔ Installer uses modern cards and hs project links
+ ✔ Server details use timeline and history needs no jquery
+ ✔ Server views contain no legacy fixed width or bootstrap four utilities
+ ✔ Every application page uses modern hope ui contracts
+
+Native Hope Ui Contract (Tests\Unit\Ui\NativeHopeUiContract)
+ ✔ Only bundled hope ui stylesheets are loaded
+ ✔ Shell uses native sidebar search and theme contracts
+ ✔ Application templates use no classes owned by removed stylesheet
+ ✔ Java script uses data hooks rather than removed presentation classes
+
+Notification Center (Tests\Unit\Notification\NotificationCenter)
+ ✔ Module and controller scope every operation to current user
+ ✔ Navbar caps unread count and renders latest five
+ ✘ Notification feed uses escaped cards and native read actions
+   │
+   │ Failed asserting that '{% import 'main/icons.tpl.html' as hope %}\n
+   │ {% import 'main/macros.tpl.html' as macro %}\n
+   │ {{ macro.input_csrf() }}\n
+   │ \n
+   │ <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">\n
+   │     <div><h2 class="h4 mb-1">Centro de notificaciones</h2><p class="text-muted mb-0">Caídas y recuperaciones confirmadas de tus servidores.</p></div>\n
+   │     <button type="button" class="btn btn-outline-primary" data-notifications-read-all data-action="{{ url_mark_all_read|raw }}">Marcar todas como leídas</button>\n
+   │ </div>\n
+   │ \n
+   │ <div class="d-grid gap-3" data-notification-list>\n
+   │     {% for notification in notifications %}\n
+   │     <article class="card{% if notification.read_at is null %} border-start border-4 border-primary{% endif %}" data-notification-item data-notification-id="{{ notification.notification_id }}">\n
+   │         <div class="card-body d-flex flex-column flex-md-row align-items-md-center gap-3">\n
+   │             <span class="avatar-40 rounded-circle bg-soft-primary text-primary d-inline-flex align-items-center justify-content-center" aria-hidden="true">{{ hope.icon(notification.transition == 'down' ? 'warning' : 'category') }}</span>\n
+   │             <div class="flex-grow-1 text-break">\n
+   │                 <div class="d-flex flex-wrap align-items-center gap-2 mb-1">\n
+   │                     <h3 class="h5 mb-0">{{ notification.title }}</h3>\n
+   │                     {% if notification.read_at is null %}<span class="badge bg-primary" data-unread-badge>Nueva</span>{% endif %}\n
+   │                 </div>\n
+   │                 <p class="mb-1">{{ notification.body }}</p>\n
+   │                 <small class="text-muted">{{ notification.server_label }} · {{ notification.created_at }}</small>\n
+   │             </div>\n
+   │             <div class="d-flex flex-wrap gap-2 position-relative">\n
+   │                 {% if notification.can_view %}<a class="btn btn-sm btn-outline-secondary" href="{{ notification.url_view|raw }}">Ver servidor</a>{% endif %}\n
+   │                 {% if notification.read_at is null %}<button type="button" class="btn btn-sm btn-primary" data-notification-mark-read data-action="{{ url_mark_read|raw }}">Marcar leída</button>{% endif %}\n
+   │             </div>\n
+   │         </div>\n
+   │     </article>\n
+   │     {% else %}\n
+   │     <div class="card"><div class="card-body text-center py-5">{{ hope.icon('bell-slash','icon-32 text-muted mb-3') }}<p class="text-muted mb-0">Todavía no hay notificaciones.</p></div></div>\n
+   │     {% endfor %}\n
+   │ </div>\n
+   │ ' [UTF-8](length: 2390) contains "<article class="card notification-card" [ASCII](length: 38).
+   │
+   │ /home/runner/work/phpservermon-Redesigned-by-hostingsupremo/phpservermon-Redesigned-by-hostingsupremo/tests/Unit/Notification/NotificationCenterTest.php:52
+   │
+
+Obsolete Feature Removal
+ ✔ Runtime source does not reference jabber
+
+Persistent Session Contract (Tests\Unit\User\PersistentSessionContract)
+ ✔ Authentication uses durable session and persistent token
+
+Php Info Service (Tests\Unit\Service\PhpInfoService)
+ ✔ Collect returns only safe keys
+
+Platform Requirements (Tests\Unit\Util\Install\PlatformRequirements)
+ ✔ Rejects php before 85
+ ✔ Reports missing extension
+ ✔ Requires intl for localized date formatting
+ ✔ Requires zip for signed updates
+ ✔ Evaluate returns a consistent result
+ ✔ Requires gd with webp support for server images
+
+Push Subscription Repository (Tests\Unit\Push\PushSubscriptionRepository)
+ ✔ Upsert validates and normalizes a device subscription
+ ✔ Rejects invalid subscription material with data set "insecure endpoint"
+ ✔ Rejects invalid subscription material with data set "invalid public key"
+ ✔ Rejects invalid subscription material with data set "invalid auth key"
+ ✔ Rejects invalid subscription material with data set "unsupported encoding"
+ ✔ Delete always scopes endpoint to current owner
+
+Pushover Channel (Tests\Unit\Notification\PushoverChannel)
+ ✔ Posts expected fields and critical priority
+ ✔ Api status zero is permanent failure
+ ✔ Missing configuration is skipped
+
+Pwa Asset (Tests\Unit\Pwa\PwaAsset)
+ ✔ Manifest is installable and provides standard and maskable icons
+ ✔ Service worker caches only public static assets and never private responses
+ ✔ Registration requires secure context and never requests permission on load
+ ✔ Apache serves manifest with correct mime and never long caches the worker
+
+Release Installer (Tests\Unit\System\ReleaseInstaller)
+ ✔ Applies verified files while preserving private runtime data
+
+Release Manifest (Tests\Unit\Update\ReleaseManifest)
+ ✔ Parses only canonical hs manifest
+ ✔ Rejects extra keys and non canonical bytes
+
+Release Package Verifier (Tests\Unit\System\ReleasePackageVerifier)
+ ✔ Verifies every manifest file and protected deletion rules
+ ✔ Rejects hash mismatch and traversal
+
+Responsive Layout Contract (Tests\Unit\Ui\ResponsiveLayoutContract)
+ ✘ Styles fix overflow at the component instead of hiding it
+   │
+   │ Failed asserting that false is of type string.
+   │
+   │ /home/runner/work/phpservermon-Redesigned-by-hostingsupremo/phpservermon-Redesigned-by-hostingsupremo/tests/Unit/Ui/ResponsiveLayoutContractTest.php:14
+   │
+ ✔ Responsive audit covers required widths and themes
+
+Retrying Http Transport (Tests\Unit\Notification\RetryingHttpTransport)
+ ✔ Retries one server error then succeeds
+ ✔ Retries rate limit
+ ✔ Does not retry permanent client error
+ ✔ Malformed json is permanent
+ ✔ Transport exception does not leak secret url
+ ✔ Successful response without json still sends request
+
+Runtime Error Handler (Tests\Unit\Util\Error\RuntimeErrorHandler)
+ ✔ Production page shows reference without leaking exception details
+ ✔ Log entry redacts common credential values
+
+Server Image Form (Tests\Unit\Server\ServerImageForm)
+ ✔ Successful upload uses the saved server id and persists metadata
+ ✔ No upload keeps existing image and replacement overwrites it
+ ✔ Remove flag deletes image and clears metadata
+ ✔ Invalid upload does not change existing image or database path
+ ✔ Deleting server removes its physical image
+ ✔ Controller and template integrate native multipart upload
+ ✘ Dropzone enhancement provides preview without replacing native input
+   │
+   │ Failed asserting that false is of type string.
+   │
+   │ /home/runner/work/phpservermon-Redesigned-by-hostingsupremo/phpservermon-Redesigned-by-hostingsupremo/tests/Unit/Server/ServerImageFormTest.php:123
+   │
+
+Server Image Storage (Tests\Unit\ServerImage\ServerImageStorage)
+ ✔ Stores only the server id filename and resolves its url
+ ✔ Missing or untrusted database value uses generic image
+ ✔ Delete targets only the exact numeric server path
+
+Smtp Security Resolver (Tests\Unit\Notification\SmtpSecurityResolver)
+ ✔ Infers start tls for submission port
+ ✔ Infers implicit tls for smtps port
+ ✔ Keeps explicit setting and plain legacy port
+
+Statistics Controller Contract (Tests\Unit\Statistics\StatisticsControllerContract)
+ ✔ Server module and menu expose statistics after status
+
+Status Dashboard (Tests\Unit\Server\StatusDashboard)
+ ✔ Controllers separate live status from scoped statistics
+ ✔ Dashboard uses summary charts accessible cards and no tables
+ ✔ Dashboard assets enforce fixed images and safe json parsing
+
+Status Notifier (Tests\Unit\Notification\StatusNotifier)
+ ✔ Failure in one channel does not stop the next channel
+
+Status Updater Ping Parser (Tests\Unit\Server\StatusUpdaterPingParser)
+ ✔ Empty ping output fails without undefined offsets or null matches
+ ✔ Successful ping output extracts average latency
+
+System Health Service (Tests\Unit\System\SystemHealthService)
+ ✔ Returns safe actionable checks without environment secrets
+
+System Update Contract (Tests\Unit\Update\SystemUpdateContract)
+ ✔ Controller is admin post csrf and requires typed target
+ ✔ Manual workflow builds and signs exact three assets
+
+Telegram Channel (Tests\Unit\Notification\TelegramChannel)
+ ✔ Posts telegram form and parses success
+ ✔ Missing token or chat id is skipped
+ ✔ Long messages are split without content loss
+ ✔ Fetches bot username through shared transport
+ ✔ Temporary failure explains http status and retry count without secrets
+
+Template Asset (Tests\Unit\TemplateAsset)
+ ✘ Hs component css is versioned and server images have fixed box
+   │
+   │ Failed asserting that false is of type string.
+   │
+   │ /home/runner/work/phpservermon-Redesigned-by-hostingsupremo/phpservermon-Redesigned-by-hostingsupremo/tests/Unit/TemplateAssetTest.php:18
+   │
+ ✔ History runtime is native and versioned to evict legacy jquery cache
+
+Twig Template Syntax (Tests\Unit\Ui\TwigTemplateSyntax)
+ ✔ Modern template compiles with data set "main/components.tpl.html"
+ ✔ Modern template compiles with data set "main/app-navbar.tpl.html"
+ ✔ Modern template compiles with data set "main/macros.tpl.html"
+ ✔ Modern template compiles with data set "module/user/login/login.tpl.html"
+ ✔ Modern template compiles with data set "module/user/login/forgot.tpl.html"
+ ✔ Modern template compiles with data set "module/user/login/register.tpl.html"
+ ✔ Modern template compiles with data set "module/config/system.tpl.html"
+ ✔ Modern template compiles with data set "module/config/system-updated.tpl.html"
+ ✔ Modern template compiles with data set "module/user/login/reset.tpl.html"
+ ✔ Modern template compiles with data set "module/user/user/list.tpl.html"
+ ✔ Modern template compiles with data set "module/user/notification/index.tpl.html"
+ ✔ Modern template compiles with data set "module/server/log.tpl.html"
+ ✔ Modern template compiles with data set "module/server/server/list.tpl.html"
+ ✔ Modern template compiles with data set "module/server/status/index.tpl.html"
+ ✔ Modern template compiles with data set "module/server/status/cards.tpl.html"
+ ✔ Modern template compiles with data set "module/server/server/update.tpl.html"
+ ✔ Modern template compiles with data set "module/server/server/view.tpl.html"
+ ✔ Modern template compiles with data set "module/server/history.tpl.html"
+ ✔ Modern template compiles with data set "module/config/config.tpl.html"
+ ✔ Modern template compiles with data set "module/install/main.tpl.html"
+ ✔ Modern template compiles with data set "module/install/config_new.tpl.html"
+ ✔ Modern template compiles with data set "module/install/index.tpl.html"
+ ✔ Modern template compiles with data set "module/install/config_new_user.tpl.html"
+ ✔ Modern template compiles with data set "module/install/config_upgrade.tpl.html"
+ ✔ Modern template compiles with data set "module/install/results.tpl.html"
+ ✔ Modern template compiles with data set "module/install/success.tpl.html"
+
+Update Manager (Tests\Unit\Server\UpdateManager)
+ ✔ One server failure does not stop the remaining servers
+ ✔ Confirmed transitions use persistent dispatcher and flush retries
+
+User Cookie Compatibility (Tests\Unit\User\UserCookieCompatibility)
+ ✔ Null cookie domain is omitted from php 85 options
+
+User Media Storage (Tests\Unit\UserMedia\UserMediaStorage)
+ ✔ Stores only deterministic webp identity files
+
+User Preference Persistence (Tests\Unit\User\UserPreferencePersistence)
+ ✔ Updating preference targets only its composite primary key
+
+Version
+ ✔ Hs version is exposed
+
+Web Cron Authorizer (Tests\Unit\Cron\WebCronAuthorizer)
+ ✔ Disabled web cron always fails
+ ✔ Empty or wrong keys fail outside allowlist
+ ✔ Correct key or explicit remote address is allowed
+
+Web Push Channel (Tests\Unit\Notification\WebPushChannel)
+ ✔ Sends one safe json notification to every registered device
+ ✔ Deletes expired devices and surfaces temporary failures
+
+FAILURES!
+Tests: 215, Assertions: 1701, Failures: 11, Warnings: 4.
