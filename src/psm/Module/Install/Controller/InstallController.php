@@ -31,6 +31,7 @@ namespace psm\Module\Install\Controller;
 
 use psm\Module\AbstractController;
 use psm\Service\Database;
+use psm\Util\Install\PlatformRequirements;
 
 class InstallController extends AbstractController
 {
@@ -73,81 +74,22 @@ class InstallController extends AbstractController
         // build prerequisites
         $errors = 0;
 
-        $phpv = phpversion();
-        if (
-            version_compare($phpv, '5.5.9', '<') ||
-            (version_compare($phpv, '7.0.8', '<') && version_compare($phpv, '7.0.0', '>='))
-        ) {
+        $requirements = new PlatformRequirements();
+        $platform = $requirements->evaluate();
+
+        if (!$platform['php_supported']) {
             $errors++;
-            $this->addMessage('PHP 5.5.9+ or 7.0.8+ is required to run PHP Server Monitor. You\'re using ' .
-                $phpv . '.', 'error');
-        } else {
-            $this->addMessage('PHP version: ' . $phpv, 'success');
-        }
-        if (version_compare(PHP_MAJOR_VERSION, '7', '<')) {
             $this->addMessage(
-                'PHP 5 reaches the end of life (January 1, 2019), please update to PHP 7.
-                 PHP supported versions can be found
-                 <a href="https://secure.php.net/supported-versions.php" target="_blank"
-                 rel="noopener">here</a>.',
-                'warning'
+                'PHP 8.5 or newer is required. Detected: ' . $platform['php_version'] . '.',
+                'error'
             );
-        }
-        if (!function_exists('curl_init')) {
-            $this->addMessage('PHP is installed without the cURL module. Please install cURL.', 'warning');
         } else {
-            $this->addMessage('PHP cURL module found', 'success');
+            $this->addMessage('PHP version: ' . $platform['php_version'], 'success');
         }
-        if (!in_array('mysql', \PDO::getAvailableDrivers())) {
+
+        foreach ($platform['missing_extensions'] as $extension) {
             $errors++;
-            $this->addMessage('The PDO MySQL driver needs to be installed.', 'error');
-        } else {
-            $this->addMessage('PHP PDO MySQL driver found', 'success');
-        }
-        if (!extension_loaded('filter')) {
-            $this->addMessage('PHP is installed without the filter module. Please install filter.', 'warning');
-        } else {
-            $this->addMessage('PHP filter module found', 'success');
-        }
-        if (!extension_loaded('ctype')) {
-            $this->addMessage('PHP is installed without the ctype module. Please install ctype.', 'warning');
-        } else {
-            $this->addMessage('PHP ctype module found', 'success');
-        }
-        if (!extension_loaded('hash')) {
-            $this->addMessage('PHP is installed without the hash module. Please install hash.', 'warning');
-        } else {
-            $this->addMessage('PHP hash module found', 'success');
-        }
-        if (!extension_loaded('json')) {
-            $this->addMessage('PHP is installed without the json module. Please install json.', 'warning');
-        } else {
-            $this->addMessage('PHP json module found', 'success');
-        }
-        if (!extension_loaded('libxml')) {
-            $this->addMessage('PHP is installed without the libxml module. Please install libxml.', 'warning');
-        } else {
-            $this->addMessage('PHP libxml module found', 'success');
-        }
-        if (!extension_loaded('openssl')) {
-            $this->addMessage('PHP is installed without the openssl module. Please install openssl.', 'warning');
-        } else {
-            $this->addMessage('PHP openssl module found', 'success');
-        }
-        if (!extension_loaded('pcre')) {
-            $this->addMessage('PHP is installed without the pcre module. Please install pcre.', 'warning');
-        } else {
-            $this->addMessage('PHP pcre module found', 'success');
-        }
-        if (!extension_loaded('sockets')) {
-            $this->addMessage('PHP is installed without the sockets module. Please install sockets.', 'warning');
-        } else {
-            $this->addMessage('PHP sockets module found', 'success');
-        }
-        if (!extension_loaded('xml')) {
-            $this->addMessage('PHP is installed without the xml module. Please install xml.', 'warning');
-        } else {
-            $this->addMessage('PHP xml module found', 'success');
+            $this->addMessage('Missing required PHP extension: ' . $extension . '.', 'error');
         }
         if (!ini_get('date.timezone')) {
             $this->addMessage(
@@ -166,7 +108,8 @@ class InstallController extends AbstractController
         }
 
         return $this->twig->render('module/install/index.tpl.html', array(
-            'messages' => $this->getMessages()
+            'messages' => $this->getMessages(),
+            'platform_satisfied' => $platform['satisfied']
         ));
     }
 
