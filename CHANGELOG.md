@@ -1,5 +1,14 @@
 # Changelog
 
+## [4.2.2-hs] - 2026-07-20
+
+### Fixed
+- Server detail tabs, notification badges and output modals now render tuple
+  values correctly on PHP 8.5 instead of passing arrays to Twig filters.
+- Direction, sidebar and navbar customizer controls now submit their actual
+  values and load the correct Hope UI preview assets.
+- Added render-level regression tests for the detail and customizer templates.
+
 ## [4.2.1-hs] - 2026-07-20
 
 ### Fixed

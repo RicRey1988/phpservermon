@@ -1,6 +1,15 @@
 Changelog
 =========
 
+v4.2.2-hs (released July 20, 2026)
+----------------------------------
+
+* Fixed the server detail page on PHP 8.5 by rendering Hope UI tab,
+  notification and modal tuple data as scalar Twig values.
+* Fixed the design customizer so direction, sidebar and navbar choices use
+  their real values and preview assets instead of numeric indexes.
+* Added render-level regression coverage for both templates.
+
 v4.2.1-hs (released July 20, 2026)
 ----------------------------------
 
