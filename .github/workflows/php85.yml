@@ -19,5 +19,9 @@ jobs:
       - run: composer audit
       - run: vendor/bin/phpunit
       - run: vendor/bin/phpstan analyse --no-progress
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --check dev/verify-hope-ui-layout.mjs
       - run: php bin/psm version
       - run: composer install --no-dev --classmap-authoritative --no-interaction --prefer-dist

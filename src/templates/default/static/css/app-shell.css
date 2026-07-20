@@ -1,6 +1,6 @@
 :root { --psm-accent: var(--bs-primary, #3a57e8); --psm-sidebar-width: 16.25rem; --psm-surface: #fff; --psm-border: #e9ecef; }
 html { scroll-behavior: smooth; max-width: 100%; }
-body { min-height: 100vh; max-width: 100%; overflow-x: clip; }
+body { min-height: 100vh; max-width: 100%; }
 a { color: var(--psm-accent); }
 .skip-link { position: fixed; z-index: 1200; top: .75rem; left: .75rem; padding: .75rem 1rem; background: #fff; color: #111; border-radius: .5rem; }
 .place-items-center { place-items: center; }
