@@ -72,6 +72,38 @@ legend { float: none; width: auto; padding: 0 .35rem; font-size: 1rem; font-weig
 .dropzone-field { padding: 1.5rem; border: 2px dashed #c8cddd; border-radius: .85rem; background: rgba(58, 87, 232, .03); text-align: center; transition: border-color .18s ease, background .18s ease; }
 .dropzone-field:focus-within, .dropzone-field.is-dragging { border-color: var(--psm-accent); background: rgba(58, 87, 232, .08); }
 .min-w-0 { min-width: 0; }
+.server-admin-card, .status-card { overflow: hidden; transition: transform .18s ease, box-shadow .18s ease; }
+.server-admin-card:hover, .status-card:hover { transform: translateY(-2px); box-shadow: 0 .65rem 1.5rem rgba(17, 38, 146, .12); }
+.server-media-frame { position: relative; height: 10rem; display: grid; place-items: center; overflow: hidden; background: #f6f7fb; }
+.server-media { width: 100%; height: 100%; padding: 1rem; object-fit: contain; object-position: center; }
+.server-media--compact { width: 7rem; height: 7rem; flex: 0 0 7rem; }
+.status-indicator { position: absolute; inset-block-start: .75rem; inset-inline-end: .75rem; width: 2rem; height: 2rem; display: grid; place-items: center; border-radius: 50%; color: #fff; background: #6c757d; box-shadow: 0 .2rem .5rem rgba(0, 0, 0, .2); }
+.status-online .status-indicator { background: #198754; }
+.status-warning .status-indicator { background: #f59e0b; }
+.status-offline .status-indicator, .status-off .status-indicator { background: #dc3545; }
+.status-online { border-top: .25rem solid #198754; }
+.status-warning { border-top: .25rem solid #f59e0b; }
+.status-offline, .status-off { border-top: .25rem solid #dc3545; }
+.status-badge--online { color: #0f5132; background: #d1e7dd; }
+.status-badge--warning { color: #664d03; background: #fff3cd; }
+.status-badge--offline { color: #842029; background: #f8d7da; }
+.server-facts { display: grid; gap: .65rem; }
+.server-facts > div { display: flex; justify-content: space-between; gap: 1rem; border-bottom: 1px solid var(--psm-border); padding-bottom: .5rem; }
+.server-facts dt { color: #8a92a6; font-size: .8rem; font-weight: 600; }
+.server-facts dd { margin: 0; text-align: end; overflow-wrap: anywhere; }
+.channel-chips { display: flex; flex-wrap: wrap; gap: .4rem; }
+.channel-chip { width: 2rem; height: 2rem; display: inline-grid; place-items: center; border-radius: .55rem; color: var(--psm-accent); background: rgba(58, 87, 232, .1); font-size: .82rem; font-weight: 700; }
+.config-layout { display: grid; grid-template-columns: minmax(12rem, 15rem) minmax(0, 1fr); gap: 1.5rem; align-items: start; }
+.config-tabs { position: sticky; top: 5.75rem; display: grid; gap: .35rem; padding: .75rem; border: 1px solid var(--psm-border); border-radius: .85rem; background: var(--psm-surface); }
+.config-tabs .nav-link { width: 100%; text-align: start; border-radius: .6rem; }
+.config-content { min-width: 0; }
+.config-content > .tab-pane > fieldset { box-shadow: 0 .25rem .85rem rgba(17, 38, 146, .04); }
+.php-info-grid > .col { display: flex; }
+.install-shell { width: min(100%, 62rem); margin-block: 2rem; }
+.install-stepper { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin: 0; padding: 1.25rem 2rem; list-style: none; border-bottom: 1px solid var(--psm-border); }
+.install-stepper li { position: relative; display: flex; align-items: center; gap: .5rem; color: #6c757d; font-size: .85rem; }
+.install-stepper li:not(:last-child)::after { content: ""; flex: 1; height: 1px; margin-inline: .5rem; background: var(--psm-border); }
+.install-stepper span { width: 1.8rem; height: 1.8rem; flex: 0 0 1.8rem; display: grid; place-items: center; border-radius: 50%; color: #fff; background: var(--psm-accent); font-weight: 700; }
 
 .dark, html[data-bs-theme="dark"] {
 	--psm-surface: #20242d;
@@ -97,6 +129,8 @@ body.sidebar-collapsed .main-content { margin-inline-start: 0; }
 	.mobile-sidebar-toggle { display: inline-flex; }
 	.sidebar-toggle { display: none; }
 	.content-inner { padding-inline: 1rem; }
+	.config-layout { grid-template-columns: 1fr; }
+	.config-tabs { position: static; grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 575.98px) {
@@ -104,4 +138,7 @@ body.sidebar-collapsed .main-content { margin-inline-start: 0; }
 	.app-footer { padding-inline: 1rem; }
 	fieldset { padding: 1rem; }
 	.auth-card .card-body, .auth-brand-panel { padding: 1.25rem; }
+	.server-media-frame { height: 8rem; }
+	.install-stepper { grid-template-columns: repeat(2, 1fr); row-gap: .75rem; padding: 1rem; }
+	.install-stepper li::after { display: none; }
 }

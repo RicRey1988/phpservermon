@@ -1,101 +1,53 @@
-{% import 'main/macros.tpl.html' as macro %}
-{{ macro.table_search(label_search) }}
-<div class="table-responsive">
-	<table class="table table-striped table-hover table-bordered">
-		<thead>
-			<tr>
-				<!--class="d-none d-lg-table-cell"-->
-                <th scope="col">{{ label_label }}</th>
-                <th scope="col">{{ label_domain }}</th>
-                <th scope="col" style="width: 5%;">{{ label_port }}</th>
-                <th scope="col" style="width: 8%;">{{ label_type }}</th>
-                <th scope="col" style="width: 8%;">{{ label_rtime }} (ms)</th>
-                <th scope="col" style="width: 10%;">{{ label_last_online }}</th>
-                <th scope="col" style="width: 10%;">{{ label_last_offline }}</th>
-                <th scope="col" style="width: 10%;">{{ label_monitoring }}</th>
+<div class="searchbar input-group mb-4">
+    <span class="input-group-text"><i class="fas fa-search" aria-hidden="true"></i></span>
+    <input class="form-control" type="search" maxlength="255" placeholder="{{ label_search }}..." aria-label="{{ label_search }}" data-card-search>
+</div>
+
+<div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4" data-card-collection>
+    {% for server in servers %}
+    <div class="col" data-search-text="{{ server.label }} {{ server.ip|striptags }} {{ server.port }} {{ server.type }} {{ server.status }}">
+        <article class="card server-admin-card h-100 status-{{ server.status|lower }}">
+            <div class="server-media-frame">
+                <img src="icons/{{ server.label }}.png" alt="" class="server-media" loading="lazy" onerror="this.onerror=null;this.src='phpservermon.png';">
+                <span class="status-indicator" title="{{ server.status }}">
+                    {% if server.status|lower == 'on' %}<i class="fas fa-check-circle" aria-hidden="true"></i>
+                    {% elseif server.status|lower == 'warning' %}<i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+                    {% else %}<i class="fas fa-times-circle" aria-hidden="true"></i>{% endif %}
+                    <span class="visually-hidden">{{ server.status }}</span>
+                </span>
+            </div>
+            <div class="card-body d-flex flex-column">
+                <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+                    <div class="min-w-0">
+                        <h2 class="h5 text-truncate mb-1"><a class="stretched-link text-decoration-none" href="{{ server.url_view|raw }}">{{ server.label }}</a></h2>
+                        <p class="text-muted text-truncate mb-0">{{ server.ip|raw }}{% if server.port %}:{{ server.port }}{% endif %}</p>
+                    </div>
+                    <span class="badge bg-soft-primary text-primary">{{ server.type }}</span>
+                </div>
+                <dl class="server-facts">
+                    <div><dt>{{ label_rtime }}</dt><dd>{{ (server.rtime * 1000)|round(2) }} ms</dd></div>
+                    <div><dt>{{ label_last_online }}</dt><dd>{{ server.last_online }}</dd></div>
+                    <div><dt>{{ label_last_offline }}</dt><dd>{{ server.last_offline }}</dd></div>
+                </dl>
+                <div class="channel-chips mt-auto mb-3" aria-label="{{ label_monitoring }}">
+                    <span class="channel-chip" title="{{ server.active_title }}"><i class="fas fa-{% if server.active|lower == 'yes' %}eye{% else %}eye-slash{% endif %}" aria-hidden="true"></i></span>
+                    {% if server.email|lower == 'yes' and config.email|lower %}<span class="channel-chip" title="{{ label_email }}"><i class="fas fa-envelope" aria-hidden="true"></i></span>{% endif %}
+                    {% if server.sms|lower == 'yes' and config.sms|lower %}<span class="channel-chip" title="{{ label_sms }}"><i class="fas fa-sms" aria-hidden="true"></i></span>{% endif %}
+                    {% if server.pushover|lower == 'yes' and config.pushover|lower %}<span class="channel-chip" title="{{ label_pushover }}">P</span>{% endif %}
+                    {% if server.telegram|lower == 'yes' and config.telegram|lower %}<span class="channel-chip" title="{{ label_telegram }}"><i class="fab fa-telegram" aria-hidden="true"></i></span>{% endif %}
+                    {% if server.discord|lower == 'yes' and config.discord|lower %}<span class="channel-chip" title="{{ label_discord }}"><i class="fab fa-discord" aria-hidden="true"></i></span>{% endif %}
+                    {% if server.webhook|lower == 'yes' and config.webhook|lower %}<span class="channel-chip" title="{{ label_webhook }}">W</span>{% endif %}
+                </div>
                 {% if user_level == 10 %}
-                <th scope="col" style="width: 5%;">&#32</th>
+                <div class="position-relative d-flex gap-2">
+                    <a class="btn btn-outline-primary flex-grow-1 position-relative" href="{{ server.url_edit|raw }}"><i class="fas fa-edit me-1" aria-hidden="true"></i>{{ label_edit }}</a>
+                    <a class="btn btn-outline-danger show-modal position-relative" href="{{ server.url_delete|raw }}" data-modal-id="delete" data-modal-param="{{ server.label }}"><i class="fas fa-trash" aria-hidden="true"></i><span class="visually-hidden">{{ label_delete }}</span></a>
+                </div>
                 {% endif %}
-			</tr>
-			<tr class="warning no-result">
-					<td colspan="9"><i class="fas fa-exclamation-triangle"></i> No result</td>
-				  </tr>
-		</thead>
-		<tbody>
-			{% for server in servers %}
-			<tr>
-				<th scope="row">
-					<div class="content">
-						{% if server.status|lower == 'on' %}
-						<i class="fas fa-check-circle" title="{{ server.status }}"></i>&nbsp;
-						{% elseif server.status|lower == 'warning' %}
-						<i class="fas fa-exclamation-triangle" title="{{ server.status }}"></i>&nbsp;
-						{% elseif server.status|lower == 'off' %}
-						<i class="fas fa-times-circle" title="{{ server.status }}"></i>&nbsp;
-						{% endif %}
-						<a href="{{ server.url_view|raw }}" title="{{ label_view }}">
-							{{ server.label }}
-						</a>
-					</div>
-				</th>
-				<td><div class="content">{{ server.ip|raw }}</div></td>
-				<td>{{ server.port }}</td>
-				<td>{{ server.type }}</td>
-				<td>{{ (server.rtime * 1000)|round(2) }}</td>
-				<td><div class="content">{{ server.last_online }}</div></td>
-				<td><div class="content">{{ server.last_offline }}</div></td>
-				<td>
-					{% if server.active|lower == 'yes'%} 
-						<i class="fas fa-eye" title="{{ server.active_title }}"></i>
-					{% else %}
-						<i class="fas fa-eye-slash" title="{{ server.active_title }}"></i>
-					{% endif %}
-					{% if server.email|lower == 'yes' and config.email|lower%}
-						<i class="fas fa-envelope" title="{{ label_email }}"></i>
-					{% endif %}
-					{% if server.sms|lower == 'yes' and config.sms|lower%}
-						<i class="fas fa-sms" title="{{ label_sms }}"></i>
-					{% endif %}
-					{% if server.pushover|lower == 'yes'and config.pushover|lower %}
-						<span class="fa-layers">
-							<i class="fas fa-circle" title="{{ label_pushover }}"></i>
-							<span class="fa-layers-text fa-inverse" style="font-weight:400; font-size:75%">P</span>
-						</span>
-					{% endif %}
-					{% if server.telegram|lower == 'yes' and config.telegram|lower%}
-                        <i class="fab fa-telegram" title="{{ label_telegram }}"></i>
-					{% endif %}
-                    {% if server.discord|lower == 'yes' and config.discord|lower %}
-                        <i class="fab fa-discord" title="{{ label_discord }}"></i>
-                    {% endif %}
-                    {% if server.webhook|lower == 'yes' and config.webhook|lower %}
-                        <span class="fa-layers">
-                            <i class="fas fa-circle" title="{{ label_webhook }}"></i>
-                            <span class="fa-layers-text fa-inverse" style="font-weight:600; font-size:55%">W</span>
-                        </span>
-                    {% endif %}
-				</td>
-				{% if user_level == 10 %}
-				<td>
-					<div class="item-action dropdown">
-						<a data-toggle="dropdown" class="icon"><i class="fas fa-ellipsis-v"></i></a>
-						<div class="dropdown-menu">
-							<a class="dropdown-item" href="{{ server.url_view|raw }}" title="{{ label_view }}">
-								<i class="fas fa-eye"></i> {{ label_view }}
-							</a>
-							<a class="dropdown-item" href="{{ server.url_edit|raw }}" title="{{ label_edit }}">
-								<i class="fas fa-edit"></i> {{ label_edit }}
-							</a>
-							<a class="dropdown-item show-modal" href="{{ server.url_delete|raw }}" title="{{ label_delete }}" data-modal-id="delete"
-							 data-modal-param="{{ server.label }}">
-								<i class="fas fa-trash"></i> {{ label_delete }}
-							</a>
-						</div>
-					</div>
-				</td>
-				{% endif %}
-			</tr>
-			{% endfor %}
-		</tbody>
-	</table>
+            </div>
+        </article>
+    </div>
+    {% else %}
+    <div class="col-12"><div class="card"><div class="card-body text-center text-muted">No result</div></div></div>
+    {% endfor %}
 </div>

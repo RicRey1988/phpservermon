@@ -1,7 +1,7 @@
 {% import 'main/macros.tpl.html' as macro %}
-<form name="edit_server" action="{{ url_save|raw }}" class="col-md-6 pl-0 pr-0" id="edit_server" method="post"
+<form name="edit_server" action="{{ url_save|raw }}" class="server-form col-12 col-xxl-9" id="edit_server" method="post"
  autocomplete="off">
-	<fieldset>
+	<fieldset data-form-section="identification-check">
 		<legend>{{ titlemode }}</legend>
 		<div class="col">
 			<!-- Label -->
@@ -11,7 +11,7 @@
 			<!-- Type -->
 			<div class="form-group">
 				<label for="type">{{ label_type }}</label>
-				<select id="type" name="type" class="custom-select" required>
+				<select id="type" name="type" class="form-select" required>
 					<option value="">{{ label_please_select }}</option>
 					<option value="ping" {{ edit_type_selected_ping|raw }}>{{ label_ping }}</option>
 					<option value="service" {{ edit_type_selected_service|raw }}>{{ label_service }}</option>
@@ -21,7 +21,7 @@
 			<!-- Port -->
 			<div class="form-group types typeService">
 				<label for="popular_ports">{{ label_port }}</label>
-				<select id="popular_ports" name="popular_ports" class="custom-select">
+				<select id="popular_ports" name="popular_ports" class="form-select">
 					<option {% if not edit_value_port %}selected {% endif %} disabled>{{ label_please_select }}</option>
 					<option {% if edit_value_port not in [0, 80, 443, 21, 25, 465, 110, 995, 143, 993, 22, 389, 3306, 115, 43, 53,
 					 3389] %} selected {% endif %} value="custom">{{ label_custom_port }}</option>
@@ -52,7 +52,7 @@
 			<!-- Request method -->
 			<div class="form-group types typeWebsite">
 				<label for="popular_request_methods">{{ label_request_method }}</label>
-				<select id="popular_request_methods" name="popular_request_methods" class="custom-select">
+				<select id="popular_request_methods" name="popular_request_methods" class="form-select">
 					<option value="">{{ label_none }}</option>
 					<optgroup label="{{ label_popular_request_methods }}">
 						<option {% if edit_value_request_method|upper=='GET' %}selected {% endif %}value="GET">GET</option>
@@ -79,7 +79,7 @@
 			<div class="form-group form-row types typeWebsite">
 				<label for="pattern_online" class="col-form-label col-md-6">{{ label_pattern_online }}</label>
 				<div class="col-md-6 p-0">
-					<select id="pattern_online" name="pattern_online" class="custom-select" aria-describedby="pattern_online">
+					<select id="pattern_online" name="pattern_online" class="form-select" aria-describedby="pattern_online">
 						<option value="yes" {{ edit_pattern_selected_yes|raw }}>{{ label_online }}</option>
 						<option value="no" {{ edit_pattern_selected_no|raw }}>{{ label_offline }}</option>
 					</select>
@@ -90,7 +90,7 @@
 			<div class="form-group form-row types typeWebsite">
 				<label for="redirect_check" class="col-form-label col-md-7">{{ label_redirect_check }}</label>
 				<div class="col-md-5 p-0">
-					<select id="redirect_check" name="redirect_check" class="custom-select" aria-describedby="redirect_check_help">
+					<select id="redirect_check" name="redirect_check" class="form-select" aria-describedby="redirect_check_help">
 						<option value="ok" {{ edit_redirect_check_selected_ok|raw }}>{{ label_ok }}</option>
 						<option value="bad" {{ edit_redirect_check_selected_bad|raw }}>{{ label_bad }}</option>
 					</select>
@@ -120,13 +120,13 @@
 			{{ macro.input_field("number", "timeout", null, "timeout", label_timeout, edit_value_timeout, default_value_timeout, "10", 'timeout_help', label_timeout_description) }}
 		</div>
 	</fieldset>
-	<fieldset>
+	<fieldset data-form-section="http-headers">
 		<legend>{{ label_custom_header }} ({{ label_optional }})</legend>
 		<div class="col">
 			{{ macro.input_field("text", "custom_header", null, "custom_header", label_custom_header, edit_custom_header, "Cookie:...", null, 'custom_header_help', label_custom_header_description) }}
 		</div>
 	</fieldset>
-	<fieldset class="types typeWebsite">
+	<fieldset class="types typeWebsite" data-form-section="authentication">
 		<legend>{{ label_authentication_settings }} ({{ label_optional }})</legend>
 		<div class="col">
 			<!-- Website username -->
@@ -135,7 +135,7 @@
 			{{ macro.input_field("password", "website_password", null, "website_password", label_website_password, edit_value_website_password, null, "255", 'website_password_help', label_website_password_description, null, true, null, null, true) }}
 		</div>
 	</fieldset>
-	<fieldset>
+	<fieldset data-form-section="channels">
 		<legend>{{ label_fieldset_monitoring }}</legend>
 		<div class="col">
 			<!-- Monitor -->
@@ -154,12 +154,12 @@
             {{ macro.input_select_monitoring("webhook", "webhook", label_send_webhook, edit_webhook_selected, label_yes, label_no, warning_webhook, label_warning_webhook) }}
 		</div>
     </fieldset>
-	<fieldset>
+	<fieldset data-form-section="access">
 		<legend>{{ label_fieldset_permissions }}</legend>
 		<!-- Permissions -->
 		{{ macro.input_select_multiple("user_id", "user_id[]", label_permissions, label_search, users, label_please_select) }}
     </fieldset>
-    <fieldset>
+    <fieldset data-form-section="actions">
         <legend>{{ label_save }}</legend>
         {{ macro.button_save(null, label_save) }}
         <a class="btn" href="{{ url_go_back|raw }}">{{ label_go_back }}</a>

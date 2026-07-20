@@ -8,40 +8,40 @@
 </div>
 <div class="row">
    <div class="col-md-6">
-	<form id="psm_config" action="install.php?action=config" method="post">
+	<form id="psm_config" action="install.php?action=config" method="post" class="card border-0 shadow-none">
 	  {{ macro.input_csrf() }}
 		<p>Please enter the application url:</p>
 		<div class="form-group">
 		<label class="col-form-label" for="base_url">Application base url</label>
-		<input type="text" id="base_url" name="base_url" value="{{ base_url }}" />
+		<input class="form-control" type="url" id="base_url" name="base_url" value="{{ base_url }}" autocomplete="url" required />
 	  </div>
 	  <p>Please enter your database info:</p>
 	  <div class="form-group">
 		<label class="col-form-label" for="host">Database host</label>
-		<input type="text" id="host" name="db_host" value="{{ db_host }}" />
+		<input class="form-control" type="text" id="host" name="db_host" value="{{ db_host }}" autocomplete="off" required />
 	  </div>
 	  <div class="form-group">
-		<label class="col-form-label" for="host">Database port</label>
-		<input type="text" id="port" name="db_port" value="{{ db_port }}" placeholder="3306 most likely, may be empty" />
+		<label class="col-form-label" for="port">Database port</label>
+		<input class="form-control" type="number" id="port" name="db_port" value="{{ db_port }}" placeholder="3306 most likely, may be empty" />
 	  </div>
 	  <div class="form-group">
 		<label class="col-form-label" for="name">Database name</label>
-		<input type="text" id="name" name="db_name" value="{{ db_name }}" placeholder="db name" />
+		<input class="form-control" type="text" id="name" name="db_name" value="{{ db_name }}" placeholder="db name" autocomplete="off" required />
 	  </div>
 	  <div class="form-group">
 		<label class="col-form-label" for="user">Database user</label>
-		<input type="text" id="user" name="db_user" value="{{ db_user }}" placeholder="db user" />
+		<input class="form-control" type="text" id="user" name="db_user" value="{{ db_user }}" placeholder="db user" autocomplete="username" required />
 	  </div>
 	  <div class="form-group">
 		<label class="col-form-label" for="pass">Database password</label>
-		<input type="password" id="pass" name="db_pass" value="{{ db_pass }}" placeholder="db password" />
+		<input class="form-control" type="password" id="pass" name="db_pass" value="{{ db_pass }}" placeholder="db password" autocomplete="current-password" />
 	  </div>
 	  <div class="form-group">
 		<label class="col-form-label" for="prefix">Table prefix</label>
-		<input type="text" id="prefix" name="db_prefix" value="{{ db_prefix }}" />
+		<input class="form-control" type="text" id="prefix" name="db_prefix" value="{{ db_prefix }}" autocomplete="off" />
 	  </div>
 	  <div class="form-group">
-		<button type="submit" class="btn">Save configuration</button>
+		<button type="submit" class="btn btn-primary">Save configuration</button>
 	  </div>
 	</form>
    </div>
@@ -52,8 +52,8 @@
 		<p>Your database information is valid, however we are unable to create the configuration file automatically.
 		Please create a new file in the project directory called "config.php" and copy the information below.</p>
 		<p>After you have copied the configuration, press the button to continue.</p>
-		<p class="pull-left"><textarea rows="10">{{ php_config }}</textarea></p>
-		<p class="col-md-offset-2"><input type="submit" class="btn btn-primary" value="I have saved the configuration" onclick="location.reload(true);" /></p>
+		<p><textarea class="form-control font-monospace" rows="10" readonly>{{ php_config }}</textarea></p>
+		<p><button type="button" class="btn btn-primary" onclick="location.reload(true);">I have saved the configuration</button></p>
 	</div>
    {% endif %}
 </div>

@@ -23,6 +23,19 @@ final class TwigTemplateSyntaxTest extends TestCase
             'module/user/login/reset.tpl.html',
             'module/user/user/list.tpl.html',
             'module/server/log.tpl.html',
+            'module/server/server/list.tpl.html',
+            'module/server/status/index.tpl.html',
+            'module/server/server/update.tpl.html',
+            'module/server/server/view.tpl.html',
+            'module/server/history.tpl.html',
+            'module/config/config.tpl.html',
+            'module/install/main.tpl.html',
+            'module/install/config_new.tpl.html',
+            'module/install/index.tpl.html',
+            'module/install/config_new_user.tpl.html',
+            'module/install/config_upgrade.tpl.html',
+            'module/install/results.tpl.html',
+            'module/install/success.tpl.html',
         ] as $template) {
             yield $template => [$template];
         }

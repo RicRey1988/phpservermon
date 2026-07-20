@@ -1,134 +1,70 @@
 {% import 'main/macros.tpl.html' as macro %}
+{% macro status_card(server, state, state_label, compact, label_last_online, label_last_offline, label_last_check, label_rtime) %}
+<article class="card status-card status-{{ state }} h-100">
+    <div class="{% if compact %}d-flex{% else %}server-media-frame{% endif %}">
+        <img src="icons/{{ server.label }}.png" alt="" class="server-media{% if compact %} server-media--compact{% endif %}" loading="lazy" onerror="this.onerror=null;this.src='phpservermon.png';">
+        {% if not compact %}<span class="status-indicator" aria-hidden="true"><i class="fas fa-{% if state == 'online' %}check-circle{% elseif state == 'warning' %}exclamation-triangle{% else %}times-circle{% endif %}"></i></span>{% endif %}
+    </div>
+    <div class="card-body d-flex flex-column min-w-0">
+        <div class="d-flex justify-content-between align-items-start gap-2 mb-3">
+            <h2 class="h5 text-truncate mb-0"><a class="stretched-link text-decoration-none" href="{{ server.url_view|raw }}">{{ server.label }}</a></h2>
+            <span class="badge status-badge status-badge--{{ state }}">{{ state_label }}</span>
+        </div>
+        <dl class="server-facts mb-0">
+            <div><dt>{{ label_last_online }}</dt><dd>{{ server.last_online_nice }}</dd></div>
+            {% if state == 'online' %}
+            <div><dt>{{ label_last_offline }}</dt><dd>{{ server.last_offline_nice }} {{ server.last_offline_duration_nice }}</dd></div>
+            <div><dt>{{ label_rtime }}</dt><dd>{{ (server.rtime * 1000)|round(2) }} ms</dd></div>
+            {% else %}
+            <div><dt>{{ label_last_check }}</dt><dd>{{ server.last_checked_nice }}</dd></div>
+            {% endif %}
+        </dl>
+    </div>
+</article>
+{% endmacro %}
+
 {{ macro.input_csrf() }}
-<div class="container-fluid">
-	<div id="flow-layout" class="{{ block_layout_active }}" aria-labelledby="block-layout">
-		<div class="row">
-			{% for server in servers_offline %}
-			<div class="col-sm-4 col-md-3 col-xl-2">
-				<div class="card text-white bg-danger mb-3" onclick="window.location.href='{{ server.url_view|raw }}'">
-					<div class="card-header"><a href="{{ server.url_view|raw }}" class="text-white"><img src="icons/{{ server.label }}.png" alt="{{ server.label }}" class="server-icon server-icon--card" onerror="this.onerror=null;this.src='phpservermon.png';">{{ server.label }}<span class="sr-only"> ({{ label_offline }})</span></a></div>
-					<div class="card-body">
-						<p class="card-text">
-							{{ label_last_online }}: {{ server.last_online_nice }}<br>
-							{{ label_last_check }}: {{ server.last_checked_nice }}
-						</p>
-					</div>
-				</div>
-			</div>
-			{% endfor %}
-			{% for server in servers_warning %}
-			<div class="col-sm-4 col-md-3 col-xl-2">
-				<div class="card text-white bg-warning mb-3" onclick="window.location.href='{{ server.url_view|raw }}'">
-					<div class="card-header"><a href="{{ server.url_view|raw }}" class="text-white"><img src="icons/{{ server.label }}.png" alt="{{ server.label }}" class="server-icon server-icon--card" onerror="this.onerror=null;this.src='phpservermon.png';">{{ server.label }}<span class="sr-only"> ({{ label_warning }})</span></a></div>
-					<div class="card-body">
-						<p class="card-text">
-							{{ label_last_online }}: {{ server.last_online_nice }}<br>
-							{{ label_last_check }}: {{ server.last_checked_nice }}
-						</p>
-					</div>
-				</div>
-			</div>
-			{% endfor %}
-			{% for server in servers_online %}
-			<div class="col-sm-4 col-md-3 col-xl-2">
-				<div class="card text-white bg-success mb-3" onclick="window.location.href='{{ server.url_view|raw }}'">
-					<div class="card-header"><a href="{{ server.url_view|raw }}" class="text-white"><img src="icons/{{ server.label }}.png" alt="{{ server.label }}" class="server-icon server-icon--card" onerror="this.onerror=null;this.src='phpservermon.png';">{{ server.label }}<span class="sr-only"> ({{ label_online }})</span></a></div>
-					<div class="card-body">
-						<p class="card-text">
-							{{ label_last_online }}: {{ server.last_online_nice }}<br>
-							{{ label_last_offline }}: {{ server.last_offline_nice }} {{ server.last_offline_duration_nice }}<br>
-							{{ label_rtime }}: {{ (server.rtime * 1000)|round(2) }} ms
-						</p>
-					</div>
-				</div>
-			</div>
-			{% endfor %}
-			{% if not servers_offline and not servers_warning and not servers_online %}
-				{{ label_none }}
-				<div class="w-100"></div>
-				<button class="btn btn-primary" onclick="window.location.href='{{ url_save|raw }}'">{{ label_add_server }}</button>
-			{% endif %}
-		</div>
-	</div>
-	<div id="list-layout" class="{{ list_layout_active }}" aria-labelledby="block-layout" style="display:none;">
-		<div class="row table-responsive">
-			{% if servers_offline  or servers_warning or servers_online %}
-			<table class="table table-bordered table-hover">
-				{% if servers_offline or servers_warning %}
-				<thead>
-					<tr>
-						<th scope="col">#</th>
-						<th scope="col">{{ label_last_online }}</th>
-						<th scope="col">{{ label_last_check }}</th>
-						<th scope="col">{{ label_rtime }}</th>
-					</tr>
-				</thead>
-				<tbody>
-					{% for server in servers_offline %}
-						<tr class="bg-danger text-white" onclick="window.location.href='{{ server.url_view|raw }}'">
-							<th class="full"><a href="{{ server.url_view|raw }}" class="text-white"><img src="icons/{{ server.label }}.png" alt="{{ server.label }}" class="server-icon server-icon--inline" onerror="this.onerror=null;this.src='phpservermon.png';">{{ server.label }}<span class="sr-only"> ({{ label_offline }})</span></a></th>
-							<td>{{ server.last_online_nice }}</td>
-							<td>{{ server.last_checked_nice }}</td>
-							<td></td>
-						</tr>
-					{% endfor %}
-					{% for server in servers_warning %}
-						<tr class="bg-warning text-white" onclick="window.location.href='{{ server.url_view|raw }}'">
-							<th class="full"><a href="{{ server.url_view|raw }}" class="text-white"><img src="icons/{{ server.label }}.png" alt="{{ server.label }}" class="server-icon server-icon--inline" onerror="this.onerror=null;this.src='phpservermon.png';">{{ server.label }}<span class="sr-only"> ({{ label_warning }})</span></a></th>
-							<td>{{ server.last_online_nice }}</td>
-							<td>{{ server.last_checked_nice }}</td>
-							<td></td>
-						</tr>
-					{% endfor %}
-				</tbody>
-				{% endif %}
-				{% if servers_online %}
-				<thead>
-					<tr>
-						<th scope="col">#</th>
-						<th scope="col">{{ label_last_online }}</th>
-						<th scope="col">{{ label_last_offline }}</th>
-						<th scope="col">{{ label_rtime }}</th>
-					</tr>
-				</thead>
-				<tbody>
-					{% for server in servers_online %}
-						<tr class="bg-success text-white" onclick="window.location.href='{{ server.url_view|raw }}'">
-							<th class="full"><a href="{{ server.url_view|raw }}" class="text-white"><img src="icons/{{ server.label }}.png" alt="{{ server.label }}" class="server-icon server-icon--inline" onerror="this.onerror=null;this.src='phpservermon.png';">{{ server.label }}<span class="sr-only"> ({{ label_online }})</span></a></th>
-							<td>{{ server.last_online_nice }}</td>
-							<td>{{ server.last_offline_nice }} {{ server.last_offline_duration_nice }}</td>
-							<td>{{ (server.rtime * 1000)|round(2) }} ms</td>
-						</tr>
-					{% endfor %}
-				</tbody>
-				{% endif %}
-			</table>
-			{% else %}
-				{{ label_none }}
-				<div class="w-100"></div>
-				<button class="btn btn-primary" onclick="window.location.href='{{ url_save|raw }}'">{{ label_add_server }}</button>
-			{% endif %}
-		</div>
-	</div>
+<div id="flow-layout" class="{{ block_layout_active }}" aria-labelledby="block-layout">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 row-cols-xxl-4 g-4">
+        {% for server in servers_offline %}<div class="col">{{ _self.status_card(server, 'offline', label_offline, false, label_last_online, label_last_offline, label_last_check, label_rtime) }}</div>{% endfor %}
+        {% for server in servers_warning %}<div class="col">{{ _self.status_card(server, 'warning', label_warning, false, label_last_online, label_last_offline, label_last_check, label_rtime) }}</div>{% endfor %}
+        {% for server in servers_online %}<div class="col">{{ _self.status_card(server, 'online', label_online, false, label_last_online, label_last_offline, label_last_check, label_rtime) }}</div>{% endfor %}
+    </div>
 </div>
+
+<div id="list-layout" class="{{ list_layout_active }}" aria-labelledby="table-layout">
+    <div class="status-list d-grid gap-3">
+        {% for server in servers_offline %}{{ _self.status_card(server, 'offline', label_offline, true, label_last_online, label_last_offline, label_last_check, label_rtime) }}{% endfor %}
+        {% for server in servers_warning %}{{ _self.status_card(server, 'warning', label_warning, true, label_last_online, label_last_offline, label_last_check, label_rtime) }}{% endfor %}
+        {% for server in servers_online %}{{ _self.status_card(server, 'online', label_online, true, label_last_online, label_last_offline, label_last_check, label_rtime) }}{% endfor %}
+    </div>
+</div>
+
+{% if not servers_offline and not servers_warning and not servers_online %}
+<div class="card"><div class="card-body text-center py-5">
+    <i class="fas fa-server fa-2x text-muted mb-3" aria-hidden="true"></i>
+    <p class="text-muted">{{ label_none }}</p>
+    <a class="btn btn-primary" href="{{ url_save|raw }}">{{ label_add_server }}</a>
+</div></div>
+{% endif %}
 
 {% if auto_refresh %}
 <script>
 setInterval(function() {
-	fetch(window.location.href, {
-		headers: { 'X-Requested-With': 'XMLHttpRequest' },
-		credentials: 'same-origin',
-		cache: 'no-store'
-	}).then(function(response) {
-		if (!response.ok) { throw new Error('Status refresh failed'); }
-		return response.text();
-	}).then(function(html) {
-		var content = document.getElementById('content');
-		if (content) { content.innerHTML = html; }
-		psm_setLayout({{ layout }});
-	}).catch(function() {
-		// Keep the last known status visible; the next interval retries.
-	});
+    fetch(window.location.href, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        credentials: 'same-origin',
+        cache: 'no-store'
+    }).then(function(response) {
+        if (!response.ok) { throw new Error('Status refresh failed'); }
+        return response.text();
+    }).then(function(html) {
+        var content = document.getElementById('content');
+        if (content) { content.innerHTML = html; }
+        psm_setLayout({{ layout }});
+    }).catch(function() {
+        // Keep the last known status visible; the next interval retries.
+    });
 }, {{ auto_refresh_seconds }} * 1000);
 </script>
 {% endif %}

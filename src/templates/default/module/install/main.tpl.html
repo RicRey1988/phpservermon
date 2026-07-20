@@ -1,9 +1,15 @@
-<div class="jumbotron w-100">
-	<div class="row">
-	<a href="http://www.phpservermonitor.org/">
-		<img class="img-responsive" src="phpservermon.png" alt="PHPServerMonitor - home" />
-	</a>
-	<h2>&nbsp;PHP Server Monitor</h2>
-</div>
-	{% block install %} {% endblock %}
-</div>
+<section class="install-shell card mx-auto overflow-hidden">
+    <header class="auth-brand-panel d-flex align-items-center gap-3">
+        <span class="brand-mark brand-mark-lg" aria-hidden="true">PSM</span>
+        <div><p class="eyebrow text-white-50 mb-1">Hosting Supremo</p><h1 class="h3 mb-0">PHP Server Monitor</h1></div>
+    </header>
+    <ol class="install-stepper" data-install-stepper aria-label="Installation progress">
+        <li><span>1</span>Requirements</li>
+        <li><span>2</span>Database</li>
+        <li><span>3</span>Administrator</li>
+        <li><span>4</span>Ready</li>
+    </ol>
+    <div class="card-body p-4 p-lg-5">
+        {% block install %}{% endblock %}
+    </div>
+</section>

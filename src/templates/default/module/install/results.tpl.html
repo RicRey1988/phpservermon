@@ -1,10 +1,10 @@
 {% block results %}
 {% if messages %}
 	{% for msg in messages %}
-		<div class="row">
-			<div class="col-md-1"><span class="badge badge-{{ msg.class }}">{{ msg.shortcode }}</span></div>
+		<div class="alert alert-{{ msg.class }} d-flex align-items-start gap-3" role="status">
+			<div><span class="badge bg-{{ msg.class }}">{{ msg.shortcode }}</span></div>
 			{% autoescape false %}
-			<div class="col-md-11">{{ msg.message }}</div>
+			<div class="flex-grow-1">{{ msg.message }}</div>
 			{% endautoescape %}
 		</div>
 	{% endfor %}

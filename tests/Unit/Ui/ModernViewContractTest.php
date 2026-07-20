@@ -63,7 +63,92 @@ final class ModernViewContractTest extends TestCase
         self::assertStringContainsString('.user-card', $styles);
         self::assertStringContainsString('.timeline-item', $styles);
         self::assertStringContainsString('.dropzone-field', $styles);
+        self::assertStringContainsString('.server-media-frame', $styles);
+        self::assertStringContainsString('.config-layout', $styles);
+        self::assertStringContainsString('.install-stepper', $styles);
         self::assertStringNotContainsString('Â', $macros);
+    }
+
+    public function testServerAndConfigurationViewsUseCardsAndAccessibleTabs(): void
+    {
+        $servers = $this->read('module/server/server/list.tpl.html');
+        $status = $this->read('module/server/status/index.tpl.html');
+        $config = $this->read('module/config/config.tpl.html');
+
+        self::assertStringContainsString('<article class="card server-admin-card', $servers);
+        self::assertStringContainsString('<article class="card status-card', $status);
+        self::assertStringNotContainsString('<table', $servers . $status . $config);
+        self::assertStringContainsString('role="tablist"', $config);
+        self::assertStringContainsString('aria-orientation="vertical"', $config);
+        self::assertStringContainsString('data-bs-toggle="pill"', $config);
+        self::assertStringContainsString('class="php-info-grid', $config);
+    }
+
+    public function testServerFormAndInstallerExposeModernSections(): void
+    {
+        $server = $this->read('module/server/server/update.tpl.html');
+        $installer = $this->read('module/install/main.tpl.html');
+        $database = $this->read('module/install/config_new.tpl.html');
+
+        self::assertStringContainsString('class="server-form', $server);
+        self::assertGreaterThanOrEqual(6, substr_count($server, 'data-form-section'));
+        self::assertStringNotContainsString('custom-select', $server);
+        self::assertStringContainsString('data-install-stepper', $installer);
+        self::assertStringContainsString('class="form-control"', $database);
+    }
+
+    public function testModernViewsDoNotUseBootstrapFourDataAttributes(): void
+    {
+        $contents = '';
+        foreach ([
+            'module/config/config.tpl.html',
+            'module/server/history.tpl.html',
+            'module/server/server/list.tpl.html',
+            'module/server/server/view.tpl.html',
+            'module/user/profile.tpl.html',
+            'util/module/sidebar.tpl.html',
+        ] as $template) {
+            $contents .= $this->read($template);
+        }
+
+        self::assertStringNotContainsString('data-toggle=', $contents);
+        self::assertStringNotContainsString('data-dismiss=', $contents);
+    }
+
+    public function testInstallerUsesModernCardsAndHsProjectLinks(): void
+    {
+        $contents = '';
+        foreach ([
+            'module/install/main.tpl.html',
+            'module/install/index.tpl.html',
+            'module/install/config_new.tpl.html',
+            'module/install/config_new_user.tpl.html',
+            'module/install/config_upgrade.tpl.html',
+            'module/install/results.tpl.html',
+            'module/install/success.tpl.html',
+        ] as $template) {
+            $contents .= $this->read($template);
+        }
+
+        self::assertStringNotContainsString('jumbotron', $contents);
+        self::assertStringNotContainsString('img-responsive', $contents);
+        self::assertStringNotContainsString('badge-', $contents);
+        self::assertStringNotContainsString('phpservermonitor.org', $contents);
+        self::assertStringContainsString('github.com/RicRey1988/phpservermon', $contents);
+        self::assertStringContainsString('</form>', $this->read('module/install/config_new_user.tpl.html'));
+    }
+
+    public function testServerDetailsUseTimelineAndHistoryNeedsNoJquery(): void
+    {
+        $view = $this->read('module/server/server/view.tpl.html');
+        $history = $this->read('module/server/history.tpl.html');
+        $historyJavascript = $this->read('static/js/history.js');
+
+        self::assertStringNotContainsString('<table', $view);
+        self::assertStringContainsString('class="timeline-item', $view);
+        self::assertStringNotContainsString('$.', $history);
+        self::assertStringNotContainsString('$(', $historyJavascript);
+        self::assertStringContainsString('querySelectorAll', $historyJavascript);
     }
 
     private function read(string $path): string
