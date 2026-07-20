@@ -1,8 +1,8 @@
 Changelog
 =========
 
-v4.2.0-hs (unreleased)
-----------------------
+v4.2.0-hs (released July 20, 2026)
+----------------------------------
 
 * Integrated the authentic owner-supplied Hope UI 2.0 shell, quick theme
   control and full settings gear with persisted appearance options.
@@ -11,7 +11,7 @@ v4.2.0-hs (unreleased)
   bounded images and Bootstrap 5 controls without DataTables or jQuery.
 * Added light/dark responsive audits for 360 through 1600 pixel viewports.
 * Updated the PWA cache for the complete versioned Hope UI runtime.
-* This source version has not been published as a GitHub Release.
+* Published with a signed production package for the built-in HS updater.
 
 v4.1.0-hs (unreleased)
 ----------------------

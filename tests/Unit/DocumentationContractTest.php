@@ -37,9 +37,19 @@ final class DocumentationContractTest extends TestCase
         yield 'invitations' => ['invitation'];
         yield 'diagnostics' => ['diagnostics'];
         yield 'updater' => ['signed updater'];
+        yield 'release' => ['releases/tag/v4.2.0-hs'];
         yield 'fork' => ['RicRey1988/phpservermon'];
         yield 'gd' => ['ext-gd'];
         yield 'zip' => ['ext-zip'];
+    }
+
+    public function testReadmeDescribesThePublishedRelease(): void
+    {
+        $readme = file_get_contents(dirname(__DIR__, 2) . '/README.rst');
+
+        self::assertIsString($readme);
+        self::assertStringNotContainsString('release package not published yet', $readme);
+        self::assertStringNotContainsString('not yet offered by that updater', $readme);
     }
 
     public function testRuntimeReferencesUseTheHsRepository(): void

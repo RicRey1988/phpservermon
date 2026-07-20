@@ -1,6 +1,6 @@
 # Changelog
 
-## [4.2.0-hs] - Unreleased
+## [4.2.0-hs] - 2026-07-20
 
 ### Added
 - Authentic Hope UI 2.0 shell and customizer using the owner-supplied template
@@ -26,7 +26,8 @@
 
 ### Notes
 - DataTables and jQuery demo bundles are intentionally excluded.
-- This source version is not a GitHub Release until separately approved.
+- Published as a signed GitHub Release with the production ZIP, canonical
+  manifest and detached RSA-SHA256 signature required by the HS updater.
 
 ## [4.1.0-hs] - Unreleased
 
