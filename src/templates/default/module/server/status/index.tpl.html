@@ -6,19 +6,19 @@
 
     <div class="dashboard-summary row row-cols-2 row-cols-md-3 row-cols-xl-6 g-3 mb-4" aria-label="Resumen de monitoreo">
         {% set summary_cards = [
-            {label: 'En línea', value: dashboard.summary.online, icon: 'check-circle', tone: 'success'},
-            {label: 'Atención', value: dashboard.summary.warning, icon: 'exclamation-triangle', tone: 'warning'},
-            {label: 'Fuera de línea', value: dashboard.summary.offline, icon: 'times-circle', tone: 'danger'},
-            {label: 'Disponibilidad', value: dashboard.summary.uptime_percentage is null ? '—' : dashboard.summary.uptime_percentage ~ '%', icon: 'chart-line', tone: 'primary'},
-            {label: 'Latencia media', value: dashboard.summary.latency_avg is null ? '—' : dashboard.summary.latency_avg ~ ' ms', icon: 'tachometer-alt', tone: 'info'},
-            {label: 'Comprobaciones', value: dashboard.summary.checks, icon: 'clipboard-check', tone: 'secondary'}
+            {key: 'online', label: 'En línea', value: dashboard.summary.online, icon: 'check-circle', tone: 'success'},
+            {key: 'warning', label: 'Atención', value: dashboard.summary.warning, icon: 'exclamation-triangle', tone: 'warning'},
+            {key: 'offline', label: 'Fuera de línea', value: dashboard.summary.offline, icon: 'times-circle', tone: 'danger'},
+            {key: 'uptime_percentage', label: 'Disponibilidad', value: dashboard.summary.uptime_percentage is null ? '—' : dashboard.summary.uptime_percentage ~ '%', icon: 'chart-line', tone: 'primary'},
+            {key: 'latency_avg', label: 'Latencia media', value: dashboard.summary.latency_avg is null ? '—' : dashboard.summary.latency_avg ~ ' ms', icon: 'tachometer-alt', tone: 'info'},
+            {key: 'checks', label: 'Comprobaciones', value: dashboard.summary.checks, icon: 'clipboard-check', tone: 'secondary'}
         ] %}
         {% for item in summary_cards %}
         <div class="col">
-            <article class="card dashboard-stat-card h-100">
+            <article class="card dashboard-stat-card h-100" data-summary-key="{{ item.key }}">
                 <div class="card-body d-flex align-items-center gap-3">
                     <span class="stat-icon text-{{ item.tone }} bg-soft-{{ item.tone }}" aria-hidden="true"><i class="fas fa-{{ item.icon }}"></i></span>
-                    <div class="min-w-0"><p class="text-muted small mb-1">{{ item.label }}</p><strong class="h5 mb-0">{{ item.value }}</strong></div>
+                    <div class="min-w-0"><p class="text-muted small mb-1">{{ item.label }}</p><strong class="h5 mb-0" data-summary-value>{{ item.value }}</strong></div>
                 </div>
             </article>
         </div>

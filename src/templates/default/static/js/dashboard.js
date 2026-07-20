@@ -59,30 +59,125 @@
 		}
 	}
 
+	function formatSummary(key, value) {
+		if (value === null || typeof value === 'undefined') { return '—'; }
+		if (key === 'uptime_percentage') { return value + '%'; }
+		if (key === 'latency_avg') { return value + ' ms'; }
+		return String(value);
+	}
+
+	function applyStatusCards(payload) {
+		(payload.cards || []).forEach(function (server) {
+			document.querySelectorAll('[data-server-id="' + server.server_id + '"]').forEach(function (card) {
+				['online', 'warning', 'offline', 'paused'].forEach(function (tone) {
+					card.classList.remove('status-' + tone);
+				});
+				card.classList.add('status-' + server.status_tone);
+				var badge = card.querySelector('.status-badge');
+				if (badge) {
+					['online', 'warning', 'offline', 'paused'].forEach(function (tone) {
+						badge.classList.remove('status-badge--' + tone);
+					});
+					badge.classList.add('status-badge--' + server.status_tone);
+					badge.textContent = server.status_label;
+					badge.setAttribute('aria-label', server.status_label);
+				}
+				var lastCheck = card.querySelector('[data-server-last-check]');
+				var lastOnline = card.querySelector('[data-server-last-online]');
+				var latency = card.querySelector('[data-server-latency]');
+				if (lastCheck) { lastCheck.textContent = server.last_check; }
+				if (lastOnline) { lastOnline.textContent = server.last_online; }
+				if (latency && server.latency !== null) { latency.textContent = server.latency + ' ms'; }
+			});
+		});
+
+		Object.keys(payload.summary || {}).forEach(function (key) {
+			var element = document.querySelector('[data-summary-key="' + key + '"] [data-summary-value]');
+			if (element) { element.textContent = formatSummary(key, payload.summary[key]); }
+		});
+	}
+
+	function replaceDashboard(html) {
+		var parsed = new DOMParser().parseFromString(html, 'text/html');
+		var fresh = parsed.querySelector('[data-dashboard]');
+		var current = document.querySelector('[data-dashboard]');
+		if (!fresh || !current) { return; }
+		current.replaceWith(fresh);
+		renderCharts(fresh);
+	}
+
+	function refreshSnapshot() {
+		var range = document.getElementById('dashboard-range');
+		var url = new URL('index.php', window.location.href);
+		url.search = '';
+		url.searchParams.set('mod', 'server_status');
+		url.searchParams.set('action', 'snapshot');
+		url.searchParams.set('xhr', '1');
+		url.searchParams.set('range', range ? range.value : '24h');
+
+		return fetch(url.toString(), {
+			headers: { 'X-Requested-With': 'XMLHttpRequest' },
+			credentials: 'same-origin',
+			cache: 'no-store'
+		}).then(function (response) {
+			if (!response.ok) { throw new Error('Snapshot refresh failed'); }
+			return response.json();
+		}).then(function (payload) {
+			replaceDashboard(payload.html || '');
+		});
+	}
+
+	function runManualUpdate(button) {
+		var token = document.querySelector('[data-dashboard] input[name="csrf"]');
+		var range = document.getElementById('dashboard-range');
+		var label = button.querySelector('[data-update-label]');
+		var originalLabel = label ? label.textContent : '';
+		var body = new URLSearchParams({
+			csrf: token ? token.value : '',
+			range: range ? range.value : '24h'
+		});
+
+		button.disabled = true;
+		button.setAttribute('aria-busy', 'true');
+		if (label) { label.textContent = 'Comprobando…'; }
+		fetch(button.dataset.updateUrl, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' },
+			body: body.toString(),
+			credentials: 'same-origin',
+			cache: 'no-store'
+		}).then(function (response) {
+			return response.json().then(function (payload) { return { response: response, payload: payload }; });
+		}).then(function (result) {
+			applyStatusCards(result.payload);
+			if (label) {
+				label.textContent = result.payload.busy ? 'Comprobación ocupada' : 'Estado actualizado';
+			}
+			return refreshSnapshot();
+		}).catch(function () {
+			if (label) { label.textContent = 'No se pudo actualizar'; }
+		}).finally(function () {
+			button.disabled = false;
+			button.removeAttribute('aria-busy');
+			window.setTimeout(function () { if (label) { label.textContent = originalLabel; } }, 2500);
+		});
+	}
+
 	function initializeDashboard() {
 		var root = document.querySelector('[data-dashboard]');
 		if (!root) { return; }
 		renderCharts(root);
+		var updateButton = document.querySelector('[data-run-update]');
+		if (updateButton && !updateButton.dataset.updateBound) {
+			updateButton.dataset.updateBound = '1';
+			updateButton.addEventListener('click', function () { runManualUpdate(updateButton); });
+		}
 
 		var seconds = Number(root.dataset.autoRefreshSeconds || 0);
 		if (seconds > 0 && !document.body.dataset.dashboardRefreshStarted) {
 			document.body.dataset.dashboardRefreshStarted = '1';
 			window.setInterval(function () {
-				fetch(window.location.href, {
-					headers: { 'X-Requested-With': 'XMLHttpRequest' },
-					credentials: 'same-origin',
-					cache: 'no-store'
-				}).then(function (response) {
-					if (!response.ok) { throw new Error('Status refresh failed'); }
-					return response.text();
-				}).then(function (html) {
-					var parsed = new DOMParser().parseFromString(html, 'text/html');
-					var fresh = parsed.querySelector('[data-dashboard]');
-					var current = document.querySelector('[data-dashboard]');
-					if (!fresh || !current) { return; }
-					current.replaceWith(fresh);
-					renderCharts(fresh);
-				}).catch(function () {
+				refreshSnapshot().catch(function () {
 					// The next scheduled refresh retries while keeping the last snapshot visible.
 				});
 			}, seconds * 1000);

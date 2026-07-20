@@ -34,6 +34,8 @@ use psm\Service\Database;
 use psm\Service\ServerImage\ServerImageStorage;
 use psm\Service\Statistics\DashboardStatistics;
 use psm\Service\Statistics\StatisticsRange;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Status module
@@ -46,7 +48,7 @@ class StatusController extends AbstractServerController
         parent::__construct($db, $twig);
 
         $this->setCSRFKey('status');
-        $this->setActions(array('index', 'saveLayout'), 'index');
+        $this->setActions(array('index', 'saveLayout', 'snapshot'), 'index');
     }
 
     /**
@@ -77,6 +79,7 @@ class StatusController extends AbstractServerController
             'layout' => $layout,
             'range' => $range->value,
             'url_save' => psm_build_url(array('mod' => 'server', 'action' => 'edit')),
+            'url_update' => psm_build_url(array('mod' => 'server_update', 'action' => 'run')),
         );
 
         $auto_refresh_seconds = psm_get_conf('auto_refresh_servers');
@@ -153,6 +156,26 @@ class StatusController extends AbstractServerController
             ));
             return $response;
         }
+    }
+
+    protected function executeSnapshot(): JsonResponse
+    {
+        if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'GET') {
+            return new JsonResponse(
+                ['error' => 'Method not allowed.'],
+                Response::HTTP_METHOD_NOT_ALLOWED,
+                ['Allow' => 'GET'],
+            );
+        }
+
+        $this->xhr = true;
+        $response = new JsonResponse([
+            'html' => $this->executeIndex(),
+            'checked_at' => (new DateTimeImmutable())->format(DATE_ATOM),
+        ]);
+        $response->headers->set('Cache-Control', 'no-store, private');
+
+        return $response;
     }
 
     private function dashboardStatistics(): DashboardStatistics
