@@ -1,5 +1,5 @@
 {% import 'main/icons.tpl.html' as hope %}
-<div class="offcanvas offcanvas-end hope-settings" tabindex="-1" id="hope-ui-settings" data-bs-scroll="true" aria-labelledby="hope-ui-settings-label">
+<div class="offcanvas offcanvas-end" tabindex="-1" id="hope-ui-settings" data-bs-scroll="true" aria-labelledby="hope-ui-settings-label">
     <div class="offcanvas-header border-bottom">
         <div>
             <p class="text-primary small fw-semibold text-uppercase mb-1">Hope UI</p>
@@ -8,35 +8,35 @@
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Cerrar personalizador"></button>
     </div>
     <div class="offcanvas-body" data-appearance-customizer>
-        <section class="settings-section" aria-labelledby="setting-scheme">
+        <section class="py-2" aria-labelledby="setting-scheme">
             <h3 class="h6 mb-3" id="setting-scheme">Esquema</h3>
-            <div class="d-grid gap-2 grid-cols-3">
-                <button type="button" class="btn btn-border setting-choice{% if appearance.scheme == 'auto' %} active{% endif %}" data-setting="color-mode" data-name="color" data-preference="scheme" data-value="auto" aria-pressed="{{ appearance.scheme == 'auto' ? 'true' : 'false' }}">{{ hope.icon('bolt','me-1') }}Auto</button>
-                <button type="button" class="btn btn-border setting-choice{% if appearance.scheme == 'dark' %} active{% endif %}" data-setting="color-mode" data-name="color" data-preference="scheme" data-value="dark" aria-pressed="{{ appearance.scheme == 'dark' ? 'true' : 'false' }}">{{ hope.icon('moon','me-1') }}Oscuro</button>
-                <button type="button" class="btn btn-border setting-choice{% if appearance.scheme == 'light' %} active{% endif %}" data-setting="color-mode" data-name="color" data-preference="scheme" data-value="light" aria-pressed="{{ appearance.scheme == 'light' ? 'true' : 'false' }}">{{ hope.icon('sun','me-1') }}Claro</button>
+            <div class="row row-cols-1 row-cols-sm-3 g-2">
+                <div class="col"><button type="button" class="btn btn-outline-secondary w-100 h-100{% if appearance.scheme == 'auto' %} active{% endif %}" data-setting="color-mode" data-name="color" data-preference="scheme" data-value="auto" aria-pressed="{{ appearance.scheme == 'auto' ? 'true' : 'false' }}">{{ hope.icon('bolt','me-1') }}Auto</button></div>
+                <div class="col"><button type="button" class="btn btn-outline-secondary w-100 h-100{% if appearance.scheme == 'dark' %} active{% endif %}" data-setting="color-mode" data-name="color" data-preference="scheme" data-value="dark" aria-pressed="{{ appearance.scheme == 'dark' ? 'true' : 'false' }}">{{ hope.icon('moon','me-1') }}Oscuro</button></div>
+                <div class="col"><button type="button" class="btn btn-outline-secondary w-100 h-100{% if appearance.scheme == 'light' %} active{% endif %}" data-setting="color-mode" data-name="color" data-preference="scheme" data-value="light" aria-pressed="{{ appearance.scheme == 'light' ? 'true' : 'false' }}">{{ hope.icon('sun','me-1') }}Claro</button></div>
             </div>
         </section>
 
         <hr>
-        <section class="settings-section" aria-labelledby="setting-accent">
+        <section class="py-2" aria-labelledby="setting-accent">
             <div class="d-flex align-items-center justify-content-between"><h3 class="h6 mb-3" id="setting-accent">Color principal</h3>{{ hope.icon('refresh','text-primary') }}</div>
-            <div class="d-grid gap-2 grid-cols-6 accent-grid">
+            {% set tones = {'default':'primary','blue':'info','gray':'secondary','red':'danger','yellow':'warning','pink':'primary'} %}
+            <div class="row row-cols-2 row-cols-sm-3 g-2">
                 {% for value, label in {'default':'Original','blue':'Azul','gray':'Gris','red':'Rojo','yellow':'Naranja','pink':'Rosa'} %}
-                <button type="button" class="accent-choice{% if appearance.accent == value %} active{% endif %}" data-setting="color-mode1" data-name="color"
-                    data-preference="accent" data-value="{{ value }}" aria-label="{{ label }}" aria-pressed="{{ appearance.accent == value ? 'true' : 'false' }}"><span class="accent-swatch accent-{{ value }}"></span></button>
+                <div class="col"><button type="button" class="btn btn-outline-{{ tones[value] }} w-100{% if appearance.accent == value %} active{% endif %}" data-setting="color-mode1" data-name="color" data-preference="accent" data-value="{{ value }}" aria-pressed="{{ appearance.accent == value ? 'true' : 'false' }}">{{ label }}</button></div>
                 {% endfor %}
             </div>
         </section>
 
         <hr>
-        <section class="settings-section" aria-labelledby="setting-direction">
+        <section class="py-2" aria-labelledby="setting-direction">
             <h3 class="h6 mb-3" id="setting-direction">Dirección</h3>
-            <div class="row g-3">
+            <div class="row g-2">
                 {% for option in [['ltr','01','LTR'],['rtl','02','RTL']] %}
                 {% set value = option[0] %}{% set preview = option[1] %}{% set label = option[2] %}
-                <div class="col-6 text-center">
-                    <button type="button" class="preview-choice{% if appearance.direction == value %} active{% endif %}" data-setting="dir-mode" data-name="dir" data-preference="direction" data-value="{{ value }}" aria-pressed="{{ appearance.direction == value ? 'true' : 'false' }}">
-                        <picture><source media="(prefers-color-scheme: dark)" srcset="src/templates/default/static/hope/images/settings/dark/{{ preview }}.png"><img src="src/templates/default/static/hope/images/settings/light/{{ preview }}.png" alt="Vista {{ label }}"></picture><span>{{ label }}</span>
+                <div class="col-6">
+                    <button type="button" class="btn btn-outline-secondary w-100 h-100 p-2{% if appearance.direction == value %} active{% endif %}" data-setting="dir-mode" data-name="dir" data-preference="direction" data-value="{{ value }}" aria-pressed="{{ appearance.direction == value ? 'true' : 'false' }}">
+                        <picture><source media="(prefers-color-scheme: dark)" srcset="src/templates/default/static/hope/images/settings/dark/{{ preview }}.png"><img class="img-fluid rounded border mb-2 d-block" src="src/templates/default/static/hope/images/settings/light/{{ preview }}.png" alt="Vista {{ label }}"></picture><span>{{ label }}</span>
                     </button>
                 </div>
                 {% endfor %}
@@ -44,52 +44,52 @@
         </section>
 
         <hr>
-        <section class="settings-section" aria-labelledby="setting-sidebar-color">
+        <section class="py-2" aria-labelledby="setting-sidebar-color">
             <h3 class="h6 mb-3" id="setting-sidebar-color">Color de barra lateral</h3>
-            <div class="d-grid gap-2 grid-cols-2">
+            <div class="row row-cols-2 g-2">
                 {% for value, label in {'default':'Predeterminada','dark':'Oscura','color':'Color','transparent':'Transparente'} %}
-                <button type="button" class="btn btn-border{% if appearance.sidebar == value %} active{% endif %}" data-setting="sidebar" data-name="sidebar-color" data-preference="sidebar" data-value="{{ value }}" aria-pressed="{{ appearance.sidebar == value ? 'true' : 'false' }}">{{ label }}</button>
+                <div class="col"><button type="button" class="btn btn-outline-secondary w-100 h-100{% if appearance.sidebar == value %} active{% endif %}" data-setting="sidebar" data-name="sidebar-color" data-preference="sidebar" data-value="{{ value }}" aria-pressed="{{ appearance.sidebar == value ? 'true' : 'false' }}">{{ label }}</button></div>
                 {% endfor %}
             </div>
         </section>
 
         <hr>
-        <section class="settings-section" aria-labelledby="setting-sidebar-type">
+        <section class="py-2" aria-labelledby="setting-sidebar-type">
             <h3 class="h6 mb-3" id="setting-sidebar-type">Tipo de barra lateral</h3>
-            <div class="row g-2">
+            <div class="row row-cols-1 row-cols-sm-3 g-2">
                 {% for option in [['mini','03','Mini'],['hover','04','Hover'],['boxed','05','Boxed']] %}
                 {% set value = option[0] %}{% set preview = option[1] %}{% set label = option[2] %}
-                <div class="col-4 text-center"><button type="button" class="preview-choice{% if value in appearance.sidebar_types %} active{% endif %}" data-setting="sidebar" data-name="sidebar-type" data-preference="sidebar_types" data-multiple="true" data-value="{{ value }}" aria-pressed="{{ value in appearance.sidebar_types ? 'true' : 'false' }}"><picture><source media="(prefers-color-scheme: dark)" srcset="src/templates/default/static/hope/images/settings/dark/{{ preview }}.png"><img src="src/templates/default/static/hope/images/settings/light/{{ preview }}.png" alt="Vista {{ label }}"></picture><span>{{ label }}</span></button></div>
+                <div class="col"><button type="button" class="btn btn-outline-secondary w-100 h-100 p-2{% if value in appearance.sidebar_types %} active{% endif %}" data-setting="sidebar" data-name="sidebar-type" data-preference="sidebar_types" data-multiple="true" data-value="{{ value }}" aria-pressed="{{ value in appearance.sidebar_types ? 'true' : 'false' }}"><picture><source media="(prefers-color-scheme: dark)" srcset="src/templates/default/static/hope/images/settings/dark/{{ preview }}.png"><img class="img-fluid rounded border mb-2 d-block" src="src/templates/default/static/hope/images/settings/light/{{ preview }}.png" alt="Vista {{ label }}"></picture><span>{{ label }}</span></button></div>
                 {% endfor %}
             </div>
         </section>
 
         <hr>
-        <section class="settings-section" aria-labelledby="setting-sidebar-active">
+        <section class="py-2" aria-labelledby="setting-sidebar-active">
             <h3 class="h6 mb-3" id="setting-sidebar-active">Estilo del elemento activo</h3>
-            <div class="row g-2">
+            <div class="row row-cols-1 row-cols-sm-2 g-2">
                 {% for option in [['rounded-one-side','06','Redondeado lateral'],['rounded-all','07','Todo redondeado'],['pill-one-side','08','Píldora lateral'],['pill-all','09','Todo píldora']] %}
                 {% set value = option[0] %}{% set preview = option[1] %}{% set label = option[2] %}
-                <div class="col-6 text-center"><button type="button" class="preview-choice{% if appearance.sidebar_active == value %} active{% endif %}" data-setting="sidebar" data-name="sidebar-item" data-preference="sidebar_active" data-value="{{ value }}" aria-pressed="{{ appearance.sidebar_active == value ? 'true' : 'false' }}"><picture><source media="(prefers-color-scheme: dark)" srcset="src/templates/default/static/hope/images/settings/dark/{{ preview }}.png"><img src="src/templates/default/static/hope/images/settings/light/{{ preview }}.png" alt="Vista {{ label }}"></picture><span>{{ label }}</span></button></div>
+                <div class="col"><button type="button" class="btn btn-outline-secondary w-100 h-100 p-2{% if appearance.sidebar_active == value %} active{% endif %}" data-setting="sidebar" data-name="sidebar-item" data-preference="sidebar_active" data-value="{{ value }}" aria-pressed="{{ appearance.sidebar_active == value ? 'true' : 'false' }}"><picture><source media="(prefers-color-scheme: dark)" srcset="src/templates/default/static/hope/images/settings/dark/{{ preview }}.png"><img class="img-fluid rounded border mb-2 d-block" src="src/templates/default/static/hope/images/settings/light/{{ preview }}.png" alt="Vista {{ label }}"></picture><span>{{ label }}</span></button></div>
                 {% endfor %}
             </div>
         </section>
 
         <hr>
-        <section class="settings-section" aria-labelledby="setting-navbar">
+        <section class="py-2" aria-labelledby="setting-navbar">
             <h3 class="h6 mb-3" id="setting-navbar">Estilo de barra superior</h3>
-            <div class="row g-2">
+            <div class="row row-cols-1 row-cols-sm-2 g-2">
                 {% for option in [['glass','10','Cristal'],['color','11','Color'],['sticky','12','Fija'],['transparent','13','Transparente']] %}
                 {% set value = option[0] %}{% set preview = option[1] %}{% set label = option[2] %}
-                <div class="col-6 text-center"><button type="button" class="preview-choice{% if appearance.navbar == value %} active{% endif %}" data-setting="navbar" data-name="navbar-type" data-preference="navbar" data-value="{{ value }}" aria-pressed="{{ appearance.navbar == value ? 'true' : 'false' }}"><picture><source media="(prefers-color-scheme: dark)" srcset="src/templates/default/static/hope/images/settings/dark/{{ preview }}.png"><img src="src/templates/default/static/hope/images/settings/light/{{ preview }}.png" alt="Vista {{ label }}"></picture><span>{{ label }}</span></button></div>
+                <div class="col"><button type="button" class="btn btn-outline-secondary w-100 h-100 p-2{% if appearance.navbar == value %} active{% endif %}" data-setting="navbar" data-name="navbar-type" data-preference="navbar" data-value="{{ value }}" aria-pressed="{{ appearance.navbar == value ? 'true' : 'false' }}"><picture><source media="(prefers-color-scheme: dark)" srcset="src/templates/default/static/hope/images/settings/dark/{{ preview }}.png"><img class="img-fluid rounded border mb-2 d-block" src="src/templates/default/static/hope/images/settings/light/{{ preview }}.png" alt="Vista {{ label }}"></picture><span>{{ label }}</span></button></div>
                 {% endfor %}
-                <div class="col-12"><button type="button" class="btn btn-border w-100{% if appearance.navbar == 'default' %} active{% endif %}" data-setting="navbar" data-name="navbar-default" data-preference="navbar" data-value="default" aria-pressed="{{ appearance.navbar == 'default' ? 'true' : 'false' }}">Barra predeterminada</button></div>
+                <div class="col-12"><button type="button" class="btn btn-outline-secondary w-100{% if appearance.navbar == 'default' %} active{% endif %}" data-setting="navbar" data-name="navbar-default" data-preference="navbar" data-value="default" aria-pressed="{{ appearance.navbar == 'default' ? 'true' : 'false' }}">Barra predeterminada</button></div>
             </div>
         </section>
     </div>
 </div>
 
-<button class="btn btn-fixed-end btn-warning btn-icon btn-setting" type="button" data-bs-toggle="offcanvas" data-bs-target="#hope-ui-settings" aria-controls="hope-ui-settings" aria-label="Abrir personalizador de diseño">
+<button class="btn btn-fixed-end btn-warning btn-icon" type="button" data-bs-toggle="offcanvas" data-bs-target="#hope-ui-settings" aria-controls="hope-ui-settings" aria-label="Abrir personalizador de diseño">
     {{ hope.icon('gear','animated-rotate') }}
 </button>
 
