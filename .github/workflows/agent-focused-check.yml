@@ -26,6 +26,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: agent-focused-report
-          path: .agent/focus-result.txt
+          path: .agent/*.txt
           retention-days: 1
           if-no-files-found: warn
