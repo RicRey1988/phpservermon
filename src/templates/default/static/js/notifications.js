@@ -20,7 +20,7 @@
 	}
 
 	function updateBadge(unread) {
-		var badge = document.querySelector('.notification-count');
+		var badge = document.querySelector('[data-notification-count]');
 		if (!badge) { return; }
 		if (unread < 1) {
 			badge.remove();
@@ -29,16 +29,22 @@
 		badge.textContent = unread > 99 ? '99+' : String(unread);
 	}
 
+	function markItemRead(item, button) {
+		item.classList.remove('border-primary');
+		item.classList.remove('border-start');
+		item.classList.remove('border-4');
+		item.querySelectorAll('[data-unread-badge]').forEach(function (element) { element.remove(); });
+		if (button) { button.remove(); }
+	}
+
 	document.addEventListener('DOMContentLoaded', function () {
-		document.querySelectorAll('[data-notification-read]').forEach(function (button) {
+		document.querySelectorAll('[data-notification-mark-read]').forEach(function (button) {
 			button.addEventListener('click', function () {
-				var card = button.closest('[data-notification-id]');
-				if (!card) { return; }
+				var item = button.closest('[data-notification-item]');
+				if (!item) { return; }
 				button.disabled = true;
-				post(button.dataset.action, { notification_id: card.dataset.notificationId }).then(function (payload) {
-					card.classList.remove('notification-unread');
-					card.querySelectorAll('.badge.bg-primary').forEach(function (element) { element.remove(); });
-					button.remove();
+				post(button.dataset.action, { notification_id: item.dataset.notificationId }).then(function (payload) {
+					markItemRead(item, button);
 					updateBadge(payload.unread || 0);
 				}).catch(function () { button.disabled = false; });
 			});
@@ -49,8 +55,9 @@
 			readAll.addEventListener('click', function () {
 				readAll.disabled = true;
 				post(readAll.dataset.action).then(function () {
-					document.querySelectorAll('.notification-unread').forEach(function (card) { card.classList.remove('notification-unread'); });
-					document.querySelectorAll('[data-notification-read]').forEach(function (button) { button.remove(); });
+					document.querySelectorAll('[data-notification-item]').forEach(function (item) {
+						markItemRead(item, item.querySelector('[data-notification-mark-read]'));
+					});
 					updateBadge(0);
 				}).finally(function () { readAll.disabled = false; });
 			});

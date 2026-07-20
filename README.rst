@@ -23,10 +23,17 @@ Highlights
 * Authentic Hope UI 2.0 dashboard with accessible cards, the original visual
   hierarchy and redesigned login, registration, recovery, configuration and
   installer screens. DataTables is not loaded.
+* No project-specific presentation stylesheet is loaded. The complete interface
+  is composed from the bundled ``hope-ui.min.css``, ``dark.min.css`` and
+  ``customizer.min.css`` assets plus native Hope UI/Bootstrap utilities.
 * A quick theme toggle in the top bar switches light/dark immediately. The
   settings gear opens the complete customizer for Auto/Dark/Light, accent,
   LTR/RTL, sidebar and navbar styles; authenticated preferences are saved per
   user and anonymous preferences remain local to the browser.
+* The top search and icon controls share the native Hope UI alignment. The
+  responsive sidebar uses the upstream ``sidebar-mini`` state, places and
+  rotates its arrow correctly, opens on mobile and closes after navigation,
+  Escape or an outside click. User session actions live only in the top menu.
 * Estado is operational-first and shows server cards immediately; the separate Statistics
   page contains availability/latency KPIs and charts.
 * Responsive contracts cover widths 360, 390, 768, 1024, 1366 and 1600 in

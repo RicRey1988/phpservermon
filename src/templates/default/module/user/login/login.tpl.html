@@ -1,22 +1,31 @@
 {% import 'main/macros.tpl.html' as macro %}
 {% import 'main/icons.tpl.html' as hope %}
-<div class="auth-shell auth-layout">
-  <section class="auth-form-pane">
-    <form class="auth-card card" method="post">
-      {{ macro.input_csrf() }}
-      <div class="card-body p-0">
-        <a href="index.php" class="navbar-brand d-inline-flex align-items-center gap-3 mb-5">{% if site_logo_url %}<img class="brand-logo brand-logo--auth" src="{{ site_logo_url }}" alt="">{% else %}<span class="brand-mark">HS</span>{% endif %}<span class="h4 mb-0">{{ title }}</span></a>
-        <h1 class="h2 text-center mb-2">{{ title_sign_in }}</h1>
-        <p class="text-muted text-center mb-4">Accede para administrar tus servicios.</p>
-        <div class="mb-3"><label class="form-label" for="input-username">{{ label_username }}</label><input type="text" name="user_name" id="input-username" class="form-control form-control-lg" value="{{ value_user_name }}" autocomplete="username" required autofocus></div>
-        <div class="mb-3"><label class="form-label" for="input-password">{{ label_password }}</label><div class="input-group"><input type="password" id="input-password" name="user_password" class="form-control form-control-lg" autocomplete="current-password" required><button class="btn btn-outline-secondary" type="button" data-password-toggle="input-password" aria-label="Mostrar contraseña">{{ hope.icon('eye') }}</button></div></div>
-        <input type="hidden" name="action" value="login">
-        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4"><small class="text-muted">La sesión permanecerá iniciada en este dispositivo hasta que cierres sesión.</small><a href="?action=forgot">{{ label_password_forgot }}</a></div>
-        <div aria-live="polite" class="visually-hidden" id="login-status"></div>
-        <button class="btn btn-lg btn-primary d-block mx-auto px-5" type="submit">{{ label_login }}</button>
-        <p class="text-center text-muted small mt-5 mb-0">PHP Server Monitor · Mejorado por Hosting Supremo</p>
-      </div>
-    </form>
-  </section>
-  <aside class="auth-visual" aria-hidden="true"><div class="auth-visual-brand">{% if site_logo_url %}<img class="auth-visual-logo" src="{{ site_logo_url }}" alt="">{% else %}<span class="brand-mark brand-mark-lg">HS</span>{% endif %}</div></aside>
+<div class="container-fluid p-0 min-vh-100">
+  <div class="row g-0 min-vh-100">
+    <div class="col-12 col-lg-6 d-flex align-items-center justify-content-center p-4 p-md-5">
+      <div class="w-100"><div class="row justify-content-center"><div class="col-12 col-sm-10 col-md-8 col-lg-10 col-xl-8">
+        <form class="card border-0 shadow-none bg-transparent" method="post">
+          {{ macro.input_csrf() }}
+          <div class="card-body p-0">
+            <a href="index.php" class="navbar-brand d-inline-flex align-items-center gap-3 mb-5">
+              {% if site_logo_url %}<img width="48" height="48" class="img-fluid rounded-3" src="{{ site_logo_url }}" alt="">{% else %}<span class="avatar-50 rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center fw-bold" aria-hidden="true">HS</span>{% endif %}
+              <span class="h4 mb-0">{{ title }}</span>
+            </a>
+            <h1 class="h2 text-center mb-2">{{ title_sign_in }}</h1>
+            <p class="text-muted text-center mb-4">Accede para administrar tus servicios.</p>
+            <div class="mb-3"><label class="form-label" for="input-username">{{ label_username }}</label><input type="text" name="user_name" id="input-username" class="form-control form-control-lg" value="{{ value_user_name }}" autocomplete="username" required autofocus></div>
+            <div class="mb-3"><label class="form-label" for="input-password">{{ label_password }}</label><div class="input-group"><input type="password" id="input-password" name="user_password" class="form-control form-control-lg" autocomplete="current-password" required><button class="btn btn-outline-secondary d-inline-flex align-items-center justify-content-center" type="button" data-password-toggle="input-password" aria-label="Mostrar contraseña">{{ hope.icon('eye') }}</button></div></div>
+            <input type="hidden" name="action" value="login">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4"><small class="text-muted">La sesión permanecerá iniciada en este dispositivo hasta que cierres sesión.</small><a href="?action=forgot">{{ label_password_forgot }}</a></div>
+            <div aria-live="polite" class="visually-hidden" id="login-status"></div>
+            <button class="btn btn-lg btn-primary w-100" type="submit">{{ label_login }}</button>
+            <p class="text-center text-muted small mt-5 mb-0">PHP Server Monitor · Mejorado por Hosting Supremo</p>
+          </div>
+        </form>
+      </div></div></div>
+    </div>
+    <div class="col-lg-6 d-none d-lg-flex align-items-center justify-content-center bg-primary p-5" aria-hidden="true">
+      <div class="text-center"><img src="src/templates/default/static/hope/images/auth/01.png" class="img-fluid" alt="">{% if site_logo_url %}<img width="96" height="96" class="img-fluid rounded-3 mt-4" src="{{ site_logo_url }}" alt="">{% endif %}</div>
+    </div>
+  </div>
 </div>

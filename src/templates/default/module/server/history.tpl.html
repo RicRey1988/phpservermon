@@ -3,187 +3,136 @@
 <script type="text/javascript" src="src/templates/default/static/plugin/hammer/hammer.min.js"></script>
 <script type="text/javascript" src="src/templates/default/static/plugin/chartjs/plugin-zoom.min.js"></script>
 {% for graph in graphs %}
-
-<section class="history-graph row g-4 align-items-start mb-4">
-<div class="chart-container col-12 col-xl-9 min-w-0">
-	<canvas id="{{ graph.id }}">Your browser does not support the canvas element.</canvas>
-</div>
-<div class="col-12 col-xl-3 min-w-0">
-	<noscript><div hidden></noscript>
-		<div class="d-flex flex-wrap gap-2 history-range-controls" role="group" aria-label="{{ label_history }}">
-			{% for button in graph.buttons %}
-			<label class="btn btn-secondary {{ button.class_active }}">
-				<input type="radio" name="{{ graph.button_name }}" value="{{ button.time }}" id="{{ button.unit }}" autocomplete="off" {% if button.class_active %} checked {% endif  %}> {{ button.label }}
-			</label>
-			{% endfor %}
-		</div>
-	<noscript></div></noscript><div class="w-100"></div>
-	<br>
-	{% if graph.id == 'history_short' %}
-	<div id="meter" data-value="{{ graph.uptime|round(3) }}" translation="{{ graph.info.1.label|lower }}">
-		<span id="needle" style="transform: rotate({{ ((graph.uptime|round/100)*180)|round }}deg);"></span>
-	</div><br>
-	{% endif %}
-		{{ graph.info.0.label }}: {{ graph.info.0.value * 1000 }} ms
-</div>
+<section class="card mb-4" data-history-chart="{{ graph.id }}">
+    <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <h2 class="h5 mb-0">{{ label_history }}</h2>
+        <span class="badge bg-soft-primary text-primary">{{ graph.info.0.label }}: {{ graph.info.0.value * 1000 }} ms</span>
+    </div>
+    <div class="card-body">
+        <div class="row g-4 align-items-start">
+            <div class="col-12 col-xl-9">
+                <div class="ratio ratio-21x9 overflow-auto">
+                    <canvas id="{{ graph.id }}">Your browser does not support the canvas element.</canvas>
+                </div>
+            </div>
+            <div class="col-12 col-xl-3">
+                <noscript><div hidden></noscript>
+                <div class="d-flex flex-wrap gap-2" role="group" aria-label="{{ label_history }}">
+                    {% for button in graph.buttons %}
+                    {% set input_id = graph.id ~ '-' ~ button.unit ~ '-' ~ loop.index %}
+                    <input class="btn-check" type="radio" name="{{ graph.button_name }}" value="{{ button.time }}" id="{{ input_id }}" data-time-unit="{{ button.unit }}" autocomplete="off" {% if button.class_active %}checked{% endif %}>
+                    <label class="btn btn-outline-secondary {{ button.class_active }}" for="{{ input_id }}">{{ button.label }}</label>
+                    {% endfor %}
+                </div>
+                <noscript></div></noscript>
+                {% if graph.id == 'history_short' %}
+                <div class="mt-4">
+                    <label class="form-label" for="{{ graph.id }}-uptime">{{ graph.info.1.label }}</label>
+                    <progress class="w-100" id="{{ graph.id }}-uptime" max="100" value="{{ graph.uptime|round(3) }}">{{ graph.uptime|round(3) }}%</progress>
+                    <strong class="d-block mt-2">{{ graph.uptime|round(3) }}%</strong>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
 
 {% if graph.id == 'history_short' %}
 <script>
-	var historyShort = new Chart(document.getElementById("{{ graph.id }}").getContext('2d'), {
-		type: 'line',
-		data: {
-			datasets: [
-			{
-				data: {{ graph.lines.offline.value|raw }},
-				label: '{{ graph.lines.offline.name }}',
-				backgroundColor: '#dc3545',
-				borderColor: '#dc3545',
-				borderWidth: 2,
-				radius: 0,
-				pointStyle: 'crossRot',
-				fill: true,
-				spanGaps: false,
-			},
-			{
-				data: {{ graph.lines.online.value|raw }},
-				label: '{{graph.lines.online.name }}',
-				fill: false,
-				spanGaps: false,
-				backgroundColor: '#28a745',
-				borderColor: '#28a745',
-				lineTension: 0,
-				steppedLine: true
-			},
-			]
-		},
-		options: {	
-			scales: {
-				yAxes: [{
-					ticks: {
-						min: 0.0
-					}
-				}],
-				xAxes: [{
-					type: 'time',
-					time: {
-						unit: '{{ graph.unit }}',
-						minUnit: 'hour',
-						min: {{ graph.start_timestamp }},
-						max: {{ graph.end_timestamp }},
-					},
-					distribution: 'linear',
-					ticks: {
-						source: 'auto',
-					}
-				}]
-			},
-			plugins: {
-				zoom: {
-					pan: {
-						enabled: true,
-						mode: 'x',
-                        rangeMax: {
-                            x: new Date,
-                        },
-					},
-					zoom: {
-						enabled: true,
-						mode: 'x',
-                        rangeMax: {
-                            x: new Date,
-                        },
-                        speed: 0.05,
-					}
-				}
-			}
-		}
-	});
+    var historyShort = new Chart(document.getElementById("{{ graph.id }}").getContext('2d'), {
+        type: 'line',
+        data: {
+            datasets: [
+                {
+                    data: {{ graph.lines.offline.value|raw }},
+                    label: '{{ graph.lines.offline.name }}',
+                    backgroundColor: '#dc3545',
+                    borderColor: '#dc3545',
+                    borderWidth: 2,
+                    radius: 0,
+                    pointStyle: 'crossRot',
+                    fill: true,
+                    spanGaps: false
+                },
+                {
+                    data: {{ graph.lines.online.value|raw }},
+                    label: '{{ graph.lines.online.name }}',
+                    fill: false,
+                    spanGaps: false,
+                    backgroundColor: '#28a745',
+                    borderColor: '#28a745',
+                    lineTension: 0,
+                    steppedLine: true
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                yAxes: [{ ticks: { min: 0.0 } }],
+                xAxes: [{
+                    type: 'time',
+                    time: { unit: '{{ graph.unit }}', minUnit: 'hour', min: {{ graph.start_timestamp }}, max: {{ graph.end_timestamp }} },
+                    distribution: 'linear',
+                    ticks: { source: 'auto' }
+                }]
+            },
+            plugins: {
+                zoom: {
+                    pan: { enabled: true, mode: 'x', rangeMax: { x: new Date } },
+                    zoom: { enabled: true, mode: 'x', rangeMax: { x: new Date }, speed: 0.05 }
+                }
+            }
+        }
+    });
 </script>
 {% elseif graph.id == 'history_long' %}
 <script>
-	var colors = {
-		/*
-			ChartJS example colors
-			red: 'rgb(255, 99, 132)',
-			orange: 'rgb(255, 159, 64)',
-			yellow: 'rgb(255, 205, 86)',
-			green: 'rgb(75, 192, 192)',
-			blue: 'rgb(54, 162, 235)',
-			purple: 'rgb(153, 102, 255)',
-			grey: 'rgb(201, 203, 207)'
-		*/
-		latency_min: 'rgb(255, 99, 132)',
-		latency_avg: 'rgb(54, 162, 235)',
-		latency_max: 'rgb(255, 205, 86)'
-	}
-	var historyLong = new Chart(document.getElementById("{{ graph.id }}").getContext('2d'), {
-		type: 'line',
-		data: {
-			datasets: [
-			{% for key,line in graph.lines %}
-			{
-				data: {{ line.value|raw }},
-				label: '{{ line.name }}',
-				backgroundColor: colors['{{key}}'],
-				borderColor: colors['{{key}}'],
-			},
-			{% endfor %}
-			]
-		},
-		options: {
-			animation: {
-				easing: 'easeInOutExpo',
-			},
-			tooltips: {
-				mode: 'index'
-			},
-			scales: {
-				yAxes: [{
-					ticks: {
-						min: 0.0
-					}
-				}],
-				xAxes: [{
-					type: 'time',
-					time: {
-						unit: '{{ graph.unit }}',
-						minUnit: 'day',
-						min: {{ graph.start_timestamp }},
-						max: {{ graph.end_timestamp }},
-					},
-					distribution: 'linear',
-					ticks: {
-						source: 'auto',
-					}
-				}]
-			},
-			plugins: {
-				zoom: {
-					pan: {
-						enabled: true,
-						mode: 'x',
-                        rangeMax: {
-                            x: new Date,
-                        },
-					},
-					zoom: {
-						enabled: true,
-						mode: 'x',
-                        rangeMax: {
-                            x: new Date,
-                        },
-                        speed: 0.05,
-					}
-				}
-			}
-		}
-	});
+    var colors = {
+        latency_min: 'rgb(255, 99, 132)',
+        latency_avg: 'rgb(54, 162, 235)',
+        latency_max: 'rgb(255, 205, 86)'
+    };
+    var historyLong = new Chart(document.getElementById("{{ graph.id }}").getContext('2d'), {
+        type: 'line',
+        data: {
+            datasets: [
+                {% for key,line in graph.lines %}
+                {
+                    data: {{ line.value|raw }},
+                    label: '{{ line.name }}',
+                    backgroundColor: colors['{{ key }}'],
+                    borderColor: colors['{{ key }}']
+                },
+                {% endfor %}
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: { easing: 'easeInOutExpo' },
+            tooltips: { mode: 'index' },
+            scales: {
+                yAxes: [{ ticks: { min: 0.0 } }],
+                xAxes: [{
+                    type: 'time',
+                    time: { unit: '{{ graph.unit }}', minUnit: 'day', min: {{ graph.start_timestamp }}, max: {{ graph.end_timestamp }} },
+                    distribution: 'linear',
+                    ticks: { source: 'auto' }
+                }]
+            },
+            plugins: {
+                zoom: {
+                    pan: { enabled: true, mode: 'x', rangeMax: { x: new Date } },
+                    zoom: { enabled: true, mode: 'x', rangeMax: { x: new Date }, speed: 0.05 }
+                }
+            }
+        }
+    });
 </script>
 {% else %}
-<script>
-	alert('Graph is missing the \'javascript part\'.');
-</script>
+<script>console.warn('Graph is missing its JavaScript configuration.');</script>
 {% endif %}
-</section>
 {% endfor %}
 <script src="src/templates/default/static/js/history.js?v={{ constant('PSM_VERSION')|url_encode }}"></script>

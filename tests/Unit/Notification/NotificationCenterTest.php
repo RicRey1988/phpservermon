@@ -37,10 +37,11 @@ final class NotificationCenterTest extends TestCase
         $navbar = $this->read('src/templates/default/main/app-navbar.tpl.html');
         $controller = $this->read('src/psm/Module/AbstractController.php');
 
-        self::assertStringContainsString('notification-navbar', $navbar);
+        self::assertStringContainsString('data-notification-navbar', $navbar);
+        self::assertStringContainsString('data-notification-count', $navbar);
         self::assertStringContainsString('99+', $navbar);
         self::assertStringContainsString('notification_navbar.latest', $navbar);
-        self::assertStringContainsString("latestForUser(", $controller);
+        self::assertStringContainsString('latestForUser(', $controller);
         self::assertStringContainsString(', 5)', $controller);
     }
 
@@ -49,14 +50,18 @@ final class NotificationCenterTest extends TestCase
         $template = $this->read('src/templates/default/module/user/notification/index.tpl.html');
         $javascript = $this->read('src/templates/default/static/js/notifications.js');
 
-        self::assertStringContainsString('<article class="card notification-card', $template);
+        self::assertStringContainsString('<article class="card', $template);
+        self::assertStringContainsString('data-notification-item', $template);
+        self::assertStringContainsString('border-start border-4 border-primary', $template);
         self::assertStringContainsString('{{ notification.body }}', $template);
         self::assertStringNotContainsString('notification.body|raw', $template);
         self::assertStringNotContainsString('<table', $template);
-        self::assertStringContainsString('data-notification-read', $template);
+        self::assertStringContainsString('data-notification-mark-read', $template);
         self::assertStringContainsString('data-notifications-read-all', $template);
+        self::assertStringContainsString('data-unread-badge', $template . $javascript);
         self::assertStringContainsString("method: 'POST'", $javascript);
         self::assertStringContainsString('X-Requested-With', $javascript);
+        self::assertStringNotContainsString('notification-unread', $template . $javascript);
     }
 
     private function read(string $path): string

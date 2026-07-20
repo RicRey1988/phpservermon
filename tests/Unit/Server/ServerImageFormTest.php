@@ -116,15 +116,20 @@ final class ServerImageFormTest extends TestCase
 
     public function testDropzoneEnhancementProvidesPreviewWithoutReplacingNativeInput(): void
     {
-        $root = dirname(__DIR__, 3) . '/src/templates/default/static/';
-        $javascript = file_get_contents($root . 'js/app-shell.js');
-        $styles = file_get_contents($root . 'css/hs-monitor.css');
+        $root = dirname(__DIR__, 3) . '/src/templates/default/';
+        $javascript = file_get_contents($root . 'static/js/app-shell.js');
+        $template = file_get_contents($root . 'module/server/server/update.tpl.html');
         self::assertIsString($javascript);
-        self::assertIsString($styles);
+        self::assertIsString($template);
 
         self::assertStringContainsString('[data-dropzone]', $javascript);
         self::assertStringContainsString('[data-image-preview]', $javascript);
-        self::assertStringContainsString('.dropzone-preview', $styles);
+        self::assertStringContainsString('URL.createObjectURL', $javascript);
+        self::assertStringContainsString('data-image-input', $template);
+        self::assertStringContainsString('class="form-control" type="file"', $template);
+        self::assertStringContainsString('class="img-thumbnail"', $template);
+        self::assertStringContainsString('width="112" height="112"', $template);
+        self::assertFileDoesNotExist($root . 'static/css/hs-monitor.css');
     }
 
     private function managerWith(ImageProcessorInterface $processor): ServerImageManager

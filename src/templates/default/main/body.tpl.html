@@ -15,26 +15,30 @@
     <link href="src/templates/default/static/hope/css/hope-ui.min.css?v={{ version|url_encode }}" rel="stylesheet">
     <link href="src/templates/default/static/hope/css/dark.min.css?v={{ version|url_encode }}" rel="stylesheet">
     <link href="src/templates/default/static/hope/css/customizer.min.css?v={{ version|url_encode }}" rel="stylesheet">
-    <link href="src/templates/default/static/css/hs-monitor.css?v={{ version|url_encode }}&ui=1" rel="stylesheet">
 </head>
-<body class="{{ appearance.body_classes }}{% if html_menu is not defined or not html_menu %} no-menu{% endif %}" data-authenticated="{{ user_level != 30 ? 'true' : 'false' }}" data-appearance-url="{{ appearance_save_url|default('')|raw }}" data-appearance-csrf="{{ appearance_csrf|default('') }}">
-    <a class="visually-hidden-focusable skip-link" href="#main-content">Ir al contenido principal</a>
+<body class="{{ appearance.body_classes }}" data-authenticated="{{ user_level != 30 ? 'true' : 'false' }}" data-appearance-url="{{ appearance_save_url|default('')|raw }}" data-appearance-csrf="{{ appearance_csrf|default('') }}">
+    <a class="visually-hidden-focusable" href="#main-content">Ir al contenido principal</a>
 
     {% import 'main/icons.tpl.html' as hope %}
     {% if html_menu is defined and html_menu %}
-    <aside class="sidebar sidebar-default sidebar-base navs-rounded-all {{ appearance.sidebar_classes }}" aria-label="Navegación principal">
+    <aside class="sidebar sidebar-default sidebar-white sidebar-base navs-rounded-all {{ appearance.sidebar_classes }}" data-sidebar-preferred-mini="{{ 'mini' in appearance.sidebar_types ? 'true' : 'false' }}" aria-label="Navegación principal">
         <div class="sidebar-header d-flex align-items-center justify-content-start">
             <a href="index.php" class="navbar-brand d-flex align-items-center gap-2">
-                {% if site_logo_url %}<img class="brand-logo" src="{{ site_logo_url }}" alt=""><span class="visually-hidden">{{ title }}</span>{% else %}<span class="brand-mark" aria-hidden="true">HS</span>{% endif %}<h4 class="logo-title mb-0">{{ title }}</h4>
+                {% if site_logo_url %}
+                <img src="{{ site_logo_url }}" width="40" height="40" class="img-fluid rounded-3" alt=""><span class="visually-hidden">{{ title }}</span>
+                {% else %}
+                <span class="avatar-40 rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center fw-bold" aria-hidden="true">HS</span>
+                {% endif %}
+                <h4 class="logo-title mb-0">{{ title }}</h4>
             </a>
-            <button type="button" class="sidebar-toggle btn btn-icon" data-toggle="sidebar" data-active="true" aria-label="Contraer menú" aria-expanded="true"><i class="icon">{{ hope.icon('arrow-left', 'icon-20') }}</i></button>
+            <button type="button" class="sidebar-toggle" data-toggle="sidebar" data-active="true" aria-label="Contraer menú" aria-expanded="true"><i class="icon">{{ hope.icon('arrow-left') }}</i></button>
         </div>
         <div class="sidebar-body pt-0 data-scrollbar"><div class="sidebar-list">{{ html_menu|raw }}</div></div>
         <div class="sidebar-footer"></div>
     </aside>
     {% endif %}
 
-    <main class="main-content" id="main-content">
+    <main class="main-content min-vh-100 d-flex flex-column" id="main-content">
         {% if html_menu is defined and html_menu %}
         <div class="position-relative iq-banner">
             {% include 'main/app-navbar.tpl.html' %}
@@ -42,24 +46,24 @@
                 <div class="container-fluid iq-container">
                     <div class="row"><div class="col-md-12"><div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
                         <div><p class="text-white-50 mb-1">PHP Server Monitor</p><h1 class="text-white h2 mb-0">{{ subtitle|default(title) }}</h1></div>
-                        {% if header_accessories is defined %}<div class="page-actions">{{ header_accessories|raw }}</div>{% endif %}
+                        {% if header_accessories is defined %}<div>{{ header_accessories|raw }}</div>{% endif %}
                     </div></div></div>
                 </div>
                 <div class="iq-header-img"><img src="src/templates/default/static/hope/images/dashboard/top-header.png" alt="" class="theme-color-default-img img-fluid w-100" onerror="this.hidden=true"></div>
             </div>
         </div>
 
-        <div class="container-fluid content-inner mt-n5 py-0">
+        <div class="container-fluid content-inner mt-n5 py-0 flex-grow-1">
             <noscript><div class="alert alert-warning" role="alert">PHP Server Monitor funciona mejor con JavaScript activado.</div></noscript>
-            <div class="message-stack" aria-live="polite" aria-atomic="true">{% for msg in messages %}<div class="alert alert-{{ msg.class }} alert-dismissible fade show" role="alert"><strong>{{ msg.message|raw }}</strong><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button></div>{% endfor %}</div>
-            {% if html_sidebar is defined %}<div class="module-actions mb-3">{{ html_sidebar|raw }}</div>{% endif %}
-            <div id="content" class="app-content">{{ html_content|raw }}</div>
+            <div aria-live="polite" aria-atomic="true">{% for msg in messages %}<div class="alert alert-{{ msg.class }} alert-dismissible fade show" role="alert"><strong>{{ msg.message|raw }}</strong><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button></div>{% endfor %}</div>
+            {% if html_sidebar is defined %}<div class="mb-3">{{ html_sidebar|raw }}</div>{% endif %}
+            <div id="content">{{ html_content|raw }}</div>
         </div>
 
-        {% if add_footer %}<footer class="footer app-footer" role="contentinfo"><div class="container-fluid d-flex flex-wrap justify-content-between gap-2"><span>PHP Server Monitor {{ version }} · <a href="https://github.com/RicRey1988/phpservermon" target="_blank" rel="noopener noreferrer">Mejorado por Hosting Supremo</a> <span class="text-danger">{{ update_available|raw }}</span></span><a href="#main-content">{{ label_back_to_top }}</a></div></footer>{% endif %}
+        {% if add_footer %}<footer class="footer mt-auto border-top bg-body" role="contentinfo"><div class="container-fluid d-flex flex-wrap justify-content-between gap-2"><span>PHP Server Monitor {{ version }} · <a href="https://github.com/RicRey1988/phpservermon" target="_blank" rel="noopener noreferrer">Mejorado por Hosting Supremo</a> <span class="text-danger">{{ update_available|raw }}</span></span><a href="#main-content">{{ label_back_to_top }}</a></div></footer>{% endif %}
         {% else %}
-        <div class="auth-messages position-fixed top-0 start-50 translate-middle-x mt-3" aria-live="polite">{% for msg in messages %}<div class="alert alert-{{ msg.class }} alert-dismissible fade show shadow" role="alert"><strong>{{ msg.message|raw }}</strong><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button></div>{% endfor %}</div>
-        <div id="content" class="auth-page-content">{{ html_content|raw }}</div>
+        <div class="position-fixed top-0 start-50 translate-middle-x mt-3 w-100 px-3" aria-live="polite">{% for msg in messages %}<div class="alert alert-{{ msg.class }} alert-dismissible fade show shadow mx-auto" role="alert"><strong>{{ msg.message|raw }}</strong><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button></div>{% endfor %}</div>
+        <div id="content" class="min-vh-100">{{ html_content|raw }}</div>
         {% endif %}
     </main>
 

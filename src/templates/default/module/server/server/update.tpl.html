@@ -1,17 +1,18 @@
 {% import 'main/icons.tpl.html' as hope %}
 {% import 'main/macros.tpl.html' as macro %}
-<form name="edit_server" action="{{ url_save|raw }}" class="server-form col-12 col-xxl-9" id="edit_server" method="post"
+<form name="edit_server" action="{{ url_save|raw }}" class="col-12 col-xxl-9 mx-auto" data-server-form id="edit_server" method="post"
 	 enctype="multipart/form-data" autocomplete="off">
-	<fieldset data-form-section="identification-check">
-		<legend>{{ titlemode }}</legend>
+	<fieldset class="card mb-4" data-form-section="identification-check">
+		<legend class="card-header h5 float-none w-100 mb-0">{{ titlemode }}</legend>
+		<div class="card-body">
 		<div class="col">
 			<!-- Label -->
 			{{ macro.input_field("text", "label", null, "label", label_label, edit_value_label, null, "255", null, null, null, null, true, true) }}
 			<!-- IP -->
 			{{ macro.input_field("text", "ip", null, "ip", label_domain, edit_value_ip, null, "255", null, null, null, null, true) }}
 			<!-- Type -->
-			<div class="form-group">
-				<label for="type">{{ label_type }}</label>
+			<div class="mb-3">
+				<label class="form-label" for="type">{{ label_type }}</label>
 				<select id="type" name="type" class="form-select" required>
 					<option value="">{{ label_please_select }}</option>
 					<option value="ping" {{ edit_type_selected_ping|raw }}>{{ label_ping }}</option>
@@ -20,8 +21,8 @@
 				</select>
 			</div>
 			<!-- Port -->
-			<div class="form-group types typeService">
-				<label for="popular_ports">{{ label_port }}</label>
+			<div class="mb-3" data-server-type="service">
+				<label class="form-label" for="popular_ports">{{ label_port }}</label>
 				<select id="popular_ports" name="popular_ports" class="form-select">
 					<option {% if not edit_value_port %}selected {% endif %} disabled>{{ label_please_select }}</option>
 					<option {% if edit_value_port not in [0, 80, 443, 21, 25, 465, 110, 995, 143, 993, 22, 389, 3306, 115, 43, 53,
@@ -47,12 +48,12 @@
 				</select>
 			</div>
 			<!-- Custom port -->
-            {{ macro.input_field("number", "port", "port types typeService", "port", label_custom_port, edit_value_port, null, "5") }}
+            <div data-server-type="service" data-port-custom>{{ macro.input_field("number", "port", null, "port", label_custom_port, edit_value_port, null, "5") }}</div>
             <!-- SSL Cert check -->
-            {{ macro.input_field("number", "ssl_cert_expiry_days", "types typeWebsite", "ssl_cert_expiry_days", label_ssl_cert_expiry_days, edit_value_ssl_cert_expiry_days, 0, "5", 'ssl_cert_help', label_ssl_cert_expiry_days_description) }}
+            <div data-server-type="website">{{ macro.input_field("number", "ssl_cert_expiry_days", null, "ssl_cert_expiry_days", label_ssl_cert_expiry_days, edit_value_ssl_cert_expiry_days, 0, "5", 'ssl_cert_help', label_ssl_cert_expiry_days_description) }}</div>
 			<!-- Request method -->
-			<div class="form-group types typeWebsite">
-				<label for="popular_request_methods">{{ label_request_method }}</label>
+			<div class="mb-3" data-server-type="website">
+				<label class="form-label" for="popular_request_methods">{{ label_request_method }}</label>
 				<select id="popular_request_methods" name="popular_request_methods" class="form-select">
 					<option value="">{{ label_none }}</option>
 					<optgroup label="{{ label_popular_request_methods }}">
@@ -71,16 +72,16 @@
 				</select>
 			</div>
 			<!-- Custom request method -->
-			{{ macro.input_field("text", "request_method", "requestMethod types typeWebsite", "request_method", label_custom_request_method, edit_value_request_method, null, "50") }}
+			<div data-server-type="website" data-request-method-custom>{{ macro.input_field("text", "request_method", null, "request_method", label_custom_request_method, edit_value_request_method, null, "50") }}</div>
 			<!-- Post field -->
-			{{ macro.input_field("text", "post_field", "types typeWebsite typeGroup", "post_field", label_post_field, edit_value_post_field, "param1=val1&param2=val2&...", "255", 'post_field_help', label_post_field_description) }}
+			<div data-server-type="website">{{ macro.input_field("text", "post_field", null, "post_field", label_post_field, edit_value_post_field, "param1=val1&param2=val2&...", "255", 'post_field_help', label_post_field_description) }}</div>
 			<!-- Pattern -->
-			{{ macro.input_field("text", "pattern", "types typeWebsite", "pattern", label_pattern, edit_value_pattern, null, "255", 'pattern_help', label_pattern_description) }}
+			<div data-server-type="website">{{ macro.input_field("text", "pattern", null, "pattern", label_pattern, edit_value_pattern, null, "255", 'pattern_help', label_pattern_description) }}</div>
 			<!-- Pattern online/offline (Didn't use the macro because of the custom col.) -->
-			<div class="form-group row g-3 types typeWebsite">
+			<div class="row g-3 mb-3" data-server-type="website">
 				<label for="pattern_online" class="col-form-label col-md-6">{{ label_pattern_online }}</label>
-				<div class="col-md-6 p-0">
-					<select id="pattern_online" name="pattern_online" class="form-select" aria-describedby="pattern_online">
+				<div class="col-md-6">
+					<select id="pattern_online" name="pattern_online" class="form-select" aria-describedby="pattern_online_help">
 						<option value="yes" {{ edit_pattern_selected_yes|raw }}>{{ label_online }}</option>
 						<option value="no" {{ edit_pattern_selected_no|raw }}>{{ label_offline }}</option>
 					</select>
@@ -88,9 +89,9 @@
 				<small id="pattern_online_help" class="form-text text-muted p-1">{{ label_pattern_online_description }}</small>
 			</div>
 			<!-- Redirect check (Didn't use the macro because of the custom col.) -->
-			<div class="form-group row g-3 types typeWebsite">
+			<div class="row g-3 mb-3" data-server-type="website">
 				<label for="redirect_check" class="col-form-label col-md-7">{{ label_redirect_check }}</label>
-				<div class="col-md-5 p-0">
+				<div class="col-md-5">
 					<select id="redirect_check" name="redirect_check" class="form-select" aria-describedby="redirect_check_help">
 						<option value="ok" {{ edit_redirect_check_selected_ok|raw }}>{{ label_ok }}</option>
 						<option value="bad" {{ edit_redirect_check_selected_bad|raw }}>{{ label_bad }}</option>
@@ -99,17 +100,17 @@
 				<small id="redirect_check_help" class="form-text text-muted p-1">{{ label_redirect_check_description }}</small>
 			</div>
 			<!-- Allow HTTP codes -->
-			{{ macro.input_field("text", "allow_http_status", "types typeWebsite", "allow_http_status", label_allow_http_status, edit_value_allow_http_status, "401|403", "255", 'allow_http_status_help', label_allow_http_status_description) }}
+			<div data-server-type="website">{{ macro.input_field("text", "allow_http_status", null, "allow_http_status", label_allow_http_status, edit_value_allow_http_status, "401|403", "255", 'allow_http_status_help', label_allow_http_status_description) }}</div>
 			<!-- Header (Didn't use the macro because of the custom col.) -->
-			<div class="form-group row g-3 types typeWebsite">
+			<div class="row g-3 mb-3" data-server-type="website">
 				<div class="col-md-6">
-					<label for="header_name">{{ label_header_name }}</label>
+					<label class="form-label" for="header_name">{{ label_header_name }}</label>
 					<input type="text" class="form-control" name="header_name" id="header_name" value="{{ edit_value_header_name }}"
 					 maxlength="255" aria-describedby="header_name_help">
 					<small id="header_name_help" class="form-text text-muted">{{ label_header_name_description }}</small>
 				</div>
 				<div class="col-md-6">
-					<label for="header_value">{{ label_header_value }}</label>
+					<label class="form-label" for="header_value">{{ label_header_value }}</label>
 					<input type="text" class="form-control" name="header_value" id="header_value" value="{{ edit_value_header_value }}"
 					 maxlength="255" aria-describedby="header_value_help">
 					<small id="header_value_help" class="form-text text-muted">{{ label_header_value_description }}</small>
@@ -120,17 +121,19 @@
 			<!-- Timeout -->
 			{{ macro.input_field("number", "timeout", null, "timeout", label_timeout, edit_value_timeout, default_value_timeout, "10", 'timeout_help', label_timeout_description) }}
 		</div>
+	</div>
 	</fieldset>
-	<fieldset data-form-section="image">
-		<legend>Imagen del servidor</legend>
-		<div class="dropzone-field" data-dropzone tabindex="0" role="button" aria-controls="server_image">
-			<img class="dropzone-preview" src="{{ edit_image_url }}" alt="Vista previa" data-image-preview>
-			<div class="dropzone-copy">
-				{{ hope.icon('cloud-upload-alt','hope-icon-lg') }}
+	<fieldset class="card mb-4" data-form-section="image">
+		<legend class="card-header h5 float-none w-100 mb-0">Imagen del servidor</legend>
+		<div class="card-body">
+		<div class="row g-3 align-items-center" data-dropzone tabindex="0" role="button" aria-controls="server_image">
+			<div class="col-12 col-md-auto"><img class="img-thumbnail" src="{{ edit_image_url }}" width="112" height="112" alt="Vista previa" data-image-preview></div>
+			<div class="col">
+				{{ hope.icon('cloud-upload-alt','icon-32 text-primary mb-2') }}
 				<label class="form-label d-block mb-1" for="server_image">Arrastra una imagen aquí o selecciónala</label>
+				<input class="form-control" type="file" id="server_image" name="server_image" accept="image/jpeg,image/png,image/webp" data-image-input>
 				<small class="text-muted">JPEG, PNG o WebP; máximo 5 MiB. Se normalizará automáticamente.</small>
 			</div>
-			<input class="visually-hidden" type="file" id="server_image" name="server_image" accept="image/jpeg,image/png,image/webp" data-image-input>
 		</div>
 		{% if edit_has_image %}
 		<div class="form-check mt-3">
@@ -140,24 +143,30 @@
 		{% else %}
 		<input type="hidden" name="remove_image" value="0">
 		{% endif %}
+	</div>
 	</fieldset>
-	<fieldset data-form-section="http-headers">
-		<legend>{{ label_custom_header }} ({{ label_optional }})</legend>
+	<fieldset class="card mb-4" data-form-section="http-headers">
+		<legend class="card-header h5 float-none w-100 mb-0">{{ label_custom_header }} ({{ label_optional }})</legend>
+		<div class="card-body">
 		<div class="col">
 			{{ macro.input_field("text", "custom_header", null, "custom_header", label_custom_header, edit_custom_header, "Cookie:...", null, 'custom_header_help', label_custom_header_description) }}
 		</div>
+	</div>
 	</fieldset>
-	<fieldset class="types typeWebsite" data-form-section="authentication">
-		<legend>{{ label_authentication_settings }} ({{ label_optional }})</legend>
+	<fieldset class="card mb-4" data-server-type="website" data-form-section="authentication">
+		<legend class="card-header h5 float-none w-100 mb-0">{{ label_authentication_settings }} ({{ label_optional }})</legend>
+		<div class="card-body">
 		<div class="col">
 			<!-- Website username -->
 			{{ macro.input_field("text", "website_username", null, "website_username", label_website_username, edit_value_website_username, null, "255", 'website_username_help', label_website_username_description, null, true, null, null, true) }}
 			<!-- website password -->
 			{{ macro.input_field("password", "website_password", null, "website_password", label_website_password, edit_value_website_password, null, "255", 'website_password_help', label_website_password_description, null, true, null, null, true) }}
 		</div>
+	</div>
 	</fieldset>
-	<fieldset data-form-section="channels">
-		<legend>{{ label_fieldset_monitoring }}</legend>
+	<fieldset class="card mb-4" data-form-section="channels">
+		<legend class="card-header h5 float-none w-100 mb-0">{{ label_fieldset_monitoring }}</legend>
+		<div class="card-body">
 		<div class="col">
 			<!-- Monitor -->
 			{{ macro.input_select_monitoring("active", "active", label_monitoring, edit_active_selected, label_yes, label_no) }}
@@ -174,24 +183,31 @@
             <!-- Webhook -->
             {{ macro.input_select_monitoring("webhook", "webhook", label_send_webhook, edit_webhook_selected, label_yes, label_no, warning_webhook, label_warning_webhook) }}
 		</div>
+    </div>
     </fieldset>
-	<fieldset data-form-section="access">
-		<legend>{{ label_fieldset_permissions }}</legend>
+	<fieldset class="card mb-4" data-form-section="access">
+		<legend class="card-header h5 float-none w-100 mb-0">{{ label_fieldset_permissions }}</legend>
+		<div class="card-body">
 		<!-- Permissions -->
 		{{ macro.input_select_multiple("user_id", "user_id[]", label_permissions, label_search, users, label_please_select) }}
+    </div>
     </fieldset>
-    <fieldset data-form-section="actions">
-        <legend>{{ label_save }}</legend>
+    <fieldset class="card mb-4" data-form-section="actions">
+        <legend class="card-header h5 float-none w-100 mb-0">{{ label_save }}</legend>
+        <div class="card-body">
         {{ macro.button_save(null, label_save) }}
-        <a class="btn" href="{{ url_go_back|raw }}">{{ label_go_back }}</a>
+        <a class="btn btn-outline-secondary" href="{{ url_go_back|raw }}">{{ label_go_back }}</a>
+    </div>
     </fieldset>
     {% if edit_server_id > 0 %}
-    <fieldset>
-        <legend class="mt-4">{{ label_delete }}</legend>
-        <a class="btn btn-danger show-modal" href="{{ url_delete|raw }}" title="{{ label_delete }}" data-modal-id="delete"
+    <fieldset class="card mb-4">
+        <legend class="card-header h5 float-none w-100 mb-0">{{ label_delete }}</legend>
+        <div class="card-body">
+        <a class="btn btn-danger" data-modal-trigger href="{{ url_delete|raw }}" title="{{ label_delete }}" data-modal-id="delete"
 			data-modal-param="{{ edit_value_label }}">
             {{ hope.icon('trash') }} {{ label_delete }}
         </a>
+    </div>
     </fieldset>
     {% endif %}
 	{{ macro.input_csrf() }}

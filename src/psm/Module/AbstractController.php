@@ -351,11 +351,6 @@ abstract class AbstractController implements ControllerInterface
         $ulvl = $this->getUser()->getUserLevel();
 
         $tpl_data = array(
-            'label_help' => psm_get_lang('menu', 'help'),
-            'label_profile' => psm_get_lang('users', 'profile'),
-            'label_logout' => psm_get_lang('login', 'logout'),
-            'url_profile' => psm_build_url(array('mod' => 'user_profile')),
-            'url_logout' => psm_build_url(array('logout' => 1)),
             'label_current' => psm_get_lang('system', 'current'),
         );
 
@@ -390,14 +385,6 @@ abstract class AbstractController implements ControllerInterface
             );
         }
 
-        if ($ulvl != PSM_USER_ANONYMOUS) {
-            $user = $this->getUser()->getUser();
-            $tpl_data['label_usermenu'] = str_replace(
-                '%user_name%',
-                $user->name,
-                psm_get_lang('login', 'welcome_usermenu')
-            );
-        }
         return $this->twig->render('main/menu.tpl.html', $tpl_data);
     }
 

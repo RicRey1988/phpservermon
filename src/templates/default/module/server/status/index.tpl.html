@@ -5,12 +5,12 @@
 <section id="status-root" data-status-board data-auto-refresh-seconds="{{ auto_refresh ? auto_refresh_seconds : 0 }}">
     {{ macro.input_csrf() }}
     <div id="flow-layout" {% if layout != 0 %}hidden{% endif %} aria-labelledby="block-layout">
-        <div class="status-grid">
-            {% for server in servers %}<div data-search-text="{{ server.label }} {{ server.ip }}">{{ cards.server_card(server, false, label_last_online, label_last_offline, label_last_check, label_rtime) }}</div>{% endfor %}
+        <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
+            {% for server in servers %}<div class="col" data-search-text="{{ server.label }} {{ server.ip }}">{{ cards.server_card(server, false, label_last_online, label_last_offline, label_last_check, label_rtime) }}</div>{% endfor %}
         </div>
     </div>
     <div id="list-layout" {% if layout == 0 %}hidden{% endif %} aria-labelledby="table-layout">
-        <div class="status-list d-grid gap-3">{% for server in servers %}<div data-search-text="{{ server.label }} {{ server.ip }}">{{ cards.server_card(server, true, label_last_online, label_last_offline, label_last_check, label_rtime) }}</div>{% endfor %}</div>
+        <div class="d-grid gap-3">{% for server in servers %}<div data-search-text="{{ server.label }} {{ server.ip }}">{{ cards.server_card(server, true, label_last_online, label_last_offline, label_last_check, label_rtime) }}</div>{% endfor %}</div>
     </div>
-    {% if not servers %}<div class="card"><div class="card-body text-center py-5">{{ hope.icon('server','hope-icon-lg text-muted mb-3') }}<p class="text-muted">{{ label_none }}</p><a class="btn btn-primary" href="{{ url_save|raw }}">{{ label_add_server }}</a></div></div>{% endif %}
+    {% if not servers %}<div class="card"><div class="card-body text-center py-5">{{ hope.icon('server','icon-32 text-muted mb-3') }}<p class="text-muted">{{ label_none }}</p><a class="btn btn-primary" href="{{ url_save|raw }}">{{ label_add_server }}</a></div></div>{% endif %}
 </section>

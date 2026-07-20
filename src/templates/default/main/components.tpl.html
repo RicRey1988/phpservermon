@@ -54,15 +54,18 @@
 {% endmacro %}
 
 {% macro dropzone(id, name, label, accept, help) %}
-<label class="dropzone-field" for="{{ id }}" data-dropzone>
-	{{ hope.icon('cloud-upload-alt') }}<span>{{ label }}</span>
-	<input class="visually-hidden" type="file" id="{{ id }}" name="{{ name }}" accept="{{ accept }}">
-	{% if help %}<small>{{ help }}</small>{% endif %}
+<label class="card border border-2 mb-3" for="{{ id }}" data-dropzone tabindex="0">
+	<span class="card-body d-flex flex-column align-items-center justify-content-center gap-2 text-center py-4">
+		{{ hope.icon('cloud-upload-alt','icon-32 text-primary') }}
+		<span class="fw-semibold">{{ label }}</span>
+		{% if help %}<small class="text-muted">{{ help }}</small>{% endif %}
+	</span>
+	<input class="visually-hidden" type="file" id="{{ id }}" name="{{ name }}" accept="{{ accept }}" data-image-input>
 </label>
 {% endmacro %}
 
 {% macro status_badge(label, tone) %}<span class="badge bg-{{ tone }}">{{ label }}</span>{% endmacro %}
 
 {% macro empty_state(title, body) %}
-<div class="empty-state card"><div class="card-body text-center py-5">{{ hope.icon('inbox','hope-icon-lg mb-3') }}<h2 class="h5">{{ title }}</h2><p class="text-muted mb-0">{{ body }}</p></div></div>
+<div class="card"><div class="card-body text-center py-5">{{ hope.icon('inbox','icon-32 text-muted mb-3') }}<h2 class="h5">{{ title }}</h2><p class="text-muted mb-0">{{ body }}</p></div></div>
 {% endmacro %}

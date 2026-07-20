@@ -1,11 +1,14 @@
 name: Release HS
 
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
     inputs:
       tag:
-        description: Existing HS tag to release (vX.Y.Z-hs)
-        required: true
+        description: HS tag to create or refresh (vX.Y.Z-hs)
+        required: false
+        default: v4.3.2-hs
         type: string
 
 permissions:
@@ -13,46 +16,56 @@ permissions:
 
 jobs:
   release:
+    if: github.event_name == 'workflow_dispatch' || github.event.head_commit.message == 'release: v4.3.2-hs'
     runs-on: ubuntu-latest
+    env:
+      RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || 'v4.3.2-hs' }}
     steps:
-      - name: Validate tag
-        env:
-          RELEASE_TAG: ${{ inputs.tag }}
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate release identity
         run: |
+          set -euo pipefail
           if [[ ! "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+-hs$ ]]; then
             echo "Invalid HS tag" >&2
             exit 2
           fi
-
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ inputs.tag }}
-          fetch-depth: 0
+          version="${RELEASE_TAG#v}"
+          grep -F "define('PSM_VERSION', '$version')" src/includes/psmconfig.inc.php
+          test -f "docs/releases/$RELEASE_TAG.md"
 
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.5'
           extensions: curl, gd, intl, mbstring, openssl, pdo_mysql, xml, zip
           tools: composer:v2
+          coverage: none
 
       - name: Verify source
         run: |
+          set -euo pipefail
           composer validate --strict
           composer install --no-interaction --prefer-dist
           composer check-platform-reqs
           composer audit
           vendor/bin/phpunit
           vendor/bin/phpstan analyse --no-progress
+          node --check service-worker.js
+          node --check src/templates/default/static/js/app-shell.js
+          node --check src/templates/default/static/js/status.js
+          node --check src/templates/default/static/js/dashboard.js
+          node --check src/templates/default/static/js/history.js
+          node --check src/templates/default/static/js/notifications.js
 
-      - name: Build production assets
+      - name: Create signed production assets
         env:
-          RELEASE_TAG: ${{ inputs.tag }}
           RELEASE_SIGNING_PRIVATE_KEY: ${{ secrets.RELEASE_SIGNING_PRIVATE_KEY }}
         run: |
           set -euo pipefail
           version="${RELEASE_TAG#v}"
           test -n "$RELEASE_SIGNING_PRIVATE_KEY"
-          grep -F "define('PSM_VERSION', '$version')" src/includes/psmconfig.inc.php
           composer install --no-dev --classmap-authoritative --no-interaction --prefer-dist
           mkdir -p dist
           php dev/build-hs-release.php "$version" dist
@@ -67,14 +80,31 @@ jobs:
             -signature "$RUNNER_TEMP/verify.sig" "dist/phpservermon-$version.json"
           rm -f "$RUNNER_TEMP/release-private.pem" "$RUNNER_TEMP/manifest.sig" "$RUNNER_TEMP/verify.sig"
 
-      - name: Create GitHub release
+      - name: Create release tag
+        run: |
+          set -euo pipefail
+          git config user.name 'Hosting Supremo Releases'
+          git config user.email 'noreply@hostingsupremo.org'
+          if ! git rev-parse "$RELEASE_TAG" >/dev/null 2>&1; then
+            git tag -a "$RELEASE_TAG" "$GITHUB_SHA" -m "PHP Server Monitor $RELEASE_TAG"
+            git push origin "$RELEASE_TAG"
+          fi
+          test "$(git rev-list -n 1 "$RELEASE_TAG")" = "$GITHUB_SHA"
+
+      - name: Publish GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
-          RELEASE_TAG: ${{ inputs.tag }}
         run: |
+          set -euo pipefail
           version="${RELEASE_TAG#v}"
-          gh release create "$RELEASE_TAG" \
-            "dist/phpservermon-$version.zip" \
-            "dist/phpservermon-$version.json" \
-            "dist/phpservermon-$version.json.sig" \
-            --verify-tag --generate-notes --title "$version"
+          assets=(
+            "dist/phpservermon-$version.zip"
+            "dist/phpservermon-$version.json"
+            "dist/phpservermon-$version.json.sig"
+          )
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            gh release upload "$RELEASE_TAG" "${assets[@]}" --clobber
+            gh release edit "$RELEASE_TAG" --title "PHP Server Monitor $version" --notes-file "docs/releases/$RELEASE_TAG.md"
+          else
+            gh release create "$RELEASE_TAG" "${assets[@]}" --verify-tag --title "PHP Server Monitor $version" --notes-file "docs/releases/$RELEASE_TAG.md"
+          fi

@@ -1,54 +1,58 @@
 {% import 'main/icons.tpl.html' as hope %}
-<div class="searchbar input-group mb-4">
+<div class="input-group mb-4">
     <span class="input-group-text">{{ hope.icon('search') }}</span>
     <input class="form-control" type="search" maxlength="255" placeholder="{{ label_search }}..." aria-label="{{ label_search }}" data-card-search>
 </div>
 
-<div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4" data-card-collection>
+<div class="row row-cols-1 row-cols-lg-2 row-cols-xxl-3 g-4" data-card-collection>
     {% for server in servers %}
+    {% set server_state = server.status|lower %}
+    {% set tone = server_state == 'on' ? 'success' : (server_state == 'warning' ? 'warning' : 'danger') %}
     <div class="col" data-search-text="{{ server.label }} {{ server.ip|striptags }} {{ server.port }} {{ server.type }} {{ server.status }}">
-        <article class="card server-admin-card h-100 status-{{ server.status|lower }}">
-            <div class="server-media-frame">
-                <img src="{{ server.image_url }}" alt="" class="server-media" loading="lazy" decoding="async">
-                <span class="status-indicator" title="{{ server.status }}">
-                    {% if server.status|lower == 'on' %}{{ hope.icon('check-circle') }}
-                    {% elseif server.status|lower == 'warning' %}{{ hope.icon('exclamation-triangle') }}
-                    {% else %}{{ hope.icon('times-circle') }}{% endif %}
-                    <span class="visually-hidden">{{ server.status }}</span>
+        <article class="card h-100 overflow-hidden border-top border-4 border-{{ tone }}" data-server-admin-card>
+            <div class="card-header bg-body text-center position-relative py-4">
+                <span class="d-inline-flex align-items-center justify-content-center rounded border p-3">
+                    <img src="{{ server.image_url }}" width="112" height="112" alt="" class="img-fluid" loading="lazy" decoding="async">
+                </span>
+                <span class="badge bg-{{ tone }} position-absolute top-0 end-0 m-3" title="{{ server.status }}">
+                    {% if server_state == 'on' %}{{ hope.icon('check-circle','me-1') }}
+                    {% elseif server_state == 'warning' %}{{ hope.icon('exclamation-triangle','me-1') }}
+                    {% else %}{{ hope.icon('times-circle','me-1') }}{% endif %}
+                    {{ server.status }}
                 </span>
             </div>
             <div class="card-body d-flex flex-column">
                 <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
-                    <div class="min-w-0">
-                        <h2 class="h5 text-truncate mb-1"><a class="stretched-link text-decoration-none" href="{{ server.url_view|raw }}">{{ server.label }}</a></h2>
-                        <p class="text-muted text-truncate mb-0">{{ server.ip|raw }}{% if server.port %}:{{ server.port }}{% endif %}</p>
+                    <div>
+                        <h2 class="h5 mb-1"><a class="stretched-link text-decoration-none text-break" href="{{ server.url_view|raw }}">{{ server.label }}</a></h2>
+                        <p class="text-muted text-break mb-0">{{ server.ip|raw }}{% if server.port %}:{{ server.port }}{% endif %}</p>
                     </div>
                     <span class="badge bg-soft-primary text-primary">{{ server.type }}</span>
                 </div>
-                <dl class="server-facts">
-                    <div><dt>{{ label_rtime }}</dt><dd>{{ (server.rtime * 1000)|round(2) }} ms</dd></div>
-                    <div><dt>{{ label_last_online }}</dt><dd>{{ server.last_online }}</dd></div>
-                    <div><dt>{{ label_last_offline }}</dt><dd>{{ server.last_offline }}</dd></div>
-                </dl>
-                <div class="channel-chips mt-auto mb-3" aria-label="{{ label_monitoring }}">
-                    <span class="channel-chip" title="{{ server.active_title }}">{{ hope.icon(server.active|lower == 'yes' ? 'eye' : 'warning') }}</span>
-                    {% if server.email|lower == 'yes' and config.email|lower %}<span class="channel-chip" title="{{ label_email }}">{{ hope.icon('envelope') }}</span>{% endif %}
-                    {% if server.sms|lower == 'yes' and config.sms|lower %}<span class="channel-chip" title="{{ label_sms }}">{{ hope.icon('sms') }}</span>{% endif %}
-                    {% if server.pushover|lower == 'yes' and config.pushover|lower %}<span class="channel-chip" title="{{ label_pushover }}">P</span>{% endif %}
-                    {% if server.telegram|lower == 'yes' and config.telegram|lower %}<span class="channel-chip" title="{{ label_telegram }}">{{ hope.icon('telegram') }}</span>{% endif %}
-                    {% if server.discord|lower == 'yes' and config.discord|lower %}<span class="channel-chip" title="{{ label_discord }}">{{ hope.icon('discord') }}</span>{% endif %}
-                    {% if server.webhook|lower == 'yes' and config.webhook|lower %}<span class="channel-chip" title="{{ label_webhook }}">W</span>{% endif %}
+                <ul class="list-group list-group-flush mb-3">
+                    <li class="list-group-item px-0 d-flex justify-content-between gap-3"><span class="text-muted">{{ label_rtime }}</span><strong class="text-end">{{ (server.rtime * 1000)|round(2) }} ms</strong></li>
+                    <li class="list-group-item px-0 d-flex justify-content-between gap-3"><span class="text-muted">{{ label_last_online }}</span><strong class="text-end">{{ server.last_online }}</strong></li>
+                    <li class="list-group-item px-0 d-flex justify-content-between gap-3"><span class="text-muted">{{ label_last_offline }}</span><strong class="text-end">{{ server.last_offline }}</strong></li>
+                </ul>
+                <div class="d-flex flex-wrap gap-2 mt-auto mb-3" aria-label="{{ label_monitoring }}">
+                    <span class="badge rounded-pill bg-soft-primary text-primary" title="{{ server.active_title }}">{{ hope.icon(server.active|lower == 'yes' ? 'eye' : 'warning','me-1') }}{{ label_monitoring }}</span>
+                    {% if server.email|lower == 'yes' and config.email|lower %}<span class="badge rounded-pill bg-soft-primary text-primary" title="{{ label_email }}">{{ hope.icon('envelope','me-1') }}{{ label_email }}</span>{% endif %}
+                    {% if server.sms|lower == 'yes' and config.sms|lower %}<span class="badge rounded-pill bg-soft-primary text-primary" title="{{ label_sms }}">{{ hope.icon('sms','me-1') }}{{ label_sms }}</span>{% endif %}
+                    {% if server.pushover|lower == 'yes' and config.pushover|lower %}<span class="badge rounded-pill bg-soft-primary text-primary" title="{{ label_pushover }}">P</span>{% endif %}
+                    {% if server.telegram|lower == 'yes' and config.telegram|lower %}<span class="badge rounded-pill bg-soft-primary text-primary" title="{{ label_telegram }}">{{ hope.icon('telegram','me-1') }}{{ label_telegram }}</span>{% endif %}
+                    {% if server.discord|lower == 'yes' and config.discord|lower %}<span class="badge rounded-pill bg-soft-primary text-primary" title="{{ label_discord }}">{{ hope.icon('discord','me-1') }}{{ label_discord }}</span>{% endif %}
+                    {% if server.webhook|lower == 'yes' and config.webhook|lower %}<span class="badge rounded-pill bg-soft-primary text-primary" title="{{ label_webhook }}">W</span>{% endif %}
                 </div>
                 {% if user_level == 10 %}
                 <div class="position-relative d-flex gap-2">
                     <a class="btn btn-outline-primary flex-grow-1 position-relative" href="{{ server.url_edit|raw }}">{{ hope.icon('edit','me-1') }}{{ label_edit }}</a>
-                    <a class="btn btn-outline-danger show-modal position-relative" href="{{ server.url_delete|raw }}" data-modal-id="delete" data-modal-param="{{ server.label }}">{{ hope.icon('trash') }}<span class="visually-hidden">{{ label_delete }}</span></a>
+                    <a class="btn btn-outline-danger position-relative" data-modal-trigger href="{{ server.url_delete|raw }}" data-modal-id="delete" data-modal-param="{{ server.label }}">{{ hope.icon('trash') }}<span class="visually-hidden">{{ label_delete }}</span></a>
                 </div>
                 {% endif %}
             </div>
         </article>
     </div>
     {% else %}
-    <div class="col-12"><div class="card"><div class="card-body text-center text-muted">No result</div></div></div>
+    <div class="col-12"><div class="card"><div class="card-body text-center text-muted py-5">No result</div></div></div>
     {% endfor %}
 </div>

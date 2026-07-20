@@ -1,15 +1,21 @@
-<section class="install-shell card mx-auto overflow-hidden">
-    <header class="auth-brand-panel d-flex align-items-center gap-3">
-        <span class="brand-mark brand-mark-lg" aria-hidden="true">PSM</span>
-        <div><p class="eyebrow text-white-50 mb-1">Hosting Supremo</p><h1 class="h3 mb-0">PHP Server Monitor</h1></div>
-    </header>
-    <ol class="install-stepper" data-install-stepper aria-label="Installation progress">
-        <li><span>1</span>Requirements</li>
-        <li><span>2</span>Database</li>
-        <li><span>3</span>Administrator</li>
-        <li><span>4</span>Ready</li>
-    </ol>
-    <div class="card-body p-4 p-lg-5">
-        {% block install %}{% endblock %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-xl-10">
+            <section class="card shadow-sm overflow-hidden">
+                <header class="card-header bg-primary text-white d-flex align-items-center gap-3 p-4">
+                    <span class="avatar-50 rounded-circle bg-white text-primary d-inline-flex align-items-center justify-content-center fw-bold" aria-hidden="true">PSM</span>
+                    <div><p class="text-white-50 mb-1">Hosting Supremo</p><h1 class="h3 text-white mb-0">PHP Server Monitor</h1></div>
+                </header>
+                <ol class="row row-cols-2 row-cols-md-4 g-2 list-unstyled p-3 mb-0 border-bottom" data-install-stepper aria-label="Installation progress">
+                    <li class="col d-flex align-items-center gap-2"><span class="badge rounded-pill bg-primary">1</span><span>Requirements</span></li>
+                    <li class="col d-flex align-items-center gap-2"><span class="badge rounded-pill bg-primary">2</span><span>Database</span></li>
+                    <li class="col d-flex align-items-center gap-2"><span class="badge rounded-pill bg-primary">3</span><span>Administrator</span></li>
+                    <li class="col d-flex align-items-center gap-2"><span class="badge rounded-pill bg-primary">4</span><span>Ready</span></li>
+                </ol>
+                <div class="card-body p-4 p-lg-5">
+                    {% block install %}{% endblock %}
+                </div>
+            </section>
+        </div>
     </div>
-</section>
+</div>

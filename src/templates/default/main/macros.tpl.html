@@ -45,14 +45,14 @@
 
 {% macro input_select_monitoring(id, name, label, current, label_yes, label_no, warning, warning_label) %}
     {% import 'main/icons.tpl.html' as hope %}
-    <div class="form-group form-row">
+    <div class="row g-3 align-items-center mb-3">
         {% if warning %}
-        <div class="alert alert-warning col-md-12" role="alert">
-            {{ hope.icon('exclamation-triangle') }} {{ warning_label }}
-        </div>
+        <div class="col-12"><div class="alert alert-warning mb-0" role="alert">
+            {{ hope.icon('exclamation-triangle','me-1') }} {{ warning_label }}
+        </div></div>
         {% endif %}
         <label for="{{ id }}" class="col-form-label col-md-3">{{ label }}</label>
-        <div class="col-md-9 p-0">
+        <div class="col-md-9">
             <select id="{{ id }}" name="{{ name }}" class="form-select">
                 <option value="yes" {% if current == "yes" %} selected="selected" {% endif %}>{{ label_yes }}</option>
                 <option value="no" {% if current == "no" %} selected="selected" {% endif %}>{{ label_no }}</option>
@@ -83,9 +83,7 @@
                 <small id="{{ help }}" class="form-text text-muted">{{ help_label|striptags('<a>,<b>,<br>')|raw }}</small>
             {% endif %}
             {% if side_label %}
-                <div class="input-group-prepend">
-                    <span class="input-group-text" id="{{ help }}">{{ side_label }}</span>
-                </div>
+                <span class="input-group-text">{{ side_label }}</span>
                 </div>
             {% endif %}
         {% endif %}
@@ -97,7 +95,7 @@
 {% endmacro input_hidden %}
 
 {% macro button_test(data_modal_id, label) %}
-    <button class="btn btn-primary show-modal" type="button" data-bs-toggle="modal" data-modal-id="{{ data_modal_id }}">{{ label }}</button>
+    <button class="btn btn-primary" type="button" data-modal-trigger data-bs-toggle="modal" data-modal-id="{{ data_modal_id }}">{{ label }}</button>
 {% endmacro button_test %}
 
 {% macro button_save(name, label) %}
@@ -107,9 +105,9 @@
 {% macro table_search(label) %}
     {% import 'main/icons.tpl.html' as hope %}
     <noscript><div hidden></noscript>
-    <div class="searchbar input-group mb-3">
+    <div class="input-group mb-3">
         <span class="input-group-text">{{ hope.icon('search') }}</span>
-        <input class="form-control search_input" type="search" maxlength="255" placeholder="{{ label }}..." aria-label="{{ label }}" data-card-search>
+        <input class="form-control" type="search" maxlength="255" placeholder="{{ label }}..." aria-label="{{ label }}" data-card-search>
     </div>
     <noscript></div></noscript>
 {% endmacro table_search %}

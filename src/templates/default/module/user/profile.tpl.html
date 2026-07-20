@@ -1,67 +1,62 @@
 {% import 'main/macros.tpl.html' as macro %}
 <form name="edit_profile" class="col-12 col-xl-8" action="{{ form_action|raw }}" id="edit_profile" method="post" enctype="multipart/form-data">
 	{{ macro.input_csrf() }}
-	<!-- General settings -->
-	<fieldset>
-		<legend>{{ label_general }}</legend>
-		<div class="dropzone-field mb-4">
-			{% if profile_avatar_url %}<img class="dropzone-preview identity-preview identity-preview--avatar" src="{{ profile_avatar_url }}" alt="Foto de perfil actual">{% else %}<span class="avatar avatar-xl bg-soft-primary text-primary" aria-hidden="true">{{ user_name|slice(0,1)|upper }}</span>{% endif %}
-			<div class="dropzone-copy"><label class="form-label fw-semibold" for="profile_avatar">Foto de perfil</label><input class="form-control" type="file" id="profile_avatar" name="profile_avatar" accept="image/png,image/jpeg,image/webp,image/gif"><div class="form-text">La imagen se recorta y normaliza de forma segura a WebP.</div>{% if profile_avatar_url %}<div class="form-check mt-2"><input class="form-check-input" type="checkbox" id="remove_profile_avatar" name="remove_profile_avatar" value="1"><label class="form-check-label" for="remove_profile_avatar">Quitar foto</label></div>{% endif %}</div>
+	<fieldset class="card mb-4">
+		<legend class="card-header h5 float-none w-100 mb-0">{{ label_general }}</legend>
+		<div class="card-body">
+			<div class="row g-3 align-items-center mb-4">
+				<div class="col-12 col-sm-auto text-center">
+					{% if profile_avatar_url %}<img width="112" height="112" class="img-thumbnail rounded-circle" src="{{ profile_avatar_url }}" alt="Foto de perfil actual">{% else %}<span class="avatar-80 rounded-circle bg-soft-primary text-primary d-inline-flex align-items-center justify-content-center fs-3 fw-semibold" aria-hidden="true">{{ user_name|slice(0,1)|upper }}</span>{% endif %}
+				</div>
+				<div class="col">
+					<label class="form-label fw-semibold" for="profile_avatar">Foto de perfil</label>
+					<input class="form-control" type="file" id="profile_avatar" name="profile_avatar" accept="image/png,image/jpeg,image/webp,image/gif">
+					<div class="form-text">La imagen se recorta y normaliza de forma segura a WebP.</div>
+					{% if profile_avatar_url %}<div class="form-check mt-2"><input class="form-check-input" type="checkbox" id="remove_profile_avatar" name="remove_profile_avatar" value="1"><label class="form-check-label" for="remove_profile_avatar">Quitar foto</label></div>{% endif %}
+				</div>
+			</div>
+			<div class="row row-cols-1 row-cols-lg-2 g-3">
+				<div class="col">{{ macro.input_field("text", "user_name", null, "user_name", label_user_name, user_name, label_user_name, "64", null, null, null, null, true, true, "username") }}</div>
+				<div class="col">{{ macro.input_field("text", "name", null, "name", label_name, name, label_name, "255", null, null, null, null, true, null, "name") }}</div>
+				<div class="col">{{ macro.input_field("text", "level", null, "level", label_level, level, label_level, null, null, null, null, null, null, null, null, true) }}</div>
+				<div class="col">{{ macro.input_field("email", "email", null, "email", label_email, email, label_email, "255", null, null, null, null, true, null, "email") }}</div>
+				<div class="col">{{ macro.input_field("tel", "mobile", null, "mobile", label_mobile, mobile, label_mobile, "15", null, null, null, null, null, null, "tel") }}</div>
+				<div class="col">{{ macro.input_field("password", "password", null, "password", label_password, null, placeholder_password, "255", null, null, null, null, null, null, "new-password") }}</div>
+				<div class="col">{{ macro.input_field("password", "password_repeat", null, "password_repeat", label_password_repeat, null, placeholder_password, "255", null, null, null, null, null, null, "new-password") }}</div>
+			</div>
 		</div>
-		<!-- Username -->
-		{{ macro.input_field("text", "user_name", null, "user_name", label_user_name, user_name, label_user_name, "64", null, null, null, null, true, true, "username") }}
-		<!-- Name -->
-		{{ macro.input_field("text", "name", null, "name", label_name, name, label_name, "255", null, null, null, null, true, null, "name") }}
-		<!-- Level -->
-		{{ macro.input_field("text", "level", null, "level", label_level, level, label_level, null, null, null, null, null, null, null, null, true) }}
-		<!-- Password -->
-		{{ macro.input_field("password", "password", null, "password", label_password, null, placeholder_password, "255", null, null, null, null, null, null, "new-password") }}
-		<!-- Password repeat -->
-		{{ macro.input_field("password", "password_repeat", null, "password_repeat", label_password_repeat, null, placeholder_password, "255", null, null, null, null, null, null, "new-password") }}
-		<!-- Email -->
-		{{ macro.input_field("email", "email", null, "email", label_email, email, label_email, "255", null, null, null, null, true, null, "email") }}
-		<!-- Mobile -->
-		{{ macro.input_field("tel", "mobile", null, "mobile", label_mobile, mobile, label_mobile, "15", null, null, null, null, null, null, "tel") }}
 	</fieldset>
-	<!-- Pushover settings -->
-	<fieldset>
-        <legend>{{ label_pushover }}</legend>
-        <p>{{ label_pushover_description|raw }}</p>
-		<!-- pushover key -->
-		{{ macro.input_field("text", "pushover_key", null, "pushover_key", label_pushover_key, pushover_key, label_pushover_key, "255", "pushover_key_help", label_pushover_key_description) }}
-		<!-- pushover device -->
-		{{ macro.input_field("text", "pushover_device", null, "pushover_device", label_pushover_device, pushover_device, label_pushover_device, "255", "pushover_device_help", label_pushover_device_description) }}
-	</fieldset>
-	<!-- Telegram settings -->
-	<fieldset>
-        <legend>{{ label_telegram }}</legend>
-        <p>{{ label_telegram_description|raw }}</p>
-		<!-- telegram id -->
-		<div class="form-group">
-                    <a class="btn btn-primary mb-2" href="{{ telegram_get_chat_id_url }}">{{ label_telegram_get_chat_id }}</a>
+
+	<div class="row row-cols-1 row-cols-lg-2 g-4">
+		<div class="col">
+			<fieldset class="card h-100">
+				<legend class="card-header h5 float-none w-100 mb-0">{{ label_pushover }}</legend>
+				<div class="card-body"><p class="text-muted">{{ label_pushover_description|raw }}</p>{{ macro.input_field("text", "pushover_key", null, "pushover_key", label_pushover_key, pushover_key, label_pushover_key, "255", "pushover_key_help", label_pushover_key_description) }}{{ macro.input_field("text", "pushover_device", null, "pushover_device", label_pushover_device, pushover_device, label_pushover_device, "255", "pushover_device_help", label_pushover_device_description) }}</div>
+			</fieldset>
 		</div>
-		{{ macro.input_field("text", "telegram_id", null, "telegram_id", label_telegram_chat_id, telegram_id, label_telegram_chat_id, "255", "telegram_id_help", label_telegram_id_description) }}
-		<button type="button" class="btn btn-primary show-modal" data-bs-toggle="modal" data-modal-id="activateTelegram">{{ label_activate_telegram }}</button>
-		{{ macro.input_hidden("activate_telegram", "0") }}
-	</fieldset>
-    <!-- Discord settings -->
-    <fieldset>
-        <legend>{{ label_discord }}</legend>
-        {{ macro.input_field("text", "discord", null, "discord", label_discord, discord, "https://discordapp.com/api/webhooks/xxxxx", "255", "discord_help", label_discord_description) }}
-    </fieldset>
-    <!-- Webhook settings -->
-    <fieldset>
-        <legend>{{ label_webhook }}</legend>
-        <p>{{ label_webhook_description|raw }}</p>
-        <!-- webhook url -->
-        {{ macro.input_field("text", "webhook_url", null, "webhook_url", label_webhook_url, webhook_url, "https://test.com/api/abcde", "255", "webhook_url_help", label_webhook_url_description) }}
-        <!-- webhook json -->
-        {{ macro.input_field("text", "webhook_json", null, "webhook_json", label_webhook_json, webhook_json, "{\"text\":\"servermon: #message\"}", "255", "webhook_json_help", label_webhook_json_description) }}
-    </fieldset>
-	{{ macro.button_save(null, label_save) }}
+		<div class="col">
+			<fieldset class="card h-100">
+				<legend class="card-header h5 float-none w-100 mb-0">{{ label_telegram }}</legend>
+				<div class="card-body"><p class="text-muted">{{ label_telegram_description|raw }}</p><a class="btn btn-primary mb-3" href="{{ telegram_get_chat_id_url }}">{{ label_telegram_get_chat_id }}</a>{{ macro.input_field("text", "telegram_id", null, "telegram_id", label_telegram_chat_id, telegram_id, label_telegram_chat_id, "255", "telegram_id_help", label_telegram_id_description) }}<button type="button" class="btn btn-outline-primary" data-modal-trigger data-bs-toggle="modal" data-modal-id="activateTelegram">{{ label_activate_telegram }}</button>{{ macro.input_hidden("activate_telegram", "0") }}</div>
+			</fieldset>
+		</div>
+		<div class="col">
+			<fieldset class="card h-100">
+				<legend class="card-header h5 float-none w-100 mb-0">{{ label_discord }}</legend>
+				<div class="card-body">{{ macro.input_field("text", "discord", null, "discord", label_discord, discord, "https://discordapp.com/api/webhooks/xxxxx", "255", "discord_help", label_discord_description) }}</div>
+			</fieldset>
+		</div>
+		<div class="col">
+			<fieldset class="card h-100">
+				<legend class="card-header h5 float-none w-100 mb-0">{{ label_webhook }}</legend>
+				<div class="card-body"><p class="text-muted">{{ label_webhook_description|raw }}</p>{{ macro.input_field("text", "webhook_url", null, "webhook_url", label_webhook_url, webhook_url, "https://test.com/api/abcde", "255", "webhook_url_help", label_webhook_url_description) }}{{ macro.input_field("text", "webhook_json", null, "webhook_json", label_webhook_json, webhook_json, "{\"text\":\"servermon: #message\"}", "255", "webhook_json_help", label_webhook_json_description) }}</div>
+			</fieldset>
+		</div>
+	</div>
+	<div class="d-flex justify-content-end mt-4">{{ macro.button_save(null, label_save) }}</div>
 </form>
 
-<section class="card col-12 col-xl-8 p-0 push-device-card"
+<section class="card col-12 col-xl-8 p-0 mt-4"
 	data-push-settings
 	data-enabled="{{ webpush_enabled ? 'true' : 'false' }}"
 	data-public-key="{{ webpush_public_key }}"
@@ -74,7 +69,7 @@
 			<h2 class="h5 mb-1">Notificaciones en este dispositivo</h2>
 			<p class="text-muted mb-0">Recibe avisos automáticos cuando un servidor se cae o se recupera.</p>
 		</div>
-		<div class="d-flex gap-2">
+		<div class="d-flex flex-wrap gap-2">
 			<button class="btn btn-primary" type="button" data-push-enable{% if not webpush_enabled or webpush_public_key == '' %} disabled{% endif %}>Activar</button>
 			<button class="btn btn-soft-danger" type="button" data-push-disable>Desactivar</button>
 			<button class="btn btn-outline-primary" type="button" data-push-test>Probar</button>
@@ -82,85 +77,28 @@
 	</div>
 	<div class="card-body">
 		<div class="alert alert-info mb-4" data-push-feedback role="status" hidden></div>
-		{% if not webpush_enabled or webpush_public_key == '' %}
-			<div class="alert alert-warning">Un administrador debe activar Web Push y generar las claves VAPID.</div>
-		{% endif %}
-		<div class="device-card-grid">
+		{% if not webpush_enabled or webpush_public_key == '' %}<div class="alert alert-warning">Un administrador debe activar Web Push y generar las claves VAPID.</div>{% endif %}
+		<div class="row row-cols-1 row-cols-md-2 g-3" data-push-device-list>
 			{% for device in push_devices %}
-				<article class="card border shadow-none">
-					<div class="card-body">
-						<div class="d-flex align-items-center gap-3">
-							<span class="avatar bg-soft-primary text-primary"><i class="bi bi-display"></i></span>
-							<div><h3 class="h6 mb-1">{{ device.device_name }}</h3><p class="small text-muted mb-0">Último uso: {{ device.last_seen_at }}</p></div>
-						</div>
-					</div>
-				</article>
+				<div class="col"><article class="card h-100 border shadow-none"><div class="card-body"><div class="d-flex align-items-center gap-3"><span class="avatar-40 rounded-circle bg-soft-primary text-primary d-inline-flex align-items-center justify-content-center" aria-hidden="true">{{ user_name|slice(0,1)|upper }}</span><div><h3 class="h6 mb-1">{{ device.device_name }}</h3><p class="small text-muted mb-0">Último uso: {{ device.last_seen_at }}</p></div></div></div></article></div>
 			{% else %}
-				<p class="text-muted mb-0" data-push-empty>No hay navegadores registrados todavía.</p>
+				<div class="col-12"><p class="text-muted mb-0" data-push-empty>No hay navegadores registrados todavía.</p></div>
 			{% endfor %}
 		</div>
 	</div>
 </section>
 
-<form class="card appearance-card col-12 col-xl-8 p-0" action="{{ form_action|raw }}" method="post">
+<form class="card col-12 col-xl-8 p-0 mt-4" action="{{ form_action|raw }}" method="post">
 	{{ macro.input_csrf() }}
-	<div class="card-header">
-		<h2 class="h5 mb-1">Apariencia</h2>
-		<p class="text-muted mb-0">Personaliza el tema, color, dirección y barra lateral para este usuario.</p>
-	</div>
-	<div class="card-body appearance-options">
-		<div>
-			<label class="form-label" for="ui_scheme">Esquema</label>
-			<select class="form-select" id="ui_scheme" name="ui_scheme">
-				<option value="auto"{% if appearance.scheme == 'auto' %} selected{% endif %}>Automático</option>
-				<option value="dark"{% if appearance.scheme == 'dark' %} selected{% endif %}>Oscuro</option>
-				<option value="light"{% if appearance.scheme == 'light' %} selected{% endif %}>Claro</option>
-			</select>
-		</div>
-		<div>
-			<label class="form-label" for="ui_accent">Color principal</label>
-			<select class="form-select" id="ui_accent" name="ui_accent">
-				{% for color, label in {'blue':'Azul','orange':'Naranja','red':'Rojo','purple':'Morado','pink':'Rosa'} %}
-				<option value="{{ color }}"{% if appearance.accent == color %} selected{% endif %}>{{ label }}</option>
-				{% endfor %}
-			</select>
-		</div>
-		<div>
-			<label class="form-label" for="ui_direction">Dirección</label>
-			<select class="form-select" id="ui_direction" name="ui_direction">
-				<option value="ltr"{% if appearance.direction == 'ltr' %} selected{% endif %}>LTR</option>
-				<option value="rtl"{% if appearance.direction == 'rtl' %} selected{% endif %}>RTL</option>
-			</select>
-		</div>
-		<div>
-			<label class="form-label" for="ui_sidebar">Barra lateral</label>
-			<select class="form-select" id="ui_sidebar" name="ui_sidebar">
-				<option value="default"{% if appearance.sidebar == 'default' %} selected{% endif %}>Predeterminada</option>
-				<option value="dark"{% if appearance.sidebar == 'dark' %} selected{% endif %}>Oscura</option>
-				<option value="color"{% if appearance.sidebar == 'color' %} selected{% endif %}>Color</option>
-				<option value="transparent"{% if appearance.sidebar == 'transparent' %} selected{% endif %}>Transparente</option>
-			</select>
-		</div>
-		<div>
-			<label class="form-label" for="ui_sidebar_types">Tipo de barra lateral</label>
-			<select class="form-select" id="ui_sidebar_types" name="ui_sidebar_types[]" multiple size="3">
-				{% for value, label in {'mini':'Mini','hover':'Hover','boxed':'Boxed'} %}<option value="{{ value }}"{% if value in appearance.sidebar_types %} selected{% endif %}>{{ label }}</option>{% endfor %}
-			</select>
-		</div>
-		<div>
-			<label class="form-label" for="ui_sidebar_active">Elemento activo</label>
-			<select class="form-select" id="ui_sidebar_active" name="ui_sidebar_active">
-				{% for value, label in {'rounded-one-side':'Redondeado lateral','rounded-all':'Todo redondeado','pill-one-side':'Píldora lateral','pill-all':'Todo píldora'} %}<option value="{{ value }}"{% if appearance.sidebar_active == value %} selected{% endif %}>{{ label }}</option>{% endfor %}
-			</select>
-		</div>
-		<div>
-			<label class="form-label" for="ui_navbar">Barra superior</label>
-			<select class="form-select" id="ui_navbar" name="ui_navbar">
-				{% for value, label in {'default':'Predeterminada','glass':'Cristal','color':'Color','sticky':'Fija','transparent':'Transparente'} %}<option value="{{ value }}"{% if appearance.navbar == value %} selected{% endif %}>{{ label }}</option>{% endfor %}
-			</select>
-		</div>
-	</div>
-	<div class="card-footer text-end">
-		<button class="btn btn-primary" type="submit" name="appearance_submit" value="1">Guardar apariencia</button>
-	</div>
+	<div class="card-header"><h2 class="h5 mb-1">Apariencia</h2><p class="text-muted mb-0">Personaliza el tema, color, dirección y barra lateral para este usuario.</p></div>
+	<div class="card-body"><div class="row row-cols-1 row-cols-md-2 g-3">
+		<div class="col"><label class="form-label" for="ui_scheme">Esquema</label><select class="form-select" id="ui_scheme" name="ui_scheme"><option value="auto"{% if appearance.scheme == 'auto' %} selected{% endif %}>Automático</option><option value="dark"{% if appearance.scheme == 'dark' %} selected{% endif %}>Oscuro</option><option value="light"{% if appearance.scheme == 'light' %} selected{% endif %}>Claro</option></select></div>
+		<div class="col"><label class="form-label" for="ui_accent">Color principal</label><select class="form-select" id="ui_accent" name="ui_accent">{% for color, label in {'blue':'Azul','orange':'Naranja','red':'Rojo','purple':'Morado','pink':'Rosa'} %}<option value="{{ color }}"{% if appearance.accent == color %} selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
+		<div class="col"><label class="form-label" for="ui_direction">Dirección</label><select class="form-select" id="ui_direction" name="ui_direction"><option value="ltr"{% if appearance.direction == 'ltr' %} selected{% endif %}>LTR</option><option value="rtl"{% if appearance.direction == 'rtl' %} selected{% endif %}>RTL</option></select></div>
+		<div class="col"><label class="form-label" for="ui_sidebar">Barra lateral</label><select class="form-select" id="ui_sidebar" name="ui_sidebar"><option value="default"{% if appearance.sidebar == 'default' %} selected{% endif %}>Predeterminada</option><option value="dark"{% if appearance.sidebar == 'dark' %} selected{% endif %}>Oscura</option><option value="color"{% if appearance.sidebar == 'color' %} selected{% endif %}>Color</option><option value="transparent"{% if appearance.sidebar == 'transparent' %} selected{% endif %}>Transparente</option></select></div>
+		<div class="col"><label class="form-label" for="ui_sidebar_types">Tipo de barra lateral</label><select class="form-select" id="ui_sidebar_types" name="ui_sidebar_types[]" multiple size="3">{% for value, label in {'mini':'Mini','hover':'Hover','boxed':'Boxed'} %}<option value="{{ value }}"{% if value in appearance.sidebar_types %} selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
+		<div class="col"><label class="form-label" for="ui_sidebar_active">Elemento activo</label><select class="form-select" id="ui_sidebar_active" name="ui_sidebar_active">{% for value, label in {'rounded-one-side':'Redondeado lateral','rounded-all':'Todo redondeado','pill-one-side':'Píldora lateral','pill-all':'Todo píldora'} %}<option value="{{ value }}"{% if appearance.sidebar_active == value %} selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
+		<div class="col"><label class="form-label" for="ui_navbar">Barra superior</label><select class="form-select" id="ui_navbar" name="ui_navbar">{% for value, label in {'default':'Predeterminada','glass':'Cristal','color':'Color','sticky':'Fija','transparent':'Transparente'} %}<option value="{{ value }}"{% if appearance.navbar == value %} selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
+	</div></div>
+	<div class="card-footer text-end"><button class="btn btn-primary" type="submit" name="appearance_submit" value="1">Guardar apariencia</button></div>
 </form>

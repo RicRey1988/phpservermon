@@ -1,13 +1,24 @@
 {% import 'main/macros.tpl.html' as macro %}
-<div class="auth-shell auth-layout">
-  <section class="auth-form-pane"><form class="auth-card card" action="" method="post" autocomplete="on">{{ macro.input_csrf() }}<div class="card-body p-0">
-    <a href="index.php" class="navbar-brand d-inline-flex align-items-center gap-3 mb-4">{% if site_logo_url %}<img class="brand-logo brand-logo--auth" src="{{ site_logo_url }}" alt="">{% else %}<span class="brand-mark">HS</span>{% endif %}<span class="h4 mb-0">{{ title }}</span></a>
-    <h1 class="h2 text-center mb-2">Crear cuenta</h1><p class="text-muted text-center mb-4">Completa tu perfil para <strong>{{ email }}</strong>.</p>
-    <input type="hidden" name="invitation_token" value="{{ invitation_token }}">
-    <div class="mb-3"><label class="form-label" for="name">Nombre</label><input class="form-control form-control-lg" id="name" name="name" type="text" value="{{ value_name }}" maxlength="255" required autocomplete="name"></div>
-    <div class="mb-3"><label class="form-label" for="user_name">Usuario</label><input class="form-control form-control-lg" id="user_name" name="user_name" type="text" value="{{ value_user_name }}" maxlength="64" pattern="[A-Za-z0-9_.]{2,64}" required autocomplete="username"></div>
-    <div class="mb-3"><label class="form-label" for="password">Contraseña</label><input class="form-control form-control-lg" id="password" name="password" type="password" maxlength="255" required autocomplete="new-password"></div>
-    <div class="mb-4"><label class="form-label" for="password_repeat">Repetir contraseña</label><input class="form-control form-control-lg" id="password_repeat" name="password_repeat" type="password" maxlength="255" required autocomplete="new-password"></div>
-    <button class="btn btn-primary btn-lg w-100" type="submit">Crear mi cuenta</button>
-  </div></form></section><aside class="auth-visual" aria-hidden="true"></aside>
+<div class="container-fluid p-0 min-vh-100">
+  <div class="row g-0 min-vh-100">
+    <div class="col-12 col-lg-6 d-flex align-items-center justify-content-center p-4 p-md-5">
+      <div class="w-100"><div class="row justify-content-center"><div class="col-12 col-sm-10 col-md-8 col-lg-10 col-xl-8">
+        <form class="card border-0 shadow-none bg-transparent" action="" method="post" autocomplete="on">
+          {{ macro.input_csrf() }}
+          <div class="card-body p-0">
+            <a href="index.php" class="navbar-brand d-inline-flex align-items-center gap-3 mb-4">{% if site_logo_url %}<img width="48" height="48" class="img-fluid rounded-3" src="{{ site_logo_url }}" alt="">{% else %}<span class="avatar-50 rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center fw-bold" aria-hidden="true">HS</span>{% endif %}<span class="h4 mb-0">{{ title }}</span></a>
+            <h1 class="h2 text-center mb-2">Crear cuenta</h1>
+            <p class="text-muted text-center mb-4">Completa tu perfil para <strong>{{ email }}</strong>.</p>
+            <input type="hidden" name="invitation_token" value="{{ invitation_token }}">
+            <div class="mb-3"><label class="form-label" for="name">Nombre</label><input class="form-control form-control-lg" id="name" name="name" type="text" value="{{ value_name }}" maxlength="255" required autocomplete="name"></div>
+            <div class="mb-3"><label class="form-label" for="user_name">Usuario</label><input class="form-control form-control-lg" id="user_name" name="user_name" type="text" value="{{ value_user_name }}" maxlength="64" pattern="[A-Za-z0-9_.]{2,64}" required autocomplete="username"></div>
+            <div class="mb-3"><label class="form-label" for="password">Contraseña</label><input class="form-control form-control-lg" id="password" name="password" type="password" maxlength="255" required autocomplete="new-password"></div>
+            <div class="mb-4"><label class="form-label" for="password_repeat">Repetir contraseña</label><input class="form-control form-control-lg" id="password_repeat" name="password_repeat" type="password" maxlength="255" required autocomplete="new-password"></div>
+            <button class="btn btn-primary btn-lg w-100" type="submit">Crear mi cuenta</button>
+          </div>
+        </form>
+      </div></div></div>
+    </div>
+    <div class="col-lg-6 d-none d-lg-flex align-items-center justify-content-center bg-primary p-5" aria-hidden="true"><img src="src/templates/default/static/hope/images/auth/01.png" class="img-fluid" alt=""></div>
+  </div>
 </div>

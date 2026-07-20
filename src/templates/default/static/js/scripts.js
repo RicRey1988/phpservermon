@@ -1,5 +1,5 @@
 $().ready(function () {
-	$('.show-modal').click(function (e) {
+	$('[data-modal-trigger]').click(function (e) {
 		var $this = $(this);
 		if ($this.is('a')) {
 			e.preventDefault();

@@ -84,7 +84,7 @@ class LogController extends AbstractServerController
                 psm_get_lang('log', 'clear'),
                 psm_build_url(array('mod' => 'server_log', 'action' => 'delete')),
                 'trash',
-                'danger show-modal',
+                'danger',
                 psm_get_lang('log', 'delete_title'),
                 'delete'
             );

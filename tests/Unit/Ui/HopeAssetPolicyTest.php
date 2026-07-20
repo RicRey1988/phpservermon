@@ -55,14 +55,17 @@ final class HopeAssetPolicyTest extends TestCase
         }
     }
 
-    public function testApplicationLoadsOnlyNativeHopeUiAndHsComponentStyles(): void
+    public function testApplicationLoadsOnlyBundledHopeUiStyles(): void
     {
         $root = dirname(__DIR__, 3);
         $body = file_get_contents($root . '/src/templates/default/main/body.tpl.html');
 
         self::assertIsString($body);
-        self::assertFileExists($root . '/src/templates/default/static/css/hs-monitor.css');
-        self::assertStringContainsString('static/css/hs-monitor.css', $body);
+        self::assertFileDoesNotExist($root . '/src/templates/default/static/css/hs-monitor.css');
+        foreach (['hope-ui.min.css', 'dark.min.css', 'customizer.min.css'] as $asset) {
+            self::assertStringContainsString('static/hope/css/' . $asset, $body);
+        }
+        self::assertStringNotContainsString('hs-monitor.css', $body);
         self::assertStringNotContainsString('static/css/custom.css', $body);
         self::assertStringNotContainsString('static/css/app-shell.css', $body);
         self::assertStringNotContainsString('font-awesome', $body);
@@ -81,6 +84,7 @@ final class HopeAssetPolicyTest extends TestCase
 
         self::assertIsString($icons);
         self::assertStringContainsString('{% macro icon(', $icons);
+        self::assertStringContainsString('class="icon-20 {{ className|default', $icons);
         self::assertStringContainsString("import 'main/icons.tpl.html'", $shell);
         self::assertDoesNotMatchRegularExpression('/\\bfa(?:s|r|b)?\\s+fa-|\\bfa-[a-z]/', $shell);
     }
