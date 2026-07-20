@@ -1,0 +1,31 @@
+{
+  "name": "PHP Server Monitor by Hosting Supremo",
+  "short_name": "Server Monitor",
+  "description": "Monitoreo de disponibilidad, incidentes y alertas de servidores.",
+  "start_url": "./index.php",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#151824",
+  "theme_color": "#3a57e8",
+  "icons": [
+    {
+      "src": "./src/templates/default/static/images/pwa/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./src/templates/default/static/images/pwa/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./src/templates/default/static/images/pwa/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

@@ -8,6 +8,7 @@
             {% if subtitle %}<h1 class="h4 mb-0">{{ subtitle }}</h1>{% endif %}
         </div>
         <div class="ms-auto d-flex align-items-center gap-2">
+            <button type="button" class="btn btn-sm btn-outline-primary" data-pwa-install hidden><i class="fas fa-download me-1" aria-hidden="true"></i>Instalar</button>
             {% if notification_navbar is defined %}
             <div class="dropdown notification-navbar">
                 <button class="btn btn-icon position-relative" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Notificaciones">

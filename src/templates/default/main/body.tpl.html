@@ -10,7 +10,7 @@
 	<meta name="description" content="PHP Server Monitor - {{ subtitle }}">
 	<meta name="robots" content="noindex,nofollow">
 	<meta name="theme-color" content="#3a57e8">
-	<link rel="manifest" href="manifest.json">
+	<link rel="manifest" href="manifest.webmanifest">
 	<link rel="icon" type="image/x-icon" href="favicon.ico">
 	<link rel="icon" type="image/png" href="favicon.png">
 	<link rel="apple-touch-icon" href="phpservermon.png">
@@ -30,7 +30,7 @@
 	<link href="src/templates/default/static/css/custom.css?v={{ version|url_encode }}" rel="stylesheet">
 	<link href="src/templates/default/static/css/app-shell.css?v={{ version|url_encode }}" rel="stylesheet">
 </head>
-<body class="{% if appearance.resolved_scheme == 'dark' %}dark {% endif %}{% if appearance.sidebar == 'dark' %}sidebar-dark {% endif %}{% if html_menu is not defined or not html_menu %}no-menu{% endif %}">
+<body data-authenticated="{{ user_level != 30 ? 'true' : 'false' }}" class="{% if appearance.resolved_scheme == 'dark' %}dark {% endif %}{% if appearance.sidebar == 'dark' %}sidebar-dark {% endif %}{% if html_menu is not defined or not html_menu %}no-menu{% endif %}">
 	<a class="visually-hidden-focusable skip-link" href="#main-content">Ir al contenido principal</a>
 
 	{% if html_menu is defined and html_menu %}
@@ -90,6 +90,7 @@
 	<script defer src="src/templates/default/static/plugin/font-awesome/js/brands.min.js"></script>
 	<script src="src/templates/default/static/js/app-shell.js?v={{ version|url_encode }}"></script>
 	{% if notification_navbar is defined %}<script src="src/templates/default/static/js/notifications.js?v={{ version|url_encode }}"></script>{% endif %}
+	<script src="src/templates/default/static/js/pwa.js?v={{ version|url_encode }}"></script>
 	{% if needs_dashboard|default(false) %}<script src="src/templates/default/static/js/dashboard.js?v={{ version|url_encode }}"></script>{% endif %}
 </body>
 </html>
