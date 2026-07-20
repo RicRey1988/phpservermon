@@ -1,3 +1,14 @@
+{% import 'main/macros.tpl.html' as macro %}
+<section class="card mb-4">
+  <div class="card-header"><h2 class="h5 mb-1">Invitar usuario</h2><p class="text-muted mb-0">El enlace vence en 48 horas y sólo puede usarse una vez.</p></div>
+  <form class="card-body row g-3 align-items-end" action="{{ url_invite|raw }}" method="post">
+    {{ macro.input_csrf() }}
+    <div class="col-12 col-lg-6"><label class="form-label" for="invite_email">Correo</label><input class="form-control" id="invite_email" name="invite_email" type="email" required maxlength="255" autocomplete="email"></div>
+    <div class="col-12 col-lg-3"><label class="form-label" for="invite_level">Rol</label><select class="form-select" id="invite_level" name="invite_level"><option value="20">Usuario</option><option value="10">Administrador</option></select></div>
+    <div class="col-12 col-lg-3"><button class="btn btn-primary w-100" type="submit"><i class="fas fa-paper-plane me-2" aria-hidden="true"></i>Enviar invitación</button></div>
+  </form>
+  {% if pending_invitations %}<div class="card-footer"><p class="small text-muted mb-2">Invitaciones pendientes</p><div class="d-flex flex-wrap gap-2">{% for invitation in pending_invitations %}<span class="badge bg-soft-info text-info">{{ invitation.email }} · {{ invitation.expires_at }}</span>{% endfor %}</div></div>{% endif %}
+</section>
 <div class="searchbar input-group mb-3">
   <span class="input-group-text"><i class="fas fa-search" aria-hidden="true"></i></span>
   <input class="form-control" type="search" maxlength="255" placeholder="{{ label_search }}..." aria-label="{{ label_search }}" data-card-search>

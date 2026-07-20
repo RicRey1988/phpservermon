@@ -365,6 +365,19 @@ class Installer
                 PRIMARY KEY (`subscription_id`),
                 UNIQUE KEY `endpoint_hash` (`endpoint_hash`)
             ) DEFAULT CHARSET=utf8mb4;",
+            PSM_DB_PREFIX . 'user_invitations' => "CREATE TABLE IF NOT EXISTS `" . PSM_DB_PREFIX . "user_invitations` (
+                `invitation_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+                `email` VARCHAR(255) NOT NULL,
+                `token_hash` CHAR(64) NOT NULL,
+                `level` SMALLINT UNSIGNED NOT NULL DEFAULT 20,
+                `created_by` INT UNSIGNED NOT NULL,
+                `created_at` DATETIME NOT NULL,
+                `expires_at` DATETIME NOT NULL,
+                `accepted_at` DATETIME NULL,
+                PRIMARY KEY (`invitation_id`),
+                UNIQUE KEY `token_hash` (`token_hash`),
+                KEY `pending_email` (`email`,`accepted_at`,`expires_at`)
+            ) DEFAULT CHARSET=utf8mb4;",
         );
 
         foreach ($tables as $name => $sql) {
@@ -923,6 +936,19 @@ class Installer
                 `last_seen_at` DATETIME NOT NULL,
                 PRIMARY KEY (`subscription_id`),
                 UNIQUE KEY `endpoint_hash` (`endpoint_hash`)
+            ) DEFAULT CHARSET=utf8mb4;",
+            "CREATE TABLE IF NOT EXISTS `" . PSM_DB_PREFIX . "user_invitations` (
+                `invitation_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+                `email` VARCHAR(255) NOT NULL,
+                `token_hash` CHAR(64) NOT NULL,
+                `level` SMALLINT UNSIGNED NOT NULL DEFAULT 20,
+                `created_by` INT UNSIGNED NOT NULL,
+                `created_at` DATETIME NOT NULL,
+                `expires_at` DATETIME NOT NULL,
+                `accepted_at` DATETIME NULL,
+                PRIMARY KEY (`invitation_id`),
+                UNIQUE KEY `token_hash` (`token_hash`),
+                KEY `pending_email` (`email`,`accepted_at`,`expires_at`)
             ) DEFAULT CHARSET=utf8mb4;"
         ));
         $this->execSQL(

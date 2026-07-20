@@ -60,6 +60,9 @@ xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/sc
 		<service id="service.push.subscription_repository" class="psm\Service\Push\PushSubscriptionRepository" public="true">
 			<argument type="service" id="db" />
 		</service>
+		<service id="service.invitation.repository" class="psm\Service\Invitation\InvitationRepository" public="true">
+			<argument type="service" id="db" />
+		</service>
 		<service id="notification.registry" class="psm\Notification\ChannelRegistry" public="true">
 			<factory class="psm\Notification\ChannelRegistryFactory" method="create" />
 			<argument type="service" id="service.push.subscription_repository" />

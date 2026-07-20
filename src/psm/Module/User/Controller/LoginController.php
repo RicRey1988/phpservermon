@@ -31,6 +31,8 @@ namespace psm\Module\User\Controller;
 
 use psm\Module\AbstractController;
 use psm\Service\Database;
+use DateTimeImmutable;
+use psm\Service\Invitation\InvitationRepository;
 
 class LoginController extends AbstractController
 {
@@ -42,7 +44,7 @@ class LoginController extends AbstractController
         $this->setMinUserLevelRequired(PSM_USER_ANONYMOUS);
 
         $this->setActions(array(
-            'login', 'forgot', 'reset',
+            'login', 'forgot', 'reset', 'register',
         ), 'login');
 
         $this->addMenu(false);
@@ -159,6 +161,74 @@ class LoginController extends AbstractController
         return $this->twig->render('module/user/login/reset.tpl.html', $tpl_data);
     }
 
+    protected function executeRegister()
+    {
+        $token = trim((string) ($_POST['invitation_token'] ?? $_GET['token'] ?? ''));
+        $invitation = $this->invitations()->findValid($token);
+        if ($invitation === null) {
+            $this->addMessage('La invitación no existe, ya fue utilizada o expiró.', 'error');
+            return $this->executeLogin();
+        }
+
+        $values = [
+            'user_name' => trim(strip_tags((string) ($_POST['user_name'] ?? ''))),
+            'name' => trim(strip_tags((string) ($_POST['name'] ?? ''))),
+        ];
+        if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
+            $password = (string) ($_POST['password'] ?? '');
+            $repeat = (string) ($_POST['password_repeat'] ?? '');
+            try {
+                $validator = $this->container->get('util.user.validator');
+                $validator->username($values['user_name']);
+                $validator->password($password, $repeat);
+                if ($values['name'] === '') {
+                    throw new \InvalidArgumentException('user_name_bad_length');
+                }
+                $pdo = $this->db->pdo();
+                $pdo->beginTransaction();
+                $lockedInvitation = $this->invitations()->findValid($token, true);
+                if ($lockedInvitation === null) {
+                    throw new \RuntimeException('Invitation already used.');
+                }
+                $userId = (int) $this->db->save(PSM_DB_PREFIX . 'users', [
+                    'user_name' => $values['user_name'],
+                    'name' => mb_substr($values['name'], 0, 255),
+                    'password' => '',
+                    'level' => $lockedInvitation['level'],
+                    'email' => $lockedInvitation['email'],
+                    'mobile' => '',
+                    'pushover_key' => '',
+                    'pushover_device' => '',
+                    'discord' => '',
+                    'webhook_url' => '',
+                    'webhook_json' => '',
+                    'telegram_id' => '',
+                ]);
+                if ($userId <= 0 || !$this->getUser()->changePassword($userId, $password)) {
+                    throw new \RuntimeException('Unable to create the account.');
+                }
+                $this->invitations()->markAccepted($lockedInvitation['invitation_id'], new DateTimeImmutable());
+                $pdo->commit();
+                $this->addMessage('Tu cuenta fue creada. Ya puedes iniciar sesión.', 'success');
+                return $this->executeLogin();
+            } catch (\InvalidArgumentException $exception) {
+                $this->addMessage(psm_get_lang('users', 'error_' . $exception->getMessage()), 'error');
+            } catch (\Throwable) {
+                if (isset($pdo) && $pdo->inTransaction()) {
+                    $pdo->rollBack();
+                }
+                $this->addMessage('No fue posible crear la cuenta. La invitación sigue disponible para reintentar.', 'error');
+            }
+        }
+
+        return $this->twig->render('module/user/login/register.tpl.html', [
+            'invitation_token' => $token,
+            'email' => $invitation['email'],
+            'value_user_name' => $values['user_name'],
+            'value_name' => $values['name'],
+        ]);
+    }
+
     /**
      * Sends the password-reset-email.
      * @param int $user_id
@@ -182,5 +252,12 @@ class LoginController extends AbstractController
 
         $mail->AddAddress($user_email);
         $mail->Send();
+    }
+
+    private function invitations(): InvitationRepository
+    {
+        $repository = $this->container->get('service.invitation.repository');
+        assert($repository instanceof InvitationRepository);
+        return $repository;
     }
 }

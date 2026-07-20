@@ -21,6 +21,7 @@ final class TwigTemplateSyntaxTest extends TestCase
             'main/macros.tpl.html',
             'module/user/login/login.tpl.html',
             'module/user/login/forgot.tpl.html',
+            'module/user/login/register.tpl.html',
             'module/user/login/reset.tpl.html',
             'module/user/user/list.tpl.html',
             'module/user/notification/index.tpl.html',

@@ -30,6 +30,10 @@ namespace psm\Module\User\Controller;
 
 use psm\Module\AbstractController;
 use psm\Service\Database;
+use DateTimeImmutable;
+use psm\Notification\NotificationMessage;
+use psm\Notification\Recipient;
+use psm\Service\Invitation\InvitationRepository;
 
 /**
  * User module. Add, edit and delete users, or assign
@@ -47,7 +51,7 @@ class UserController extends AbstractController
         $this->setCSRFKey('user');
 
         $this->setActions(array(
-            'index', 'edit', 'delete', 'save',
+            'index', 'edit', 'delete', 'save', 'invite',
         ), 'index');
         $this->twig->addGlobal('subtitle', psm_get_lang('menu', 'user'));
     }
@@ -142,8 +146,54 @@ class UserController extends AbstractController
         }
         $tpl_data = $this->getLabels();
         $tpl_data['users'] = $users;
+        $tpl_data['pending_invitations'] = $this->invitations()->pending();
+        $tpl_data['url_invite'] = psm_build_url(['mod' => 'user', 'action' => 'invite']);
 
         return $this->twig->render('module/user/user/list.tpl.html', $tpl_data);
+    }
+
+    protected function executeInvite()
+    {
+        if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
+            return $this->executeIndex();
+        }
+        $email = strtolower(trim((string) psm_POST('invite_email', '')));
+        $level = (int) psm_POST('invite_level', '20');
+        try {
+            $this->container->get('util.user.validator')->email($email);
+            $this->container->get('util.user.validator')->level($level);
+            if ($level === PSM_USER_ANONYMOUS) {
+                throw new \InvalidArgumentException('user_level_invalid');
+            }
+            $token = $this->invitations()->create(
+                $email,
+                $level,
+                $this->getUser()->getUserId(),
+                new DateTimeImmutable('+48 hours'),
+            );
+            $url = psm_build_url([
+                'mod' => 'user_login',
+                'action' => 'register',
+                'token' => $token,
+            ], true, false);
+            $result = $this->container->get('notification.registry')->get('email')->send(
+                new NotificationMessage(
+                    'Invitación a PHP Server Monitor',
+                    '<p>Has sido invitado a PHP Server Monitor.</p><p><a href="' . htmlspecialchars($url, ENT_QUOTES, 'UTF-8') . '">Crear mi cuenta</a></p><p>El enlace vence en 48 horas y sólo se puede usar una vez.</p>',
+                    $url,
+                ),
+                new Recipient(0, ['email' => $email]),
+            );
+            if ($result->isSuccess()) {
+                $this->addMessage('Invitación enviada correctamente a ' . htmlspecialchars($email, ENT_QUOTES, 'UTF-8') . '.', 'success');
+            } else {
+                $this->addMessage('La invitación fue creada, pero el correo no pudo enviarse. Enlace: ' . htmlspecialchars($url, ENT_QUOTES, 'UTF-8'), 'warning');
+            }
+        } catch (\InvalidArgumentException $exception) {
+            $this->addMessage(psm_get_lang('users', 'error_' . $exception->getMessage()), 'error');
+        }
+
+        return $this->executeIndex();
     }
 
     /**
@@ -454,5 +504,12 @@ class UserController extends AbstractController
             $result[] = $server['server_id'];
         }
         return $result;
+    }
+
+    private function invitations(): InvitationRepository
+    {
+        $repository = $this->container->get('service.invitation.repository');
+        assert($repository instanceof InvitationRepository);
+        return $repository;
     }
 }
