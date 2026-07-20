@@ -57,6 +57,10 @@ xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/sc
 		<service id="notification.registry" class="psm\Notification\ChannelRegistry" public="true">
 			<factory class="psm\Notification\ChannelRegistryFactory" method="create" />
 		</service>
+		<service id="service.platform_requirements" class="psm\Util\Install\PlatformRequirements" />
+		<service id="service.php_info" class="psm\Service\PhpInfoService" public="true">
+			<argument type="service" id="service.platform_requirements" />
+		</service>
 		<!--SERVICES end-->
 
 		<!--UTIL start-->

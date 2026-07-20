@@ -42,6 +42,10 @@
                 aria-controls="config-webhook" aria-selected="{% if webhook_active %}true{% else %}false{% endif %}">{{
                 label_tab_webhook }}</a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" id="config-php-info-tab" data-toggle="tab" href="#config-php-info" role="tab"
+                aria-controls="config-php-info" aria-selected="false">{{ label_tab_php_info }}</a>
+        </li>
     </ul>
     <!-- Tab panes -->
     <div class="tab-content">
@@ -244,6 +248,34 @@
                 {{ macro.button_test("testWebhook", label_test) }}
                 {{ macro.input_hidden("test_webhook", "0") }}
                 {{ macro.button_save("webhook_submit",  label_save) }}
+            </fieldset>
+        </div>
+        <div class="tab-pane" id="config-php-info" role="tabpanel" aria-labelledby="config-php-info-tab">
+            <fieldset>
+                <legend>{{ label_tab_php_info }}</legend>
+                <p>{{ label_php_info_safe }}</p>
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <tbody>
+                        {% for key, value in php_info %}
+                            <tr>
+                                <th scope="row">{{ key|e }}</th>
+                                <td>
+                                    {% if key == 'platform' %}
+                                        <span class="badge badge-{{ value.satisfied ? 'success' : 'danger' }}">{{ value.satisfied ? 'OK' : 'ERROR' }}</span>
+                                        {{ value|json_encode|e }}
+                                    {% elseif key == 'opcache' %}
+                                        <span class="badge badge-{{ value.enabled ? 'success' : 'warning' }}">{{ value.enabled ? 'ON' : 'OFF' }}</span>
+                                        {{ value|json_encode|e }}
+                                    {% else %}
+                                        {{ value|e }}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </fieldset>
         </div>
     </div>

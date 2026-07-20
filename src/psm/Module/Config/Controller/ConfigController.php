@@ -131,6 +131,7 @@ class ConfigController extends AbstractController
     {
         $this->twig->addGlobal('subtitle', psm_get_lang('menu', 'config'));
         $tpl_data = $this->getLabels();
+        $tpl_data['php_info'] = $this->container->get('service.php_info')->collect();
 
         $config_db = $this->db->select(
             PSM_DB_PREFIX . 'config',
@@ -433,6 +434,8 @@ class ConfigController extends AbstractController
             'label_tab_webhook' => psm_get_lang('config', 'tab_webhook'),
             'label_tab_telegram' => psm_get_lang('config', 'tab_telegram'),
             'label_tab_auth' => psm_get_lang('config', 'tab_auth'),
+            'label_tab_php_info' => psm_get_lang('config', 'tab_php_info'),
+            'label_php_info_safe' => psm_get_lang('config', 'php_info_safe'),
             'label_settings_email' => psm_get_lang('config', 'settings_email'),
             'label_settings_sms' => psm_get_lang('config', 'settings_sms'),
             'label_settings_discord' => psm_get_lang('config', 'settings_discord'),
