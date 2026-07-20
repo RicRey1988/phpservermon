@@ -169,6 +169,19 @@ final class ModernViewContractTest extends TestCase
         self::assertStringContainsString('querySelectorAll', $historyJavascript);
     }
 
+    public function testServerViewsContainNoLegacyFixedWidthOrBootstrapFourUtilities(): void
+    {
+        foreach (['module/server/server/list.tpl.html', 'module/server/server/update.tpl.html', 'module/server/server/view.tpl.html', 'module/server/history.tpl.html'] as $template) {
+            $html = $this->read($template);
+            self::assertDoesNotMatchRegularExpression('/width\s*:\s*\d+vw/i', $html, $template);
+            self::assertDoesNotMatchRegularExpression('/\b(?:pl|pr|ml|mr|float)-(?:0|auto|left|right)\b/', $html, $template);
+        }
+        $view = $this->read('module/server/server/view.tpl.html');
+        self::assertStringContainsString('server-detail-grid', $view);
+        self::assertStringContainsString('server-detail-tabs', $view);
+        self::assertStringContainsString('role="tablist"', $view);
+    }
+
     private function read(string $path): string
     {
         $contents = @file_get_contents($this->root . $path);

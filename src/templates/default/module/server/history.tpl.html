@@ -3,12 +3,14 @@
 <script type="text/javascript" src="src/templates/default/static/plugin/hammer/hammer.min.js"></script>
 <script type="text/javascript" src="src/templates/default/static/plugin/chartjs/plugin-zoom.min.js"></script>
 {% for graph in graphs %}
-<div class="chart-container col-10" style="position: relative;  width:60vw">
+
+<section class="history-graph row g-4 align-items-start mb-4">
+<div class="chart-container col-12 col-xl-9 min-w-0">
 	<canvas id="{{ graph.id }}">Your browser does not support the canvas element.</canvas>
 </div>
-<div class="col-md-2">
+<div class="col-12 col-xl-3 min-w-0">
 	<noscript><div hidden></noscript>
-		<div class="btn-group" role="group" aria-label="{{ label_history }}">
+		<div class="d-flex flex-wrap gap-2 history-range-controls" role="group" aria-label="{{ label_history }}">
 			{% for button in graph.buttons %}
 			<label class="btn btn-secondary {{ button.class_active }}">
 				<input type="radio" name="{{ graph.button_name }}" value="{{ button.time }}" id="{{ button.unit }}" autocomplete="off" {% if button.class_active %} checked {% endif  %}> {{ button.label }}
@@ -182,5 +184,6 @@
 	alert('Graph is missing the \'javascript part\'.');
 </script>
 {% endif %}
+</section>
 {% endfor %}
 <script src="src/templates/default/static/js/history.js"></script>

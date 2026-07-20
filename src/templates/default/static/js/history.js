@@ -21,4 +21,9 @@
 
 	if (typeof historyShort !== 'undefined') { bind('timeframe_short', historyShort); }
 	if (typeof historyLong !== 'undefined') { bind('timeframe_long', historyLong); }
+	document.addEventListener('shown.bs.tab', function (event) {
+		if (!event.target || event.target.getAttribute('data-bs-target') !== '#history-panel') { return; }
+		if (typeof historyShort !== 'undefined') { historyShort.resize(); }
+		if (typeof historyLong !== 'undefined') { historyLong.resize(); }
+	});
 }());
