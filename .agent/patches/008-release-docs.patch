@@ -1,4 +1,4 @@
-# commit-message: docs: document native Hope UI migration
+# commit-message: docs: document native Hope UI migration and release
 diff --git a/CHANGELOG.md b/CHANGELOG.md
 index 1180603..b5f5c33 100644
 --- a/CHANGELOG.md
