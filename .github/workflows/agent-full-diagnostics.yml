@@ -1,0 +1,46 @@
+name: Agent full diagnostics
+
+on:
+  push:
+    branches: [feature/native-hope-ui-4.3.2-hs]
+    paths: ['.agent/full-diagnostics-trigger.txt']
+
+permissions:
+  contents: write
+
+jobs:
+  diagnostics:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/native-hope-ui-4.3.2-hs
+          fetch-depth: 0
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: ctype, curl, filter, gd, intl, json, libxml, mbstring, openssl, pdo_mysql, xml, zip
+          coverage: none
+      - run: composer install --no-interaction --prefer-dist
+      - name: Run complete PHPUnit suite
+        id: phpunit
+        continue-on-error: true
+        run: vendor/bin/phpunit --testdox --colors=never > /tmp/phpunit-result.txt 2>&1
+      - name: Persist diagnostic report
+        if: always()
+        run: |
+          set -euo pipefail
+          {
+            printf 'Commit: %s\n\n' "$GITHUB_SHA"
+            cat /tmp/phpunit-result.txt
+          } > .agent/phpunit-diagnostics.txt
+          git config user.name 'Hosting Supremo Diagnostics'
+          git config user.email 'noreply@hostingsupremo.org'
+          git add .agent/phpunit-diagnostics.txt
+          if ! git diff --cached --quiet; then
+            git commit -m 'chore: capture PHPUnit diagnostics [skip ci]'
+            git push origin HEAD:feature/native-hope-ui-4.3.2-hs
+          fi
+      - name: Preserve failure status
+        if: steps.phpunit.outcome == 'failure'
+        run: exit 1
