@@ -6,3 +6,4 @@ parameters:
         - src/psm/Util/Install/PlatformRequirements.php
         - src/psm/Service/PhpInfoService.php
         - src/psm/Service/Statistics
+        - src/psm/Service/Incident
