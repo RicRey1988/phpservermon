@@ -150,6 +150,52 @@
 		});
 	}
 
+	function initializeDropzones() {
+		each('[data-dropzone]', function (dropzone) {
+			var input = dropzone.querySelector('[data-image-input]');
+			var preview = dropzone.querySelector('[data-image-preview]');
+			if (!input) { return; }
+
+			function showPreview(file) {
+				if (!preview || !file || !file.type || !file.type.startsWith('image/')) { return; }
+				var objectUrl = URL.createObjectURL(file);
+				preview.addEventListener('load', function () { URL.revokeObjectURL(objectUrl); }, { once: true });
+				preview.src = objectUrl;
+			}
+
+			['dragenter', 'dragover'].forEach(function (eventName) {
+				dropzone.addEventListener(eventName, function (event) {
+					event.preventDefault();
+					dropzone.classList.add('is-dragging');
+				});
+			});
+
+			['dragleave', 'drop'].forEach(function (eventName) {
+				dropzone.addEventListener(eventName, function (event) {
+					event.preventDefault();
+					dropzone.classList.remove('is-dragging');
+				});
+			});
+
+			dropzone.addEventListener('drop', function (event) {
+				var files = event.dataTransfer ? event.dataTransfer.files : null;
+				if (!files || files.length === 0) { return; }
+				try { input.files = files; } catch (error) { /* FileList can be read-only. */ }
+				showPreview(files[0]);
+			});
+
+			dropzone.addEventListener('keydown', function (event) {
+				if (event.key !== 'Enter' && event.key !== ' ') { return; }
+				event.preventDefault();
+				input.click();
+			});
+
+			input.addEventListener('change', function () {
+				showPreview(input.files && input.files[0]);
+			});
+		});
+	}
+
 	window.psm_setLayout = function (layout) {
 		var list = document.getElementById('list-layout');
 		var flow = document.getElementById('flow-layout');
@@ -178,6 +224,7 @@
 		initializeConditionalForms();
 		initializeCardSearch();
 		initializePasswordToggles();
+		initializeDropzones();
 		var label = document.getElementById('label');
 		if (label && !document.querySelector('[autofocus]')) { label.focus(); }
 	});

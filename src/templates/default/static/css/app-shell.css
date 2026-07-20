@@ -69,8 +69,11 @@ legend { float: none; width: auto; padding: 0 .35rem; font-size: 1rem; font-weig
 .timeline-marker { width: .75rem; height: .75rem; margin-top: 1.2rem; border-radius: 50%; background: var(--psm-accent); box-shadow: 0 0 0 .3rem rgba(58, 87, 232, .12); }
 .timeline-item::before { position: absolute; content: ""; inset-block: 2rem -1rem; inset-inline-start: .35rem; width: 1px; background: var(--psm-border); }
 .timeline-item:last-child::before { display: none; }
-.dropzone-field { padding: 1.5rem; border: 2px dashed #c8cddd; border-radius: .85rem; background: rgba(58, 87, 232, .03); text-align: center; transition: border-color .18s ease, background .18s ease; }
+.dropzone-field { display: grid; grid-template-columns: 7rem minmax(0, 1fr); align-items: center; gap: 1.25rem; padding: 1.5rem; border: 2px dashed #c8cddd; border-radius: .85rem; background: rgba(58, 87, 232, .03); text-align: start; cursor: pointer; transition: border-color .18s ease, background .18s ease; }
 .dropzone-field:focus-within, .dropzone-field.is-dragging { border-color: var(--psm-accent); background: rgba(58, 87, 232, .08); }
+.dropzone-preview { width: 7rem; height: 7rem; padding: .5rem; border: 1px solid var(--psm-border); border-radius: .75rem; background: var(--psm-surface); object-fit: contain; object-position: center; }
+.dropzone-copy { min-width: 0; }
+.dropzone-copy .form-label { cursor: pointer; font-weight: 600; }
 .min-w-0 { min-width: 0; }
 .server-admin-card, .status-card { overflow: hidden; transition: transform .18s ease, box-shadow .18s ease; }
 .server-admin-card:hover, .status-card:hover { transform: translateY(-2px); box-shadow: 0 .65rem 1.5rem rgba(17, 38, 146, .12); }
@@ -141,4 +144,5 @@ body.sidebar-collapsed .main-content { margin-inline-start: 0; }
 	.server-media-frame { height: 8rem; }
 	.install-stepper { grid-template-columns: repeat(2, 1fr); row-gap: .75rem; padding: 1rem; }
 	.install-stepper li::after { display: none; }
+	.dropzone-field { grid-template-columns: 1fr; justify-items: center; text-align: center; }
 }

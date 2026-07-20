@@ -73,6 +73,11 @@ xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/sc
 			<argument>%url.server_images%</argument>
 			<argument>%url.server_image_generic%</argument>
 		</service>
+		<service id="service.server_image.manager" class="psm\Service\ServerImage\ServerImageManager" public="true">
+			<argument type="service" id="db" />
+			<argument type="service" id="service.server_image.processor" />
+			<argument type="service" id="service.server_image.storage" />
+		</service>
 		<!--SERVICES end-->
 
 		<!--UTIL start-->

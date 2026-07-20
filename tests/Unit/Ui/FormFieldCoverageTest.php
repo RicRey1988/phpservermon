@@ -18,6 +18,7 @@ final class FormFieldCoverageTest extends TestCase
             'custom_header', 'warning_threshold', 'ssl_cert_expiry_days', 'website_username',
             'website_password', 'active', 'email', 'sms', 'discord', 'webhook', 'pushover',
             'telegram', 'user_id',
+            'server_image', 'remove_image',
         ]];
         yield 'user' => ['module/user/user/update.tpl.html', [
             'name', 'user_name', 'password', 'password_repeat', 'level', 'mobile', 'discord',

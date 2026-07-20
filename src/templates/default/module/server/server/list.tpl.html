@@ -8,7 +8,7 @@
     <div class="col" data-search-text="{{ server.label }} {{ server.ip|striptags }} {{ server.port }} {{ server.type }} {{ server.status }}">
         <article class="card server-admin-card h-100 status-{{ server.status|lower }}">
             <div class="server-media-frame">
-                <img src="icons/{{ server.label }}.png" alt="" class="server-media" loading="lazy" onerror="this.onerror=null;this.src='phpservermon.png';">
+                <img src="{{ server.image_url }}" alt="" class="server-media" loading="lazy" decoding="async">
                 <span class="status-indicator" title="{{ server.status }}">
                     {% if server.status|lower == 'on' %}<i class="fas fa-check-circle" aria-hidden="true"></i>
                     {% elseif server.status|lower == 'warning' %}<i class="fas fa-exclamation-triangle" aria-hidden="true"></i>

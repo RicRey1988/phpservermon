@@ -29,6 +29,8 @@
 namespace psm\Module\Server\Controller;
 
 use psm\Service\Database;
+use psm\Service\ServerImage\ServerImageManager;
+use psm\Service\ServerImage\ServerImageStorage;
 
 /**
  * Server module. Add/edit/delete servers, show a list of all servers etc.
@@ -110,6 +112,7 @@ class ServerController extends AbstractServerController
         $server_count = count($servers);
 
         for ($x = 0; $x < $server_count; $x++) {
+            $servers[$x]['image_url'] = $this->serverImageStorage()->urlFor($servers[$x]['image_file'] ?? null);
             if ($servers[$x]['type'] == 'website') {
                 // add link to label
                 $ip = $servers[$x]['ip'];
@@ -262,6 +265,10 @@ class ServerController extends AbstractServerController
             ));
         }
 
+        $tpl_data['edit_image_url'] = $this->serverImageStorage()->urlFor($edit_server['image_file'] ?? null);
+        $tpl_data['edit_has_image'] = !empty($edit_server['image_file'])
+            && str_contains($tpl_data['edit_image_url'], 'public/server-images/');
+
         $notifications = array('email', 'sms', 'pushover', 'discord', 'webhook', 'telegram');
         foreach ($notifications as $notification) {
             if (psm_get_conf($notification . '_status') == 0) {
@@ -413,6 +420,16 @@ class ServerController extends AbstractServerController
             $this->addMessage(psm_get_lang('servers', 'inserted'), 'success');
         }
 
+        try {
+            $this->serverImageManager()->apply(
+                (int) $this->server_id,
+                $_FILES['server_image'] ?? [],
+                psm_POST('remove_image', '0') === '1'
+            );
+        } catch (\InvalidArgumentException $exception) {
+            $this->addMessage($exception->getMessage(), 'error');
+        }
+
         // update users
         $user_idc = psm_POST('user_id', array());
         $user_idc_save = array();
@@ -452,6 +469,7 @@ class ServerController extends AbstractServerController
                 $this->db->delete(PSM_DB_PREFIX . 'users_servers', array('server_id' => $id));
                 $this->db->delete(PSM_DB_PREFIX . 'servers_uptime', array('server_id' => $id));
                 $this->db->delete(PSM_DB_PREFIX . 'servers_history', array('server_id' => $id));
+                $this->serverImageManager()->deleteForServer($id);
             }
             $this->addMessage(psm_get_lang('servers', 'deleted'), 'success');
         }
@@ -473,6 +491,7 @@ class ServerController extends AbstractServerController
         }
 
         $tpl_data = $this->getLabels();
+        $server['image_url'] = $this->serverImageStorage()->urlFor($server['image_file'] ?? null);
         $tpl_data = array_merge($tpl_data, $this->formatServer($server));
 
         // create history HTML
@@ -553,6 +572,26 @@ class ServerController extends AbstractServerController
         $tpl_data['log_entries'] = $log_entries;
                 
         return $this->twig->render('module/server/server/view.tpl.html', $tpl_data);
+    }
+
+    private function serverImageManager(): ServerImageManager
+    {
+        $service = $this->container?->get('service.server_image.manager');
+        if (!$service instanceof ServerImageManager) {
+            throw new \LogicException('Server image manager service is unavailable.');
+        }
+
+        return $service;
+    }
+
+    private function serverImageStorage(): ServerImageStorage
+    {
+        $service = $this->container?->get('service.server_image.storage');
+        if (!$service instanceof ServerImageStorage) {
+            throw new \LogicException('Server image storage service is unavailable.');
+        }
+
+        return $service;
     }
 
     protected function getLabels()

@@ -1,6 +1,6 @@
 {% import 'main/macros.tpl.html' as macro %}
 <form name="edit_server" action="{{ url_save|raw }}" class="server-form col-12 col-xxl-9" id="edit_server" method="post"
- autocomplete="off">
+	 enctype="multipart/form-data" autocomplete="off">
 	<fieldset data-form-section="identification-check">
 		<legend>{{ titlemode }}</legend>
 		<div class="col">
@@ -119,6 +119,26 @@
 			<!-- Timeout -->
 			{{ macro.input_field("number", "timeout", null, "timeout", label_timeout, edit_value_timeout, default_value_timeout, "10", 'timeout_help', label_timeout_description) }}
 		</div>
+	</fieldset>
+	<fieldset data-form-section="image">
+		<legend>Imagen del servidor</legend>
+		<div class="dropzone-field" data-dropzone tabindex="0" role="button" aria-controls="server_image">
+			<img class="dropzone-preview" src="{{ edit_image_url }}" alt="Vista previa" data-image-preview>
+			<div class="dropzone-copy">
+				<i class="fas fa-cloud-upload-alt fa-2x" aria-hidden="true"></i>
+				<label class="form-label d-block mb-1" for="server_image">Arrastra una imagen aquí o selecciónala</label>
+				<small class="text-muted">JPEG, PNG o WebP; máximo 5 MiB. Se normalizará automáticamente.</small>
+			</div>
+			<input class="visually-hidden" type="file" id="server_image" name="server_image" accept="image/jpeg,image/png,image/webp" data-image-input>
+		</div>
+		{% if edit_has_image %}
+		<div class="form-check mt-3">
+			<input class="form-check-input" type="checkbox" id="remove_image" name="remove_image" value="1">
+			<label class="form-check-label" for="remove_image">Eliminar la imagen actual y usar la genérica</label>
+		</div>
+		{% else %}
+		<input type="hidden" name="remove_image" value="0">
+		{% endif %}
 	</fieldset>
 	<fieldset data-form-section="http-headers">
 		<legend>{{ label_custom_header }} ({{ label_optional }})</legend>
