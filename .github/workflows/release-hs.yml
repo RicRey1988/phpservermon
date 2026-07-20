@@ -28,6 +28,7 @@ jobs:
           fetch-depth: 0
 
       - name: Validate release identity
+        id: identity
         run: |
           set -euo pipefail
           if [[ ! "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+-hs$ ]]; then
@@ -46,6 +47,7 @@ jobs:
           coverage: none
 
       - name: Verify source
+        id: verify
         run: |
           set -euo pipefail
           composer validate --strict
@@ -62,6 +64,7 @@ jobs:
           node --check src/templates/default/static/js/notifications.js
 
       - name: Create signed production assets
+        id: assets
         env:
           RELEASE_SIGNING_PRIVATE_KEY: ${{ secrets.RELEASE_SIGNING_PRIVATE_KEY }}
         run: |
@@ -83,6 +86,7 @@ jobs:
           rm -f "$RUNNER_TEMP/release-private.pem" "$RUNNER_TEMP/manifest.sig" "$RUNNER_TEMP/verify.sig"
 
       - name: Point release tag at verified main
+        id: tag
         run: |
           set -euo pipefail
           git config user.name 'Hosting Supremo Releases'
@@ -100,6 +104,7 @@ jobs:
           test "$(git rev-list -n 1 "$RELEASE_TAG")" = "$GITHUB_SHA"
 
       - name: Publish and verify GitHub release
+        id: publish
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -133,3 +138,22 @@ jobs:
             echo "Assets: phpservermon-$version.zip, phpservermon-$version.json, phpservermon-$version.json.sig"
           } > "$RUNNER_TEMP/release-comment.md"
           gh pr comment 1 --body-file "$RUNNER_TEMP/release-comment.md"
+
+      - name: Report release workflow result
+        if: always()
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          {
+            echo "Resultado del workflow de release $RELEASE_TAG"
+            echo
+            echo "Commit: $GITHUB_SHA"
+            echo "Identidad: ${{ steps.identity.outcome }}"
+            echo "Verificación: ${{ steps.verify.outcome }}"
+            echo "Assets firmados: ${{ steps.assets.outcome }}"
+            echo "Tag: ${{ steps.tag.outcome }}"
+            echo "Publicación: ${{ steps.publish.outcome }}"
+            echo "Run: https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          } > "$RUNNER_TEMP/release-result.md"
+          gh pr comment 1 --body-file "$RUNNER_TEMP/release-result.md" || true
