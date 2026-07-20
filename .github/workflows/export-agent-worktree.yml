@@ -16,9 +16,9 @@ jobs:
         with:
           fetch-depth: 0
       - name: Archive repository worktree
-        run: tar --exclude='./agent-worktree.tgz' -czf agent-worktree.tgz .
+        run: tar -czf /tmp/agent-worktree.tgz .
       - uses: actions/upload-artifact@v4
         with:
           name: agent-worktree
-          path: agent-worktree.tgz
+          path: /tmp/agent-worktree.tgz
           retention-days: 1
