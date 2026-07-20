@@ -36,6 +36,8 @@
   localized date literals work correctly on PHP 8.5.
 - Production exceptions create a safe reference and log entry instead of a
   blank authenticated page.
+- System diagnostics ignore older unsigned legacy releases before requiring
+  signed updater assets, so an already newer HS installation reports no update.
 
 ### Security
 - Dynamic authenticated pages and secrets are excluded from PWA caches.

@@ -57,4 +57,20 @@ final class GitHubReleaseClientTest extends TestCase
             ['http_code' => 200],
         ))))->latest();
     }
+
+    public function testIgnoresAnOlderLegacyReleaseBeforeRequiringSignedAssets(): void
+    {
+        $payload = [
+            'tag_name' => 'v3.5.3-hs',
+            'draft' => false,
+            'prerelease' => false,
+            'assets' => [],
+        ];
+        $client = new GitHubReleaseClient(new MockHttpClient(new MockResponse(
+            json_encode($payload, JSON_THROW_ON_ERROR),
+            ['http_code' => 200],
+        )));
+
+        self::assertNull($client->newerThan('4.1.0-hs'));
+    }
 }

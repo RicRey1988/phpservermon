@@ -21,6 +21,21 @@ final class GitHubReleaseClient
 
     public function latest(): ReleaseInfo
     {
+        $release = $this->fetchRelease();
+        if (!$release instanceof ReleaseInfo) {
+            throw new RuntimeException('GitHub did not return a release.');
+        }
+
+        return $release;
+    }
+
+    public function newerThan(string $currentVersion): ?ReleaseInfo
+    {
+        return $this->fetchRelease($currentVersion);
+    }
+
+    private function fetchRelease(?string $currentVersion = null): ?ReleaseInfo
+    {
         $response = $this->http->request('GET', self::API_URL, ['headers' => [
             'Accept' => 'application/vnd.github+json',
             'X-GitHub-Api-Version' => '2022-11-28',
@@ -37,6 +52,9 @@ final class GitHubReleaseClient
             || ($payload['prerelease'] ?? true) === true
         ) {
             throw new RuntimeException('The latest GitHub release is not a stable HS release.');
+        }
+        if ($currentVersion !== null && version_compare($version, $currentVersion, '<=')) {
+            return null;
         }
         $baseName = 'phpservermon-' . $version;
         $expectedNames = [$baseName . '.zip', $baseName . '.json', $baseName . '.json.sig'];

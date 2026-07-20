@@ -28,7 +28,7 @@ final class SystemController extends AbstractController
         $release = null;
         $releaseError = null;
         try {
-            $release = $this->releaseClient()->latest();
+            $release = $this->releaseClient()->newerThan(PSM_VERSION);
         } catch (Throwable $exception) {
             $releaseError = $exception->getMessage();
         }
