@@ -227,22 +227,22 @@
 
 		function updateType() {
 			if (!type) { return; }
-			toggleGroup('.typeWebsite', type.value === 'website');
-			toggleGroup('.typeService', type.value === 'service');
+			toggleGroup('[data-server-type="website"]', type.value === 'website');
+			toggleGroup('[data-server-type="service"]', type.value === 'service');
 			if (requestMethod) { requestMethod.dispatchEvent(new Event('change')); }
 			if (popularPort) { popularPort.dispatchEvent(new Event('change')); }
 		}
 		function updateRequestMethod() {
 			if (!requestMethod || !type || type.value !== 'website') { return; }
 			var custom = requestMethod.value === 'custom';
-			toggleGroup('.requestMethod', custom);
+			toggleGroup('[data-request-method-custom]', custom);
 			var target = document.getElementById('request_method');
 			if (target && !custom) { target.value = requestMethod.value; }
 		}
 		function updatePort() {
 			if (!popularPort || !type || type.value !== 'service') { return; }
 			var custom = popularPort.value === 'custom';
-			toggleGroup('.port', custom);
+			toggleGroup('[data-port-custom]', custom);
 			var target = document.getElementById('port');
 			if (target && !custom) { target.value = popularPort.value; }
 		}
