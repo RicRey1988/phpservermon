@@ -8,6 +8,6 @@ final class VersionTest extends TestCase
 {
     public function testHsVersionIsExposed(): void
     {
-        self::assertSame('4.0.2-hs', PSM_VERSION);
+        self::assertSame('4.1.0-hs', PSM_VERSION);
     }
 }

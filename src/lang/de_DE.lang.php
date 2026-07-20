@@ -49,7 +49,7 @@ $sm_lang = array(
         'insert' => 'Einfügen',
         'add_new' => 'Neuen Eintrag erstellen',
         'update_available' => 'Eine Aktualisierung ({version}) ist verfügbar unter <a
- href="https://github.com/phpservermon/phpservermon/releases/latest" target="_blank"
+ href="https://github.com/RicRey1988/phpservermon/releases/latest" target="_blank"
  rel="noopener">http://www.phpservermonitor.org</a>.',
         'back_to_top' => 'nach oben',
         'go_back' => 'Zurück',

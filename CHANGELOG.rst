@@ -1,6 +1,19 @@
 Changelog
 =========
 
+v4.1.0-hs (unreleased)
+----------------------
+
+* Rebuilt the application with Hope UI cards and coordinated light/dark modes.
+* Added normalized server image uploads, statistics, incident history and
+  immediate locked status checks.
+* Added persistent down/recovery delivery, PWA, per-device Web Push, expiring
+  administrator invitations and safe system diagnostics.
+* Added an RSA-signed updater restricted to releases from the Hosting Supremo
+  fork, with archive safety checks, maintenance mode and rollback.
+* Requires PHP 8.5 or later plus GD, Intl, PDO MySQL and ZIP.
+* This source version has not been published as a GitHub Release.
+
 
 v3.5.3-hs (released July 19, 2026)
 ----------------------------------

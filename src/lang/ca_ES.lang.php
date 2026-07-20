@@ -50,7 +50,7 @@ $sm_lang = array(
         'insert' => 'Inserir',
         'add_new' => 'Afegir nou',
         'update_available' => 'Hi ha disponible una nova versió ({version}) a <a
- href="https://github.com/phpservermon/phpservermon/releases/latest" target="_blank"
+ href="https://github.com/RicRey1988/phpservermon/releases/latest" target="_blank"
  rel="noopener">https://github.com/phpservermon</a>.',
         'back_to_top' => 'Tornar a dalt',
         'go_back' => 'Enrere',

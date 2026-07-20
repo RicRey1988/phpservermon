@@ -242,7 +242,7 @@ class ConfigController extends AbstractController
 
         $tpl_data['user_agent'] = empty($tpl_data['user_agent']) ?
             'Mozilla/5.0 (compatible; phpservermon/' .
-            PSM_VERSION . '; +https://github.com/phpservermon/phpservermon)' : $tpl_data['user_agent'];
+            PSM_VERSION . '; +https://github.com/RicRey1988/phpservermon)' : $tpl_data['user_agent'];
 
         $tpl_data['site_title'] = empty($tpl_data['site_title']) ?
             strtoupper(psm_get_lang('system', 'title')) : $tpl_data['site_title'];
@@ -454,7 +454,7 @@ class ConfigController extends AbstractController
         $user = $this->getUser()->getUser();
         $attributes = get_object_vars($user);
         $recipient = new Recipient((int) ($attributes['user_id'] ?? 0), $attributes);
-        $prefix = '[PRUEBA 4.0.0-hs] ';
+        $prefix = '[PRUEBA ' . PSM_VERSION . '] ';
         $message = new NotificationMessage(
             $prefix . psm_get_lang('config', 'test_subject'),
             $prefix . psm_get_lang('config', 'test_message')

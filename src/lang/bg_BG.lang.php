@@ -49,7 +49,7 @@ $sm_lang = array(
         'insert' => 'Добавяне',
         'add_new' => 'Добави нов',
         'update_available' => 'Налична е нова версия: ({version}). Може да я свалите
- от <a href="https://github.com/phpservermon/phpservermon/releases/latest"
+ от <a href="https://github.com/RicRey1988/phpservermon/releases/latest"
  target="_blank" rel="noopener">тук</a>.',
         'back_to_top' => 'Нагоре',
         'go_back' => 'Назад',

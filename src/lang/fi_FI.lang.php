@@ -50,7 +50,7 @@ $sm_lang = array(
         'insert' => 'Asetukset',
         'add_new' => 'Lisää uusi',
         'update_available' => 'Uusi versio ({version}) on ladattavissa osoitteessa <a
- href="https://github.com/phpservermon/phpservermon/releases/latest" target="_blank"
+ href="https://github.com/RicRey1988/phpservermon/releases/latest" target="_blank"
  rel="noopener">http://www.phpservermonitor.org</a>.',
         'back_to_top' => 'Takaisin ylös',
         'go_back' => 'Takaisin',

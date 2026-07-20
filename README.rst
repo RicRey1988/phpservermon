@@ -1,158 +1,108 @@
-PHP Server Monitor
-==================
+PHP Server Monitor HS
+=====================
 
-.. image:: https://badges.gitter.im/Join%20Chat.svg
-   :alt: Join the chat at https://gitter.im/phpservermon/phpservermon
-   :target: https://gitter.im/phpservermon/phpservermon
+Version 4.1.0-hs (source version; release package not published yet)
 
-Version 4.0.0-hs (unreleased)
+PHP Server Monitor HS checks websites and network services and presents their
+availability, latency and history in a modern web dashboard. This Hosting
+Supremo edition is maintained at
+https://github.com/RicRey1988/phpservermon and preserves attribution to the
+original PHP Server Monitor project.
 
-.. image:: https://img.shields.io/discord/1359923330798456992?logo=discord&logoColor=white&label=Discord&labelColor=%235865F2&link=https%3A%2F%2Fdiscord.gg%2FRv7nRP4HVq
-   :alt: Join the discord at https://discord.gg/Rv7nRP4HVq
-   :target: https://discord.gg/Rv7nRP4HVq
+Highlights
+----------
 
-PHP Server Monitor is a script that checks whether your websites and servers are up and running.
-It comes with a web based user interface where you can manage your services and websites,
-and you can manage users for each server with a mobile number and email address.
+* Responsive Hope UI dashboard with accessible cards instead of DataTables,
+  coordinated light and dark modes, and redesigned login, registration,
+  recovery, configuration and installer screens.
+* Immediate manual status refresh, uptime and latency statistics, incident
+  history, channel delivery state and clear online/offline indicators.
+* Normalized server images uploaded with drag and drop, a safe fixed display
+  size and a bundled generic fallback when no image exists.
+* Email, Telegram, Web Push, SMS, Discord, Webhook and Pushover notifications.
+  A down incident opens once, sends one alert per configured recipient and
+  channel, and sends a recovery notification when service returns.
+* Installable PWA with an offline shell, per-device Web Push subscriptions and
+  VAPID key management. Dynamic authenticated responses are never cached.
+* Administrator invitation links with expiry, revocation and single-use
+  registration.
+* Safe system diagnostics for PHP, extensions, database, disk, cron, delivery
+  queue and scheduled jobs without exposing credentials or request data.
+* A signed updater restricted to newer ``-hs`` releases from the Hosting
+  Supremo fork. It verifies the pinned RSA signature, GitHub asset digest,
+  package hash and safe archive paths before entering maintenance mode.
 
+Monitoring
+----------
 
-Features:
----------
+Services are checked by opening the configured host and port. Websites are
+checked with cURL and may also require a regular-expression match. Schedule
+``cron/status.cron.php`` at least once per minute for timely automatic checks
+and down/recovery notifications. An operating-system lock prevents overlapping
+runs, and one failing check does not stop the remaining servers.
 
-* Monitor services and websites (see below).
-* Email, SMS, Discord, Webhook, Pushover and Telegram notifications.
-* View history graphs of uptime and latency.
-* User authentication with 2 levels (administrator and regular user).
-* Logs of connection errors, outgoing emails and text messages.
-* Easy cronjob implementation to automatically check your servers.
-* Dark interface.
-* Per-server PNG icons with a bundled fallback.
-
-There are two different ways to monitor a server:
-
-* Service
-
-  A connection will be made to the entered ip or domain, on the given port.
-  This way you can check if certain services on your machine are still running.
-  To check your IMAP service for example, enter port 143.
-
-* Website
-
-  You can enter a link to a website, it will then use cURL to open the website and check the HTTP status code.
-  If the HTTP status code is in the 4xx/5xx, it means an error occurred and the website is not accessible to the public.
-  You can also set a regular expression to match for content on the page itself.
-  If the regular expression returns no matches, the website is considered down.
-  In both cases the script will return a "status offline", and will start sending out notifications.
-
-Each server has its own settings regarding notification.
-You can choose email, text message (SMS), Discord, Webhook, Pushover.net and Telegram notifications.
-The following SMS gateways are currently available:
-
-* Clickatell - <https://www.clickatell.com>
-* Inetworx - <https://www.inetworx.ch>
-* Messagebird - <https://www.messagebird.com>
-* Mosms - <https://www.mosms.com>
-* Smsglobal - <https://smsglobal.com>
-* SMSit - <https://www.smsit.dk>
-* Spryng - <https://www.spryng.nl>
-* Textmarketer - <https://www.textmarketer.co.uk>
-* FreeVoipDeal - <https://www.freevoipdeal.com>
-* Nexmo - <https://www.nexmo.com>
-* OctoPush - <https://www.octopush.com>
-* FreeMobile (FR) - <https://mobile.free.fr>
-* Twilio - <https://twilio.com>
-* CM Telecom - <https://www.cm.com>
-* GatewayAPI - <https://gatewayapi.com>
-* SolutionsInfini - <https://solutionsinfini.com>
-* Plivo - <https://www.plivo.com>
-* Callr - <https://www.callr.com>
-* SMSAPI - <https://www.smsapi.com/en>
-* OVH SMS PRO - <https://www.ovhtelecom.fr/sms>
-* PromoSMS - <https://promosms.com>
-* Infobip - <https://www.infobip.com>
-* LabsMobile - <https://www.labsmobile.com>
-* Tele2 Messaging - <https://portal.tele2messaging.com>
-
-Please note: for these gateways you will need an account with sufficient credits.
-
-
-Join the community
-------------------
-
-.. image:: https://discord.com/api/guilds/1359923330798456992/widget.png?style=banner4
-   :alt: Join the discord at https://discord.gg/Rv7nRP4HVq
-   :target: https://discord.gg/Rv7nRP4HVq
-
-
-Download
---------
-
-The current Hosting Supremo development version is available from
-https://github.com/RicRey1988/phpservermon. Version 4.0.0-hs does not have a
-release package yet.
-
+Each server controls its own recipients and channels. Use the test action in
+Configuration to validate Email or Telegram through the same delivery path as
+production. The notification centre reports outages, permanent delivery
+failures and a newer signed application version.
 
 Requirements
 ------------
 
-* Web server
-* MySQL database
-* PHP 8.5 or later
-* PHP Extensions (modules)
-
-  * ext-curl
-  * ext-ctype
-  * ext-filter
-  * ext-hash
-  * ext-json
-  * ext-libxml
-  * ext-mbstring
-  * ext-openssl
-  * ext-pdo
-  * ext-pdo_mysql
-  * ext-xml
+* Apache, nginx or another PHP-capable web server.
+* MySQL or MariaDB.
+* PHP 8.5 or later.
+* PHP extensions ``ext-ctype``, ``ext-curl``, ``ext-filter``, ``ext-gd``,
+  ``ext-hash``, ``ext-intl``, ``ext-json``, ``ext-libxml``, ``ext-mbstring``,
+  ``ext-openssl``, ``ext-pdo``, ``ext-pdo_mysql``, ``ext-xml`` and ``ext-zip``.
+* Composer 2 when installing directly from source.
+* HTTPS for PWA installation, browser notifications and Web Push outside
+  localhost.
 
 Install
 -------
 
-Please see docs/install.rst.
-In a nutshell: unzip, upload, run install.php, enjoy.
+For a packaged release, extract the archive, point the web server at its root
+and open ``install.php``. For a Git checkout, install production dependencies
+with PHP 8.5 or later::
 
-If you have downloaded the source from GitHub (and not a pre-built package), the dependencies are not included.
-To be able to run an installation from the repo, you need to run the following command to install the dependencies::
+    composer install --no-dev --classmap-authoritative
 
-     composer install --no-dev --optimize-autoloader
+Then open ``install.php`` and follow the guided setup. Keep ``config.php``
+outside version control and configure the CLI cron job, for example::
 
-If you are familiar with Vagrant (https://www.vagrantup.com)::
+    * * * * * /usr/bin/php /var/www/phpservermon/cron/status.cron.php
 
-     vagrant up
+After installation, an administrator can generate VAPID credentials in the
+PWA/Web Push configuration and each user can subscribe the current device from
+their profile.
 
-.. and browse to http://localhost:8080/psm/.
-
-
-Documentation
--------------
-
-The documentation is available in the docs folder or https://docs.phpservermonitor.org.
-
-
-License
+Upgrade
 -------
 
-PHP Server Monitor is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+Before a manual upgrade, confirm the documented platform requirements. Replace
+application files while preserving ``config.php``, ``logs/``, uploaded server
+images and runtime update data, then run::
 
-PHP Server Monitor is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+    php bin/psm migrate
+    php bin/psm health
 
-You should have received a copy of the GNU General Public License
-along with PHP Server Monitor.  If not, see https://www.gnu.org/licenses/.
+The web installer can also apply additive database migrations. The in-app
+updater accepts no arbitrary URL: it can install only a newer stable HS release
+whose three release assets and detached signature pass verification. Because
+4.1.0-hs is currently a source commit and not a GitHub Release, it is not yet
+offered by that updater.
 
-Docker
--------
+More documentation
+------------------
 
-PHPServerMonitor is now available on Docker : https://github.com/phpservermon/docker-phpservermonitor
+See ``docs/install.rst`` for deployment and cron details,
+``docs/configuration-hs.rst`` for notifications, PWA and updater operation,
+and ``docs/releasing-hs.rst`` for the signed release process.
+
+License and attribution
+-----------------------
+
+PHP Server Monitor HS is free software distributed under GPL-3.0-or-later.
+It is based on PHP Server Monitor by Pepijn Over and contributors. Hosting
+Supremo maintains this fork and its ``-hs`` product line.

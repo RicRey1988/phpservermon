@@ -52,7 +52,7 @@ $sm_lang = array(
         'insert' => 'Vložit',
         'add_new' => 'Přidat',
         'update_available' => 'Nová verze - ({version}) je dostupná na <a
- href="https://github.com/phpservermon/phpservermon/releases/latest" target="_blank"
+ href="https://github.com/RicRey1988/phpservermon/releases/latest" target="_blank"
  rel="noopener">http://www.phpservermonitor.org</a>.',
         'back_to_top' => 'Zpět na začátek',
         'go_back' => 'Zpět',

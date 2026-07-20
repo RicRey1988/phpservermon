@@ -51,7 +51,7 @@ $sm_lang = array(
         'add_new' => '新規に追加',
         'update_available' => '新しいバージョン({version})
  がリリースされています。ここから入手可能です： <a
- href="https://github.com/phpservermon/phpservermon/releases/latest" target="_blank"
+ href="https://github.com/RicRey1988/phpservermon/releases/latest" target="_blank"
  rel="noopener">http://www.phpservermonitor.org</a>.',
         'back_to_top' => 'トップに戻る',
         'go_back' => '戻る',

@@ -50,7 +50,7 @@ $sm_lang = array(
         'insert' => 'Infoga',
         'add_new' => 'Lägg till',
         'update_available' => 'En ny version ({version}) finns tillgänglig från <a
- href="https://github.com/phpservermon/phpservermon/releases/latest" target="_blank"
+ href="https://github.com/RicRey1988/phpservermon/releases/latest" target="_blank"
  rel="noopener">http://www.phpservermonitor.org</a>.',
         'back_to_top' => 'Gå upp',
         'go_back' => 'Gå tillbaka',

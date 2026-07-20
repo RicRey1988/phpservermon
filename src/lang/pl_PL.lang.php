@@ -51,7 +51,7 @@ $sm_lang = array(
         'insert' => 'Wstaw',
         'add_new' => 'Dodaj',
         'update_available' => 'Nowa wersja ({version}) jest dostępna do pobrania z <a
- href="https://github.com/phpservermon/phpservermon/releases/latest" target="_blank"
+ href="https://github.com/RicRey1988/phpservermon/releases/latest" target="_blank"
  rel="noopener">http://www.phpservermonitor.org</a>.',
         'back_to_top' => 'Do góry',
         'go_back' => 'Wstecz',

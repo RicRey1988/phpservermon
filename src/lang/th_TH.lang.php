@@ -50,7 +50,7 @@ $sm_lang = array(
         'no' => 'ไม่ใช่',
         'insert' => 'แทรก',
         'add_new' => 'เพิ่มใหม่',
-        'update_available' => 'มีเวอร์ชันใหม่ ({version}) ให้ดาวน์โหลดแล้ว คลิก <a href="https://github.com/phpservermon/phpservermon/releases/latest" target="_blank" rel="noopener">ที่นี่</a> เพื่อดาวน์โหลดการอัปเดต',
+        'update_available' => 'มีเวอร์ชันใหม่ ({version}) ให้ดาวน์โหลดแล้ว คลิก <a href="https://github.com/RicRey1988/phpservermon/releases/latest" target="_blank" rel="noopener">ที่นี่</a> เพื่อดาวน์โหลดการอัปเดต',
         'back_to_top' => 'กลับไปยังด้านบน',
         'go_back' => 'ถอยกลับ',
         'ok' => 'ตกลง',

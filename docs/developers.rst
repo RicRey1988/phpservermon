@@ -3,7 +3,7 @@
 Developers
 ==========
 
-The code is available from https://github.com/phpservermon/phpservermon.
+The code is available from https://github.com/RicRey1988/phpservermon.
 There is a master branch, which is stable and always reflects the latest release.
 The develop branch is used for ongoing development and should not be considered stable.
 If you would like to contribute a patch or feature, please fork the develop branch and send a pull request.
@@ -38,7 +38,7 @@ To add a new language, follow these steps:
 * Copy the contents of the file "en_US.lang.php" to your new file.
 * Your new language should now be available on the config page.
 * Translate :-)
-* Please send a pull request on github (https://github.com/phpservermon/phpservermon) so it can be included in the next release :-)
+* Please send a pull request on github (https://github.com/RicRey1988/phpservermon) so it can be included in the next release :-)
 
 
 Getting started
@@ -67,7 +67,7 @@ Code
 
 All code related to phpservermon lives in the "psm" namespace, which can be found under "src/psm".
 
-The Router (https://github.com/phpservermon/phpservermon/blob/develop/src/psm/Router.class.php) is used to load the modules.
+The Router (https://github.com/RicRey1988/phpservermon/blob/develop/src/psm/Router.class.php) is used to load the modules.
 All modules are registered inside the Router class with a unique ID (see getModules()), and can either be loaded manually ($router->run('mod')), or if no module is given it will attempt to discover the module from the $_GET['mod'] var.
 If no valid module or controller is found, it will fall back to the default module.
 

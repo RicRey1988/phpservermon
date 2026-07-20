@@ -50,7 +50,7 @@ $sm_lang = array(
         'insert' => 'Sett inn',
         'add_new' => 'Legg til ny',
         'update_available' => 'En ny versjon ({versjon}) er tilgjengelig på <a
- href="https://github.com/phpservermon/phpservermon/releases/latest" target="_blank"
+ href="https://github.com/RicRey1988/phpservermon/releases/latest" target="_blank"
  rel="noopener">http://www.phpservermonitor.org</a>.',
         'back_to_top' => 'Tilbake til toppen',
         'go_back' => 'Gå tilbake',

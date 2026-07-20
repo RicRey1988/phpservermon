@@ -50,7 +50,7 @@ $sm_lang = array(
         'insert' => 'Ekle',
         'add_new' => 'Yeni ekle',
         'update_available' => '({version}) sürümü şu anda <a
- href="https://github.com/phpservermon/phpservermon/releases/latest" target="_blank"
+ href="https://github.com/RicRey1988/phpservermon/releases/latest" target="_blank"
  rel="noopener">http://www.phpservermonitor.org</a> adresindedir.',
         'back_to_top' => 'Başa Dön',
         'go_back' => 'Geri Git',

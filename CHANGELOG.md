@@ -1,5 +1,66 @@
 # Changelog
 
+## [4.1.0-hs] - Unreleased
+
+### Added
+- Complete Hope UI application shell with responsive card views, accessible
+  light/dark themes and redesigned authentication, installer and forms.
+- Server image drag-and-drop uploads with GD normalization, fixed display
+  dimensions and a generic fallback.
+- Availability, latency and incident statistics plus immediate locked manual
+  checks that return the completed state to the dashboard.
+- Persistent incident and delivery queues with in-app notifications, retry
+  policy and exactly-once down/recovery notification scheduling.
+- Installable PWA, offline application shell, per-device Web Push subscriptions
+  and encrypted VAPID private-key storage.
+- Expiring, revocable and single-use administrator invitations.
+- Administrator system diagnostics and ``bin/psm`` commands for version,
+  additive migrations and health checks.
+- Transactional signed updater restricted to stable HS releases from
+  ``RicRey1988/phpservermon``.
+
+### Changed
+- Product version is now ``4.1.0-hs`` and all runtime repository identifiers
+  point to the Hosting Supremo fork.
+- Server, user and log indexes use native Hope UI cards instead of DataTables.
+- Email, Telegram, Web Push and the other channels share the persistent
+  incident delivery pipeline.
+- Release packages require a canonical manifest, detached RSA-SHA256 signature,
+  GitHub asset digest and an internal per-file hash manifest.
+
+### Fixed
+- Manual refresh no longer races cron or waits for stale browser polling before
+  changing online/offline colours.
+- Oversized and malformed server images can no longer break dashboard layout.
+- SMTP TLS selection, Telegram request handling, retry diagnostics and
+  localized date literals work correctly on PHP 8.5.
+- Production exceptions create a safe reference and log entry instead of a
+  blank authenticated page.
+
+### Security
+- Dynamic authenticated pages and secrets are excluded from PWA caches.
+- Web Push private keys, invitation tokens and updater signatures are handled
+  without storing reusable plaintext credentials.
+- The updater rejects arbitrary URLs, prereleases, wrong repositories, unsafe
+  ZIP paths, symlinks, duplicate paths, oversized packages and unsigned files.
+- Updates use a global lock, maintenance gate, protected-path allowlist and
+  rollback on installation failure.
+
+### Upgrade Notes
+- Preserve ``config.php``, ``logs/``, uploaded server images and runtime update
+  data during a manual deployment.
+- Run ``php bin/psm migrate`` followed by ``php bin/psm health`` after replacing
+  files, or finish the additive migration through ``install.php``.
+- Configure CLI cron every minute for timely monitoring, incident delivery and
+  recovery alerts. Generate VAPID keys before enabling browser push.
+- This commit is intentionally not a GitHub Release; the signed updater acts
+  only when a newer published HS release exists.
+
+### Known Requirements
+- PHP 8.5 or later, MySQL/MariaDB, HTTPS for PWA/Web Push, Composer 2 for source
+  installs, and the PHP extensions declared in ``composer.json`` including GD,
+  Intl, PDO MySQL and ZIP.
+
 ## [4.0.2-hs] - Unreleased
 
 ### Fixed

@@ -50,7 +50,7 @@ $sm_lang = array(
         'insert' => 'Вставити',
         'add_new' => 'Додати',
         'update_available' => 'Доступна нова версія ({version}). Перейдіть <a
- href="https://github.com/phpservermon/phpservermon/releases/latest" target="_blank"
+ href="https://github.com/RicRey1988/phpservermon/releases/latest" target="_blank"
  rel="noopener">сюди</a> для завантаження оновлення.',
         'back_to_top' => 'Нагору',
         'go_back' => 'Назад',

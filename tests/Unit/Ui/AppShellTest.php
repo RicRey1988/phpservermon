@@ -58,9 +58,15 @@ final class AppShellTest extends TestCase
         $status = file_get_contents(
             dirname(__DIR__, 3) . '/src/templates/default/module/server/status/index.tpl.html'
         );
+        $javascript = file_get_contents(
+            dirname(__DIR__, 3) . '/src/templates/default/static/js/dashboard.js'
+        );
         self::assertIsString($status);
+        self::assertIsString($javascript);
 
-        self::assertStringContainsString('fetch(window.location.href', $status);
-        self::assertStringNotContainsString('$.ajax', $status);
+        self::assertStringContainsString('data-auto-refresh-seconds', $status);
+        self::assertStringContainsString('return fetch(url.toString()', $javascript);
+        self::assertStringContainsString('window.setInterval', $javascript);
+        self::assertStringNotContainsString('$.ajax', $status . $javascript);
     }
 }

@@ -46,7 +46,7 @@ $sm_lang = array(
         'insert' => '삽입',
         'add_new' => '새계정 추가',
         'update_available' => '새로운 업데이트가 있습니다 ({version}). 다음사이트를 방문 해
- 주십시오. <a href="https://github.com/phpservermon/phpservermon/releases/latest"
+ 주십시오. <a href="https://github.com/RicRey1988/phpservermon/releases/latest"
  target="_blank" rel="noopener">http://www.phpservermonitor.org</a>.',
     ),
     'menu' => array(

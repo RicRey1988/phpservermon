@@ -50,7 +50,7 @@ $sm_lang = array(
         'no' => 'No',
         'insert' => 'Insert',
         'add_new' => 'Add new',
-        'update_available' => 'A new version ({version}) is available. Click <a href="https://github.com/phpservermon/phpservermon/releases/latest" target="_blank" rel="noopener">here</a> to download the update.',
+        'update_available' => 'A new version ({version}) is available. Click <a href="https://github.com/RicRey1988/phpservermon/releases/latest" target="_blank" rel="noopener">here</a> to download the update.',
         'back_to_top' => 'Back to top',
         'go_back' => 'Go back',
         'ok' => 'OK',

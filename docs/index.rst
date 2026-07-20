@@ -14,6 +14,7 @@ Contents:
    intro
    requirements
    install
+   configuration-hs
    faq
    developers
    credits

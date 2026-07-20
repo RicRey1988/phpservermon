@@ -48,7 +48,7 @@ $sm_lang = array(
         'insert' => 'Vstavi',
         'add_new' => 'Dodaj novega',
         'update_available' => 'Na voljo je nova različica ({version}); prenesti jo je mogoče iz <a
- href="https://github.com/phpservermon/phpservermon/releases/latest" target="_blank"
+ href="https://github.com/RicRey1988/phpservermon/releases/latest" target="_blank"
  rel="noopener">http://www.phpservermonitor.org</a>.',
         'back_to_top' => 'Nazaj na vrh',
         'go_back' => 'Nazaj',

@@ -1,0 +1,60 @@
+<?php
+
+declare(strict_types=1);
+
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\TestCase;
+
+final class DocumentationContractTest extends TestCase
+{
+    #[DataProvider('requiredReadmeTopics')]
+    public function testReadmeDocumentsTheHsProduct(string $topic): void
+    {
+        $readme = file_get_contents(dirname(__DIR__, 2) . '/README.rst');
+
+        self::assertIsString($readme);
+        self::assertStringContainsString($topic, $readme);
+    }
+
+    /** @return iterable<string, array{string}> */
+    public static function requiredReadmeTopics(): iterable
+    {
+        yield 'version' => ['4.1.0-hs'];
+        yield 'php' => ['PHP 8.5'];
+        yield 'images' => ['drag and drop'];
+        yield 'cards' => ['Hope UI'];
+        yield 'statistics' => ['statistics'];
+        yield 'pwa' => ['PWA'];
+        yield 'web-push' => ['VAPID'];
+        yield 'incidents' => ['incident'];
+        yield 'cron' => ['cron'];
+        yield 'invitations' => ['invitation'];
+        yield 'diagnostics' => ['diagnostics'];
+        yield 'updater' => ['signed updater'];
+        yield 'fork' => ['RicRey1988/phpservermon'];
+        yield 'gd' => ['ext-gd'];
+        yield 'zip' => ['ext-zip'];
+    }
+
+    public function testRuntimeReferencesUseTheHsRepository(): void
+    {
+        $files = [
+            dirname(__DIR__, 2) . '/src/includes/functions.inc.php',
+            dirname(__DIR__, 2) . '/src/psm/Module/Config/Controller/ConfigController.php',
+        ];
+        $languageFiles = glob(dirname(__DIR__, 2) . '/src/lang/*.lang.php');
+        self::assertIsArray($languageFiles);
+        $files = array_merge($files, $languageFiles);
+
+        foreach ($files as $file) {
+            $source = file_get_contents($file);
+            self::assertIsString($source);
+            self::assertStringNotContainsString('github.com/phpservermon/phpservermon', $source);
+        }
+
+        $runtimeSource = file_get_contents($files[0]);
+        self::assertIsString($runtimeSource);
+        self::assertStringContainsString('github.com/RicRey1988/phpservermon', $runtimeSource);
+    }
+
+}

@@ -10,10 +10,14 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.5'
-          extensions: curl, mbstring, openssl, pdo_mysql, xml
+          extensions: curl, gd, intl, mbstring, openssl, pdo_mysql, xml, zip
+          tools: composer:v2
           coverage: none
-      - run: composer install --no-interaction --prefer-dist
       - run: composer validate --strict
+      - run: composer install --no-interaction --prefer-dist
       - run: composer check-platform-reqs
+      - run: composer audit
       - run: vendor/bin/phpunit
       - run: vendor/bin/phpstan analyse --no-progress
+      - run: php bin/psm version
+      - run: composer install --no-dev --classmap-authoritative --no-interaction --prefer-dist

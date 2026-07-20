@@ -50,7 +50,7 @@ $sm_lang = array(
         'insert' => 'افزودن',
         'add_new' => 'افزودن',
         'update_available' => 'نسخه جدیدتر ({version}) در <a
- href="https://github.com/phpservermon/phpservermon/releases/latest" target="_blank"
+ href="https://github.com/RicRey1988/phpservermon/releases/latest" target="_blank"
  rel="noopener">http://www.phpservermonitor.org</a> موجود است.',
         'back_to_top' => 'برو به بالا',
         'go_back' => 'برگرد',

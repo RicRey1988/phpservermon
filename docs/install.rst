@@ -48,10 +48,12 @@ Upgrade
 
 For a regular upgrade, follow these steps:
 
-* Replace all files except(!) config.php
-* Navigate to install.php
-* Follow the steps
-* Enjoy
+* Confirm PHP 8.5 and every extension in ``docs/requirements.rst``.
+* Replace application files while preserving ``config.php``, ``logs/``,
+  uploaded server images and ``.psm-update/`` runtime data.
+* Run ``php bin/psm migrate`` and then ``php bin/psm health``. The web
+  ``install.php`` flow can apply the same additive schema upgrade.
+* Remove maintenance mode only after the health check succeeds.
 
 From 2.0
 --------

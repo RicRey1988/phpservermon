@@ -50,7 +50,7 @@ $sm_lang = array(
         'no' => 'Нет',
         'insert' => 'Добавить',
         'add_new' => 'Добавить',
-        'update_available' => 'Новая версия ({version}) доступна по адресу <a href="https://github.com/phpservermon/phpservermon/releases/latest" target="_blank"  rel="noopener">http://www.phpservermonitor.org</a>.',
+        'update_available' => 'Новая версия ({version}) доступна по адресу <a href="https://github.com/RicRey1988/phpservermon/releases/latest" target="_blank"  rel="noopener">http://www.phpservermonitor.org</a>.',
         'back_to_top' => 'Наверх',
         'go_back' => 'Вернуться',
         'ok' => 'Норма (не уведомлять)',
