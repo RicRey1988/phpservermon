@@ -212,14 +212,10 @@ Array.from(document.querySelectorAll('[data-toggle="slider-tab"]'), (elem) => {
   }
 })
 
-let Scrollbar
-if (typeof Scrollbar !== typeof null) {
-  if (document.querySelectorAll(".data-scrollbar").length) {
-    Scrollbar = window.Scrollbar
-    Scrollbar.init(document.querySelector('.data-scrollbar'), {
-      continuousScrolling: false,
-    })
-  }
+if (typeof window.Scrollbar !== 'undefined' && document.querySelectorAll('.data-scrollbar').length) {
+  window.Scrollbar.init(document.querySelector('.data-scrollbar'), {
+    continuousScrolling: false,
+  })
 }
 
 /*---------------------------------------------------------------------

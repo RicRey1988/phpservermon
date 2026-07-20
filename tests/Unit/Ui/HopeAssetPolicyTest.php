@@ -62,5 +62,6 @@ final class HopeAssetPolicyTest extends TestCase
         self::assertIsString($runtime);
         self::assertStringNotContainsString('DataTable', $runtime);
         self::assertStringNotContainsString('$.fn', $runtime);
+        self::assertStringContainsString("typeof window.Scrollbar !== 'undefined'", $runtime);
     }
 }
