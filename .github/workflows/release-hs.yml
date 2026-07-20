@@ -38,10 +38,11 @@ jobs:
       - name: Verify source
         run: |
           composer validate --strict
-          composer audit
           composer install --no-interaction --prefer-dist
+          composer check-platform-reqs
+          composer audit
           vendor/bin/phpunit
-          vendor/bin/phpstan analyse
+          vendor/bin/phpstan analyse --no-progress
 
       - name: Build production assets
         env:

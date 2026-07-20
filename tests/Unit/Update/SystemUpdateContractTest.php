@@ -35,5 +35,11 @@ final class SystemUpdateContractTest extends TestCase
         self::assertStringContainsString('phpservermon-$version.json', $workflow);
         self::assertStringContainsString('phpservermon-$version.json.sig', $workflow);
         self::assertStringContainsString('openssl dgst -sha256 -verify', $workflow);
+        self::assertLessThan(
+            strpos($workflow, 'composer audit'),
+            strpos($workflow, 'composer install --no-interaction --prefer-dist'),
+            'Release dependencies must be installed before Composer audits installed packages.',
+        );
+        self::assertStringContainsString('composer check-platform-reqs', $workflow);
     }
 }
