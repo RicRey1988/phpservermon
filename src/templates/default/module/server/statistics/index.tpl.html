@@ -2,20 +2,29 @@
 <section data-statistics-dashboard data-statistics-range="{{ range }}">
     <div class="dashboard-summary row row-cols-1 row-cols-sm-2 row-cols-xl-4 g-4 mb-4" aria-label="Resumen de monitoreo">
         {% set summary_cards = [
-            {key:'online',label:'En línea',value:dashboard.summary.online,icon:'check',tone:'primary',caption:'Servidores operativos'},
-            {key:'active_incidents',label:'Incidentes activos',value:dashboard.summary.active_incidents,icon:'exclamation',tone:'danger',caption:'Requieren atención'},
-            {key:'uptime_percentage',label:'Disponibilidad',value:dashboard.summary.uptime_percentage is null ? '—' : dashboard.summary.uptime_percentage ~ '%',icon:'arrow-up',tone:'info',caption:'Periodo seleccionado'},
-            {key:'latency_avg',label:'Latencia media',value:dashboard.summary.latency_avg is null ? '—' : dashboard.summary.latency_avg ~ ' ms',icon:'arrow-down',tone:'success',caption:dashboard.summary.checks ~ ' comprobaciones'}
+            {key:'online',label:'En línea',value:dashboard.summary.online,icon:'check-circle',tone:'primary',caption:'Servidores operativos'},
+            {key:'active_incidents',label:'Incidentes activos',value:dashboard.summary.active_incidents,icon:'exclamation-triangle',tone:'danger',caption:'Requieren atención'},
+            {key:'uptime_percentage',label:'Disponibilidad',value:dashboard.summary.uptime_percentage is null ? '—' : dashboard.summary.uptime_percentage ~ '%',icon:'chart-line',tone:'info',caption:'Periodo seleccionado'},
+            {key:'latency_avg',label:'Latencia media',value:dashboard.summary.latency_avg is null ? '—' : dashboard.summary.latency_avg ~ ' ms',icon:'history',tone:'success',caption:dashboard.summary.checks ~ ' comprobaciones'}
         ] %}
-        {% for item in summary_cards %}<div class="col"><article class="card dashboard-stat-card h-100" data-summary-key="{{ item.key }}"><div class="card-body d-flex align-items-center gap-3"><span class="circle-progress text-{{ item.tone }} border border-3 border-{{ item.tone }} rounded-circle stat-icon" aria-hidden="true">{{ hope.icon(item.icon) }}</span><div class="min-w-0"><p class="text-muted mb-1">{{ item.label }}</p><strong class="h4 mb-1 d-block" data-summary-value>{{ item.value }}</strong><small class="text-muted">{{ item.caption }}</small></div></div></article></div>{% endfor %}
+        {% for item in summary_cards %}
+        <div class="col">
+            <article class="card h-100" data-summary-key="{{ item.key }}">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <span class="avatar-40 rounded-circle bg-soft-{{ item.tone }} text-{{ item.tone }} d-inline-flex align-items-center justify-content-center" aria-hidden="true">{{ hope.icon(item.icon) }}</span>
+                    <div><p class="text-muted mb-1">{{ item.label }}</p><strong class="h4 mb-1 d-block" data-summary-value>{{ item.value }}</strong><small class="text-muted">{{ item.caption }}</small></div>
+                </div>
+            </article>
+        </div>
+        {% endfor %}
     </div>
     <div class="row g-4 mb-4">
-        <div class="col-12 col-xl-7"><section class="card h-100"><div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2"><div><h2 class="h5 mb-1">Disponibilidad</h2><p class="text-muted small mb-0">Comportamiento durante {{ range }}</p></div><span class="badge bg-soft-primary text-primary">{{ range }}</span></div><div class="card-body"><div id="uptime-chart" class="dashboard-chart" aria-label="Gráfica de disponibilidad"></div></div></section></div>
-        <div class="col-12 col-xl-5"><section class="card h-100"><div class="card-header"><h2 class="h5 mb-1">Latencia</h2><p class="text-muted small mb-0">Tiempo medio de respuesta</p></div><div class="card-body"><div id="latency-chart" class="dashboard-chart" aria-label="Gráfica de latencia"></div></div></section></div>
+        <div class="col-12 col-xl-7"><section class="card h-100"><div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2"><div><h2 class="h5 mb-1">Disponibilidad</h2><p class="text-muted small mb-0">Comportamiento durante {{ range }}</p></div><span class="badge bg-soft-primary text-primary">{{ range }}</span></div><div class="card-body"><div id="uptime-chart" data-chart="uptime" role="img" aria-label="Gráfica de disponibilidad"></div></div></section></div>
+        <div class="col-12 col-xl-5"><section class="card h-100"><div class="card-header"><h2 class="h5 mb-1">Latencia</h2><p class="text-muted small mb-0">Tiempo medio de respuesta</p></div><div class="card-body"><div id="latency-chart" data-chart="latency" role="img" aria-label="Gráfica de latencia"></div></div></section></div>
     </div>
     <div class="row g-4">
         <div class="col-12 col-lg-7"><section class="card h-100"><div class="card-header"><h2 class="h5 mb-0">Salud del sistema</h2></div><div class="card-body"><div class="row row-cols-2 row-cols-md-4 g-3 text-center"><div class="col"><strong class="h4 text-success">{{ dashboard.summary.online }}</strong><small class="d-block text-muted">En línea</small></div><div class="col"><strong class="h4 text-warning">{{ dashboard.summary.warning }}</strong><small class="d-block text-muted">Atención</small></div><div class="col"><strong class="h4 text-danger">{{ dashboard.summary.offline }}</strong><small class="d-block text-muted">Fuera de línea</small></div><div class="col"><strong class="h4 text-secondary">{{ dashboard.summary.paused }}</strong><small class="d-block text-muted">Pausados</small></div></div></div></section></div>
-        <div class="col-12 col-lg-5"><section class="card h-100"><div class="card-header"><h2 class="h5 mb-0">Actividad del periodo</h2></div><div class="card-body"><dl class="server-facts mb-0"><div><dt>Comprobaciones</dt><dd>{{ dashboard.summary.checks }}</dd></div><div><dt>Fallos</dt><dd>{{ dashboard.summary.failures }}</dd></div><div><dt>Latencia mínima</dt><dd>{{ dashboard.summary.latency_min is null ? '—' : dashboard.summary.latency_min ~ ' ms' }}</dd></div><div><dt>Latencia máxima</dt><dd>{{ dashboard.summary.latency_max is null ? '—' : dashboard.summary.latency_max ~ ' ms' }}</dd></div></dl></div></section></div>
+        <div class="col-12 col-lg-5"><section class="card h-100"><div class="card-header"><h2 class="h5 mb-0">Actividad del periodo</h2></div><ul class="list-group list-group-flush"><li class="list-group-item d-flex justify-content-between gap-3"><span>Comprobaciones</span><strong>{{ dashboard.summary.checks }}</strong></li><li class="list-group-item d-flex justify-content-between gap-3"><span>Fallos</span><strong>{{ dashboard.summary.failures }}</strong></li><li class="list-group-item d-flex justify-content-between gap-3"><span>Latencia mínima</span><strong>{{ dashboard.summary.latency_min is null ? '—' : dashboard.summary.latency_min ~ ' ms' }}</strong></li><li class="list-group-item d-flex justify-content-between gap-3"><span>Latencia máxima</span><strong>{{ dashboard.summary.latency_max is null ? '—' : dashboard.summary.latency_max ~ ' ms' }}</strong></li></ul></section></div>
     </div>
     <script id="dashboard-data" type="application/json">{{ dashboard_json|raw }}</script>
 </section>
