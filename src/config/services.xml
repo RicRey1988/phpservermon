@@ -16,6 +16,9 @@ xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/sc
 
 		<parameter key="path.src" type="constant">PSM_PATH_SRC</parameter>
 		<parameter key="path.templates">%path.src%templates</parameter>
+		<parameter key="path.server_images">%path.src%../public/server-images</parameter>
+		<parameter key="url.server_images">public/server-images</parameter>
+		<parameter key="url.server_image_generic">src/templates/default/static/images/server-generic.svg</parameter>
 
 		<parameter key="db.host" type="constant">PSM_DB_HOST</parameter>
 		<parameter key="db.port" type="constant">PSM_DB_PORT</parameter>
@@ -63,6 +66,12 @@ xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/sc
 		</service>
 		<service id="service.ui.appearance" class="psm\Service\Ui\AppearanceService" public="true">
 			<argument type="service" id="user" />
+		</service>
+		<service id="service.server_image.processor" class="psm\Service\ServerImage\GdImageProcessor" public="true" />
+		<service id="service.server_image.storage" class="psm\Service\ServerImage\ServerImageStorage" public="true">
+			<argument>%path.server_images%</argument>
+			<argument>%url.server_images%</argument>
+			<argument>%url.server_image_generic%</argument>
 		</service>
 		<!--SERVICES end-->
 

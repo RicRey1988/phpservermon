@@ -16,3 +16,4 @@ __MACOSX/
 /.vs
 /composer.phar
 /.phpunit.cache/
+/public/server-images/*.webp

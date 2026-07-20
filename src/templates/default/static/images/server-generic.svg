@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title description">
+  <title id="title">Server</title>
+  <desc id="description">Generic server image</desc>
+  <rect width="512" height="512" rx="96" fill="#eef1ff"/>
+  <rect x="104" y="112" width="304" height="128" rx="28" fill="#3a57e8"/>
+  <rect x="104" y="272" width="304" height="128" rx="28" fill="#596780"/>
+  <circle cx="152" cy="176" r="16" fill="#8ce99a"/>
+  <circle cx="152" cy="336" r="16" fill="#8ce99a"/>
+  <path d="M208 168h144M208 328h144" stroke="#fff" stroke-width="20" stroke-linecap="round" opacity=".9"/>
+</svg>
