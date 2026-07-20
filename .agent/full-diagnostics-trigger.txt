@@ -1,1 +1,1 @@
-Run compact PHPUnit diagnostics after native HOPE UI stylesheet removal.
+Run complete PHPUnit diagnostics after regression contract and semantic hook updates.
