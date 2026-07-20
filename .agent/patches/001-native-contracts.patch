@@ -1,0 +1,294 @@
+# commit-message: test: define native Hope UI contracts
+diff --git a/tests/Unit/Pwa/PwaAssetTest.php b/tests/Unit/Pwa/PwaAssetTest.php
+index 781f228..0931e26 100644
+--- a/tests/Unit/Pwa/PwaAssetTest.php
++++ b/tests/Unit/Pwa/PwaAssetTest.php
+@@ -49,9 +49,8 @@ final class PwaAssetTest extends TestCase
+     {
+         $worker = $this->read('service-worker.js');
+ 
+-        self::assertStringContainsString("psm-static-4.3.2-hs", $worker);
+-        self::assertStringContainsString('static/css/hs-monitor.css?v=4.3.2-hs', $worker);
+-        self::assertStringContainsString('static/css/hs-monitor.css?v=4.3.2-hs&ui=1', $worker);
++        self::assertStringContainsString("psm-static-4.3.2-hs-r2", $worker);
++        self::assertStringNotContainsString('hs-monitor.css', $worker);
+         self::assertStringContainsString('static/hope/images/auth/01.png', $worker);
+         foreach (['hope-ui.min.css', 'customizer.min.css', 'hope-ui.js', 'plugins/setting.js', 'status.js', 'dashboard.js'] as $asset) {
+             self::assertStringContainsString($asset, $worker);
+diff --git a/tests/Unit/Server/StatusDashboardTest.php b/tests/Unit/Server/StatusDashboardTest.php
+index 8af5b9a..7c9a778 100644
+--- a/tests/Unit/Server/StatusDashboardTest.php
++++ b/tests/Unit/Server/StatusDashboardTest.php
+@@ -47,11 +47,13 @@ final class StatusDashboardTest extends TestCase
+         self::assertStringContainsString('latency-chart', $statistics);
+         self::assertStringContainsString('type="application/json"', $statistics);
+         self::assertStringContainsString('dashboard_json', $statistics);
+-        self::assertStringContainsString('server-image-box', $cards);
++        self::assertStringContainsString('data-server-card', $cards);
++        self::assertStringContainsString('data-server-image', $cards);
++        self::assertStringContainsString('border-4', $cards);
+         self::assertStringContainsString('src="{{ server.image_url }}"', $cards);
+         self::assertStringContainsString('width="96" height="96"', $cards);
+-        self::assertStringContainsString('status-card-title', $cards);
+-        self::assertStringContainsString('status-banner', $cards);
++        self::assertStringNotContainsString('status-card-title', $cards);
++        self::assertStringNotContainsString('status-banner', $cards);
+         self::assertStringContainsString('data-server-status-icon', $cards);
+         self::assertStringContainsString('data-server-status-label', $cards);
+         self::assertStringNotContainsString('text-truncate', $cards);
+@@ -67,12 +69,10 @@ final class StatusDashboardTest extends TestCase
+ 
+     public function testDashboardAssetsEnforceFixedImagesAndSafeJsonParsing(): void
+     {
+-        $styles = $this->read('src/templates/default/static/css/hs-monitor.css');
+         $javascript = $this->read('src/templates/default/static/js/dashboard.js');
+         $body = $this->read('src/templates/default/main/body.tpl.html');
+ 
+-        self::assertMatchesRegularExpression('/\.server-image-box\s*\{[^}]*width:\s*6rem;[^}]*height:\s*6rem;/s', $styles);
+-        self::assertMatchesRegularExpression('/object-fit:\s*contain/', $styles);
++        self::assertStringNotContainsString('hs-monitor.css', $body);
+         self::assertStringContainsString("getElementById('dashboard-data')", $javascript);
+         self::assertStringContainsString('JSON.parse(', $javascript);
+         self::assertStringContainsString('new ApexCharts', $javascript);
+diff --git a/tests/Unit/Ui/ModernViewContractTest.php b/tests/Unit/Ui/ModernViewContractTest.php
+index cb7170c..667b8db 100644
+--- a/tests/Unit/Ui/ModernViewContractTest.php
++++ b/tests/Unit/Ui/ModernViewContractTest.php
+@@ -29,7 +29,7 @@ final class ModernViewContractTest extends TestCase
+         $forgot = $this->read('module/user/login/forgot.tpl.html');
+         $reset = $this->read('module/user/login/reset.tpl.html');
+ 
+-        self::assertStringContainsString('class="auth-card card"', $login);
++        self::assertStringContainsString('class="card border-0 shadow-none bg-transparent"', $login);
+         self::assertStringContainsString('autocomplete="username"', $login);
+         self::assertStringContainsString('autocomplete="current-password"', $login);
+         self::assertStringContainsString('aria-live="polite"', $login);
+@@ -42,11 +42,11 @@ final class ModernViewContractTest extends TestCase
+         $users = $this->read('module/user/user/list.tpl.html');
+         $logs = $this->read('module/server/log.tpl.html');
+ 
+-        self::assertStringContainsString('<article class="card user-card', $users);
++        self::assertStringContainsString('<article class="card h-100', $users);
+         self::assertStringContainsString('data-card-search', $users);
+         self::assertStringContainsString('data-search-text=', $users);
+         self::assertStringNotContainsString('<table', $users);
+-        self::assertStringContainsString('class="timeline-item', $logs);
++        self::assertStringContainsString('class="list-group', $logs);
+         self::assertStringNotContainsString('<table', $logs);
+         self::assertStringContainsString('data-bs-toggle="tab"', $logs);
+     }
+@@ -54,21 +54,14 @@ final class ModernViewContractTest extends TestCase
+     public function testApplicationShellProvidesModernFormInteractions(): void
+     {
+         $javascript = $this->read('static/js/app-shell.js');
+-        $styles = $this->read('static/css/hs-monitor.css');
+         $macros = $this->read('main/macros.tpl.html');
++        $icons = $this->read('main/icons.tpl.html');
+ 
+         self::assertStringContainsString('[data-card-search]', $javascript);
+         self::assertStringContainsString('[data-password-toggle]', $javascript);
+         self::assertStringContainsString('formnovalidate', $this->read('module/config/config.tpl.html'));
+-        self::assertStringContainsString('[data-password-toggle] svg', $styles);
+-        self::assertStringContainsString('html[data-bs-theme="light"] .theme-icon-dark', $styles);
+-        self::assertStringContainsString('.auth-layout', $styles);
+-        self::assertStringContainsString('.user-card', $styles);
+-        self::assertStringContainsString('.timeline-item', $styles);
+-        self::assertStringContainsString('.dropzone-field', $styles);
+-        self::assertStringContainsString('.server-media-frame', $styles);
+-        self::assertStringContainsString('.config-layout', $styles);
+-        self::assertStringContainsString('.install-stepper', $styles);
++        self::assertStringContainsString("class=\"icon-20 {{ className|default('') }}\"", $icons);
++        self::assertStringNotContainsString('hope-icon', $icons);
+         self::assertStringNotContainsString('Â', $macros);
+     }
+ 
+@@ -78,13 +71,13 @@ final class ModernViewContractTest extends TestCase
+         $status = $this->read('module/server/status/index.tpl.html') . $this->read('module/server/status/cards.tpl.html');
+         $config = $this->read('module/config/config.tpl.html');
+ 
+-        self::assertStringContainsString('<article class="card server-admin-card', $servers);
+-        self::assertStringContainsString('<article class="card status-card', $status);
++        self::assertStringContainsString('<article class="card h-100', $servers);
++        self::assertStringContainsString('data-server-card', $status);
+         self::assertStringNotContainsString('<table', $servers . $status . $config);
+         self::assertStringContainsString('role="tablist"', $config);
+         self::assertStringContainsString('aria-orientation="vertical"', $config);
+         self::assertStringContainsString('data-bs-toggle="pill"', $config);
+-        self::assertStringContainsString('class="php-info-grid', $config);
++        self::assertStringContainsString('data-php-info', $config);
+     }
+ 
+     public function testEstadoRendersServersWithoutHistoricalStatistics(): void
+@@ -166,7 +159,7 @@ final class ModernViewContractTest extends TestCase
+         $historyJavascript = $this->read('static/js/history.js');
+ 
+         self::assertStringNotContainsString('<table', $view);
+-        self::assertStringContainsString('class="timeline-item', $view);
++        self::assertStringContainsString('class="list-group', $view);
+         self::assertStringNotContainsString('$.', $history);
+         self::assertStringNotContainsString('$(', $historyJavascript);
+         self::assertStringContainsString('querySelectorAll', $historyJavascript);
+@@ -180,8 +173,7 @@ final class ModernViewContractTest extends TestCase
+             self::assertDoesNotMatchRegularExpression('/\b(?:pl|pr|ml|mr|float)-(?:0|auto|left|right)\b/', $html, $template);
+         }
+         $view = $this->read('module/server/server/view.tpl.html');
+-        self::assertStringContainsString('server-detail-grid', $view);
+-        self::assertStringContainsString('server-detail-tabs', $view);
++        self::assertStringContainsString('class="row g-4"', $view);
+         self::assertStringContainsString('role="tablist"', $view);
+     }
+ 
+@@ -204,8 +196,8 @@ final class ModernViewContractTest extends TestCase
+             self::assertStringNotContainsString('data-dismiss=', $html, $template);
+             self::assertDoesNotMatchRegularExpression('/\b(?:pl|pr|ml|mr|float)-(?:0|auto|left|right)\b|\bform-row\b|width\s*:\s*\d+(?:vw|px)/i', $html, $template);
+         }
+-        self::assertStringContainsString('user-editor-card', $this->read('module/user/user/update.tpl.html'));
+-        self::assertStringContainsString('error-state-card', $this->read('module/error/401.tpl.html'));
++        self::assertStringContainsString('data-user-editor', $this->read('module/user/user/update.tpl.html'));
++        self::assertStringContainsString('data-error-state', $this->read('module/error/401.tpl.html'));
+     }
+ 
+     private function read(string $path): string
+diff --git a/tests/Unit/Ui/NativeHopeUiContractTest.php b/tests/Unit/Ui/NativeHopeUiContractTest.php
+new file mode 100644
+index 0000000..35dec3d
+--- /dev/null
++++ b/tests/Unit/Ui/NativeHopeUiContractTest.php
+@@ -0,0 +1,137 @@
++<?php
++
++declare(strict_types=1);
++
++namespace Tests\Unit\Ui;
++
++use PHPUnit\Framework\TestCase;
++use RecursiveDirectoryIterator;
++use RecursiveIteratorIterator;
++use SplFileInfo;
++
++final class NativeHopeUiContractTest extends TestCase
++{
++    private string $root;
++
++    protected function setUp(): void
++    {
++        $this->root = dirname(__DIR__, 3);
++    }
++
++    public function testOnlyBundledHopeUiStylesheetsAreLoaded(): void
++    {
++        $body = $this->read('src/templates/default/main/body.tpl.html');
++        $worker = $this->read('service-worker.js');
++
++        self::assertFileDoesNotExist($this->root . '/src/templates/default/static/css/hs-monitor.css');
++        foreach (['hope-ui.min.css', 'dark.min.css', 'customizer.min.css'] as $asset) {
++            self::assertStringContainsString($asset, $body);
++        }
++        self::assertStringNotContainsString('hs-monitor.css', $body . $worker);
++        self::assertStringNotContainsString('<style', $this->applicationTemplateContents());
++        self::assertStringNotContainsString(' style=', $this->applicationTemplateContents());
++    }
++
++    public function testShellUsesNativeSidebarSearchAndThemeContracts(): void
++    {
++        $body = $this->read('src/templates/default/main/body.tpl.html');
++        $navbar = $this->read('src/templates/default/main/app-navbar.tpl.html');
++        $menu = $this->read('src/templates/default/main/menu.tpl.html');
++        $javascript = $this->read('src/templates/default/static/js/app-shell.js');
++
++        self::assertStringContainsString('sidebar sidebar-default sidebar-white sidebar-base', $body);
++        self::assertStringContainsString('class="sidebar-toggle" data-toggle="sidebar"', $body);
++        self::assertStringContainsString('input-group search-input', $navbar);
++        self::assertStringContainsString('data-theme-icon="dark"', $navbar);
++        self::assertStringContainsString('data-theme-icon="light"', $navbar);
++        self::assertStringNotContainsString('sidebar-user', $menu);
++        self::assertStringNotContainsString('url_profile', $menu);
++        self::assertStringNotContainsString('url_logout', $menu);
++        self::assertStringContainsString("classList.add('sidebar-mini')", $javascript);
++        self::assertStringContainsString("event.key === 'Escape'", $javascript);
++        self::assertStringContainsString("classList.toggle('d-none'", $javascript);
++        self::assertStringNotContainsString('sidebar-open', $body . $navbar . $javascript);
++    }
++
++    public function testApplicationTemplatesUseNoClassesOwnedByRemovedStylesheet(): void
++    {
++        $contents = $this->applicationTemplateContents();
++        $removed = [
++            'hope-icon', 'hope-icon-lg', 'skip-link', 'place-items-center',
++            'brand-mark', 'brand-logo', 'brand-logo--auth', 'auth-visual-logo',
++            'navbar-avatar', 'identity-preview', 'identity-preview--avatar',
++            'app-content', 'app-footer', 'module-actions', 'theme-icon-dark',
++            'theme-icon-light', 'btn-setting', 'hope-settings', 'settings-section',
++            'setting-choice', 'preview-choice', 'accent-choice', 'accent-swatch',
++            'accent-grid', 'grid-cols-6', 'appearance-options', 'appearance-card',
++            'push-device-card', 'auth-page-content', 'auth-messages', 'auth-layout',
++            'auth-form-pane', 'auth-card', 'auth-visual', 'auth-visual-brand',
++            'auth-layout-single', 'auth-brand-panel', 'brand-mark-lg', 'user-card',
++            'server-admin-card', 'status-card', 'user-contact', 'timeline-list',
++            'timeline-item', 'timeline-marker', 'dropzone-field', 'dropzone-preview',
++            'dropzone-copy', 'min-w-0', 'server-media-frame', 'server-media',
++            'server-media--compact', 'status-indicator', 'status-banner',
++            'status-banner-icon', 'status-pulse', 'status-grid', 'server-image-box',
++            'status-card-title', 'dashboard-stat-card', 'stat-icon', 'dashboard-chart',
++            'notification-count', 'notification-dropdown', 'notification-dropdown-list',
++            'notification-unread', 'server-facts', 'channel-chips', 'channel-chip',
++            'server-detail-grid', 'server-detail-image', 'server-detail-tabs',
++            'history-panel', 'history-graph', 'chart-container',
++            'history-range-controls', 'output-panel-content', 'config-layout',
++            'config-tabs', 'config-content', 'install-shell', 'install-stepper',
++            'form-row', 'input-group-prepend', 'custom-select', 'search_input',
++            'searchbar',
++        ];
++
++        foreach ($removed as $class) {
++            self::assertDoesNotMatchRegularExpression(
++                "/class=[\"'][^\"']*\\b" . preg_quote($class, '/') . "\\b[^\"']*[\"']/",
++                $contents,
++                'Custom presentation class remains: ' . $class,
++            );
++        }
++    }
++
++    public function testJavaScriptUsesDataHooksRatherThanRemovedPresentationClasses(): void
++    {
++        $javascript = implode("\n", [
++            $this->read('src/templates/default/static/js/app-shell.js'),
++            $this->read('src/templates/default/static/js/status.js'),
++            $this->read('src/templates/default/static/js/dashboard.js'),
++            $this->read('src/templates/default/static/js/history.js'),
++            $this->read('src/templates/default/static/js/notifications.js'),
++        ]);
++
++        foreach (['sidebar-open', 'status-banner', 'status-badge--', 'history-panel', 'notification-unread'] as $selector) {
++            self::assertStringNotContainsString($selector, $javascript);
++        }
++        foreach (['data-status-board', 'data-server-card', 'data-notification-item'] as $hook) {
++            self::assertStringContainsString($hook, $this->applicationTemplateContents() . $javascript);
++        }
++    }
++
++    private function applicationTemplateContents(): string
++    {
++        $contents = '';
++        $iterator = new RecursiveIteratorIterator(
++            new RecursiveDirectoryIterator($this->root . '/src/templates/default'),
++        );
++        foreach ($iterator as $file) {
++            assert($file instanceof SplFileInfo);
++            if (!$file->isFile() || !str_ends_with($file->getFilename(), '.tpl.html')) {
++                continue;
++            }
++            $contents .= "\n" . (string) file_get_contents($file->getPathname());
++        }
++
++        return $contents;
++    }
++
++    private function read(string $path): string
++    {
++        $contents = @file_get_contents($this->root . '/' . $path);
++        self::assertIsString($contents, 'Missing file: ' . $path);
++
++        return $contents;
++    }
++}
