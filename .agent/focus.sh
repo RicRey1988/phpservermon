@@ -10,7 +10,8 @@ vendor/bin/phpunit --testdox --colors=never > "$PHPUNIT_REPORT" 2>&1
 code=$?
 set -e
 if [ "$code" -ne 0 ]; then
-  printf 'FAIL phpunit-full (%s)\n' "$code" >> "$REPORT"
+  printf 'FAIL phpunit-full (%s)\n\n' "$code" >> "$REPORT"
+  cat "$PHPUNIT_REPORT" >> "$REPORT"
   exit "$code"
 fi
 printf 'PASS phpunit-full\nALL PASS\n' >> "$REPORT"
