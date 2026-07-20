@@ -29,7 +29,7 @@ final class ModernViewContractTest extends TestCase
         $forgot = $this->read('module/user/login/forgot.tpl.html');
         $reset = $this->read('module/user/login/reset.tpl.html');
 
-        self::assertStringContainsString('class="auth-card card"', $login);
+        self::assertStringContainsString('class="card border-0 shadow-none bg-transparent"', $login);
         self::assertStringContainsString('autocomplete="username"', $login);
         self::assertStringContainsString('autocomplete="current-password"', $login);
         self::assertStringContainsString('aria-live="polite"', $login);
@@ -42,11 +42,11 @@ final class ModernViewContractTest extends TestCase
         $users = $this->read('module/user/user/list.tpl.html');
         $logs = $this->read('module/server/log.tpl.html');
 
-        self::assertStringContainsString('<article class="card user-card', $users);
+        self::assertStringContainsString('<article class="card h-100', $users);
         self::assertStringContainsString('data-card-search', $users);
         self::assertStringContainsString('data-search-text=', $users);
         self::assertStringNotContainsString('<table', $users);
-        self::assertStringContainsString('class="timeline-item', $logs);
+        self::assertStringContainsString('class="list-group', $logs);
         self::assertStringNotContainsString('<table', $logs);
         self::assertStringContainsString('data-bs-toggle="tab"', $logs);
     }
@@ -54,21 +54,14 @@ final class ModernViewContractTest extends TestCase
     public function testApplicationShellProvidesModernFormInteractions(): void
     {
         $javascript = $this->read('static/js/app-shell.js');
-        $styles = $this->read('static/css/hs-monitor.css');
         $macros = $this->read('main/macros.tpl.html');
+        $icons = $this->read('main/icons.tpl.html');
 
         self::assertStringContainsString('[data-card-search]', $javascript);
         self::assertStringContainsString('[data-password-toggle]', $javascript);
         self::assertStringContainsString('formnovalidate', $this->read('module/config/config.tpl.html'));
-        self::assertStringContainsString('[data-password-toggle] svg', $styles);
-        self::assertStringContainsString('html[data-bs-theme="light"] .theme-icon-dark', $styles);
-        self::assertStringContainsString('.auth-layout', $styles);
-        self::assertStringContainsString('.user-card', $styles);
-        self::assertStringContainsString('.timeline-item', $styles);
-        self::assertStringContainsString('.dropzone-field', $styles);
-        self::assertStringContainsString('.server-media-frame', $styles);
-        self::assertStringContainsString('.config-layout', $styles);
-        self::assertStringContainsString('.install-stepper', $styles);
+        self::assertStringContainsString("class=\"icon-20 {{ className|default('') }}\"", $icons);
+        self::assertStringNotContainsString('hope-icon', $icons);
         self::assertStringNotContainsString('Â', $macros);
     }
 
@@ -78,13 +71,13 @@ final class ModernViewContractTest extends TestCase
         $status = $this->read('module/server/status/index.tpl.html') . $this->read('module/server/status/cards.tpl.html');
         $config = $this->read('module/config/config.tpl.html');
 
-        self::assertStringContainsString('<article class="card server-admin-card', $servers);
-        self::assertStringContainsString('<article class="card status-card', $status);
+        self::assertStringContainsString('<article class="card h-100', $servers);
+        self::assertStringContainsString('data-server-card', $status);
         self::assertStringNotContainsString('<table', $servers . $status . $config);
         self::assertStringContainsString('role="tablist"', $config);
         self::assertStringContainsString('aria-orientation="vertical"', $config);
         self::assertStringContainsString('data-bs-toggle="pill"', $config);
-        self::assertStringContainsString('class="php-info-grid', $config);
+        self::assertStringContainsString('data-php-info', $config);
     }
 
     public function testEstadoRendersServersWithoutHistoricalStatistics(): void
@@ -166,7 +159,7 @@ final class ModernViewContractTest extends TestCase
         $historyJavascript = $this->read('static/js/history.js');
 
         self::assertStringNotContainsString('<table', $view);
-        self::assertStringContainsString('class="timeline-item', $view);
+        self::assertStringContainsString('class="list-group', $view);
         self::assertStringNotContainsString('$.', $history);
         self::assertStringNotContainsString('$(', $historyJavascript);
         self::assertStringContainsString('querySelectorAll', $historyJavascript);
@@ -180,8 +173,7 @@ final class ModernViewContractTest extends TestCase
             self::assertDoesNotMatchRegularExpression('/\b(?:pl|pr|ml|mr|float)-(?:0|auto|left|right)\b/', $html, $template);
         }
         $view = $this->read('module/server/server/view.tpl.html');
-        self::assertStringContainsString('server-detail-grid', $view);
-        self::assertStringContainsString('server-detail-tabs', $view);
+        self::assertStringContainsString('class="row g-4"', $view);
         self::assertStringContainsString('role="tablist"', $view);
     }
 
@@ -204,8 +196,8 @@ final class ModernViewContractTest extends TestCase
             self::assertStringNotContainsString('data-dismiss=', $html, $template);
             self::assertDoesNotMatchRegularExpression('/\b(?:pl|pr|ml|mr|float)-(?:0|auto|left|right)\b|\bform-row\b|width\s*:\s*\d+(?:vw|px)/i', $html, $template);
         }
-        self::assertStringContainsString('user-editor-card', $this->read('module/user/user/update.tpl.html'));
-        self::assertStringContainsString('error-state-card', $this->read('module/error/401.tpl.html'));
+        self::assertStringContainsString('data-user-editor', $this->read('module/user/user/update.tpl.html'));
+        self::assertStringContainsString('data-error-state', $this->read('module/error/401.tpl.html'));
     }
 
     private function read(string $path): string

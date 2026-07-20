@@ -47,11 +47,13 @@ final class StatusDashboardTest extends TestCase
         self::assertStringContainsString('latency-chart', $statistics);
         self::assertStringContainsString('type="application/json"', $statistics);
         self::assertStringContainsString('dashboard_json', $statistics);
-        self::assertStringContainsString('server-image-box', $cards);
+        self::assertStringContainsString('data-server-card', $cards);
+        self::assertStringContainsString('data-server-image', $cards);
+        self::assertStringContainsString('border-4', $cards);
         self::assertStringContainsString('src="{{ server.image_url }}"', $cards);
         self::assertStringContainsString('width="96" height="96"', $cards);
-        self::assertStringContainsString('status-card-title', $cards);
-        self::assertStringContainsString('status-banner', $cards);
+        self::assertStringNotContainsString('status-card-title', $cards);
+        self::assertStringNotContainsString('status-banner', $cards);
         self::assertStringContainsString('data-server-status-icon', $cards);
         self::assertStringContainsString('data-server-status-label', $cards);
         self::assertStringNotContainsString('text-truncate', $cards);
@@ -67,12 +69,10 @@ final class StatusDashboardTest extends TestCase
 
     public function testDashboardAssetsEnforceFixedImagesAndSafeJsonParsing(): void
     {
-        $styles = $this->read('src/templates/default/static/css/hs-monitor.css');
         $javascript = $this->read('src/templates/default/static/js/dashboard.js');
         $body = $this->read('src/templates/default/main/body.tpl.html');
 
-        self::assertMatchesRegularExpression('/\.server-image-box\s*\{[^}]*width:\s*6rem;[^}]*height:\s*6rem;/s', $styles);
-        self::assertMatchesRegularExpression('/object-fit:\s*contain/', $styles);
+        self::assertStringNotContainsString('hs-monitor.css', $body);
         self::assertStringContainsString("getElementById('dashboard-data')", $javascript);
         self::assertStringContainsString('JSON.parse(', $javascript);
         self::assertStringContainsString('new ApexCharts', $javascript);
