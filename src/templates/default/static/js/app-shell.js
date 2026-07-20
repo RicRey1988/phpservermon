@@ -125,6 +125,31 @@
 		if (username) { username.addEventListener('change', updatePublicUser); updatePublicUser(); }
 	}
 
+	function initializeCardSearch() {
+		each('[data-card-search]', function (input) {
+			input.addEventListener('input', function () {
+				var query = input.value.trim().toLocaleLowerCase();
+				each('[data-search-text]', function (item) {
+					var haystack = (item.dataset.searchText || '').toLocaleLowerCase();
+					item.hidden = query !== '' && !haystack.includes(query);
+				});
+			});
+		});
+	}
+
+	function initializePasswordToggles() {
+		each('[data-password-toggle]', function (button) {
+			button.addEventListener('click', function () {
+				var input = document.getElementById(button.dataset.passwordToggle || '');
+				if (!input) { return; }
+				var reveal = input.type === 'password';
+				input.type = reveal ? 'text' : 'password';
+				button.setAttribute('aria-pressed', String(reveal));
+				button.setAttribute('aria-label', reveal ? 'Ocultar contraseña' : 'Mostrar contraseña');
+			});
+		});
+	}
+
 	window.psm_setLayout = function (layout) {
 		var list = document.getElementById('list-layout');
 		var flow = document.getElementById('flow-layout');
@@ -151,6 +176,8 @@
 		initializeSidebar();
 		initializeModals();
 		initializeConditionalForms();
+		initializeCardSearch();
+		initializePasswordToggles();
 		var label = document.getElementById('label');
 		if (label && !document.querySelector('[autofocus]')) { label.focus(); }
 	});

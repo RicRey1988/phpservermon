@@ -1,9 +1,17 @@
 {% import 'main/macros.tpl.html' as macro %}
-<form class="form-forgot text-center" method="POST">
-  {{ macro.input_csrf() }}
-  <h1 class="h3 mb-3 font-weight-normal">{{ title_forgot }}</h1>
-  <label for="input-username" class="sr-only">{{ label_username }}</label>
-  <input type="text" name="user_name" id="input-username" class="form-control mb-3" value="{{ value_user_name }}" placeholder="{{ label_username }}" required autofocus>
-  <button class="btn btn-lg btn-primary btn-block" type="submit">{{ label_submit }}</button>
-  <a class="btn" href="?">{{ label_go_back }}</a>
-</form>
+<div class="auth-layout auth-layout-single">
+  <form class="auth-card card" method="post">
+    {{ macro.input_csrf() }}
+    <div class="card-body p-4 p-lg-5">
+      <p class="eyebrow mb-2">Recuperación segura</p>
+      <h1 class="h3 mb-2">{{ title_forgot }}</h1>
+      <p class="text-muted mb-4">Escribe tu usuario y te enviaremos las instrucciones configuradas.</p>
+      <div class="mb-3">
+        <label class="form-label" for="input-username">{{ label_username }}</label>
+        <input type="text" name="user_name" id="input-username" class="form-control" value="{{ value_user_name }}" autocomplete="username" required autofocus>
+      </div>
+      <button class="btn btn-lg btn-primary w-100" type="submit">{{ label_submit }}</button>
+      <a class="btn btn-link w-100 mt-2" href="index.php">Volver al inicio de sesión</a>
+    </div>
+  </form>
+</div>

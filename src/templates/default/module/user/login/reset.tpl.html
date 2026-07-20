@@ -1,13 +1,23 @@
 {% import 'main/macros.tpl.html' as macro %}
-<form class="form-reset text-center" method="POST">
-  {{ macro.input_csrf() }}
-  <h1 class="h3 mb-3 font-weight-normal">{{ title_reset }}</h1>
-  <label for="input-username" class="sr-only">{{ label_username }}</label>
-  <input type="text" name="user_name" id="input-username" class="form-control" value="{{ value_user_name }}" required disabled>
-  <label for="input-password" class="sr-only">{{ label_password }}</label>
-  <input type="password" id="input-password" name="user_password_new" class="form-control" placeholder="{{ label_password }}" required autofocus>
-  <label for="input-password-repeat" class="sr-only">{{ label_password_repeat }}</label>
-  <input type="password" id="input-password-repeat" name="user_password_repeat" class="form-control  mb-3" placeholder="{{ label_password_repeat }}" required>
-  <button class="btn btn-lg btn-primary btn-block" type="submit">{{ label_reset }}</button>
-  <a class="btn" href="?">{{ label_go_back }}</a>
-</form>
+<div class="auth-layout auth-layout-single">
+  <form class="auth-card card" method="post">
+    {{ macro.input_csrf() }}
+    <div class="card-body p-4 p-lg-5">
+      <p class="eyebrow mb-2">Cuenta protegida</p>
+      <h1 class="h3 mb-4">{{ title_reset }}</h1>
+      <div class="mb-3">
+        <label class="form-label" for="input-username">{{ label_username }}</label>
+        <input type="text" name="user_name" id="input-username" class="form-control" value="{{ value_user_name }}" autocomplete="username" disabled>
+      </div>
+      <div class="mb-3">
+        <label class="form-label" for="input-password">{{ label_password }}</label>
+        <input type="password" id="input-password" name="user_password_new" class="form-control" autocomplete="new-password" required autofocus>
+      </div>
+      <div class="mb-4">
+        <label class="form-label" for="input-password-repeat">{{ label_password_repeat }}</label>
+        <input type="password" id="input-password-repeat" name="user_password_repeat" class="form-control" autocomplete="new-password" required>
+      </div>
+      <button class="btn btn-lg btn-primary w-100" type="submit">{{ label_reset }}</button>
+    </div>
+  </form>
+</div>

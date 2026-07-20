@@ -55,6 +55,23 @@ legend { float: none; width: auto; padding: 0 .35rem; font-size: 1rem; font-weig
 .appearance-card { margin-top: 1.5rem; }
 .module-actions .row { margin: 0; }
 .module-actions .btn { margin-inline-end: .5rem; margin-bottom: .5rem; }
+.auth-layout { min-height: calc(100vh - 12rem); display: grid; place-items: center; padding: 2rem 0; }
+.auth-card { width: min(100%, 31rem); overflow: hidden; }
+.auth-brand-panel { padding: 2rem; color: #fff; background: linear-gradient(145deg, var(--psm-accent), #6c3ce1); }
+.auth-card .card-body { padding: 2rem; }
+.brand-mark-lg { width: 3.5rem; height: 3.5rem; margin-bottom: 1rem; border-radius: 1rem; font-size: 1.35rem; }
+.user-card { height: 100%; transition: transform .18s ease, box-shadow .18s ease; }
+.user-card:hover { transform: translateY(-2px); box-shadow: 0 .65rem 1.5rem rgba(17, 38, 146, .12); }
+.avatar { width: 3rem; height: 3rem; flex: 0 0 3rem; border-radius: .85rem; display: grid; place-items: center; color: #fff; background: var(--psm-accent); font-weight: 700; }
+.user-contact { display: grid; gap: .5rem; color: #6c757d; }
+.timeline { position: relative; display: grid; gap: 1rem; }
+.timeline-item { position: relative; display: grid; grid-template-columns: 1rem minmax(0, 1fr); gap: .85rem; }
+.timeline-marker { width: .75rem; height: .75rem; margin-top: 1.2rem; border-radius: 50%; background: var(--psm-accent); box-shadow: 0 0 0 .3rem rgba(58, 87, 232, .12); }
+.timeline-item::before { position: absolute; content: ""; inset-block: 2rem -1rem; inset-inline-start: .35rem; width: 1px; background: var(--psm-border); }
+.timeline-item:last-child::before { display: none; }
+.dropzone-field { padding: 1.5rem; border: 2px dashed #c8cddd; border-radius: .85rem; background: rgba(58, 87, 232, .03); text-align: center; transition: border-color .18s ease, background .18s ease; }
+.dropzone-field:focus-within, .dropzone-field.is-dragging { border-color: var(--psm-accent); background: rgba(58, 87, 232, .08); }
+.min-w-0 { min-width: 0; }
 
 .dark, html[data-bs-theme="dark"] {
 	--psm-surface: #20242d;
@@ -86,4 +103,5 @@ body.sidebar-collapsed .main-content { margin-inline-start: 0; }
 	.app-navbar .h4 { font-size: 1.05rem; }
 	.app-footer { padding-inline: 1rem; }
 	fieldset { padding: 1rem; }
+	.auth-card .card-body, .auth-brand-panel { padding: 1.25rem; }
 }
