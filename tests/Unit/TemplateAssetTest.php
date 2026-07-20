@@ -8,17 +8,26 @@ use PHPUnit\Framework\TestCase;
 
 final class TemplateAssetTest extends TestCase
 {
-    public function testHsComponentCssIsVersionedAndServerImagesHaveFixedBox(): void
+    public function testOnlyBundledHopeUiCssIsVersionedAndServerImagesAreBounded(): void
     {
         $root = dirname(__DIR__, 2);
         $body = file_get_contents($root . '/src/templates/default/main/body.tpl.html');
-        $css = file_get_contents($root . '/src/templates/default/static/css/hs-monitor.css');
+        $cards = file_get_contents($root . '/src/templates/default/module/server/status/cards.tpl.html');
+        $editor = file_get_contents($root . '/src/templates/default/module/server/server/update.tpl.html');
 
         self::assertIsString($body);
-        self::assertIsString($css);
-        self::assertStringContainsString('hs-monitor.css?v={{ version|url_encode }}', $body);
-        self::assertMatchesRegularExpression('/\.server-image-box\s*\{[^}]*width:\s*6rem;[^}]*height:\s*6rem;/s', $css);
-        self::assertStringContainsString('overflow:hidden', str_replace(' ', '', $css));
+        self::assertIsString($cards);
+        self::assertIsString($editor);
+        self::assertFileDoesNotExist($root . '/src/templates/default/static/css/hs-monitor.css');
+        foreach (['hope-ui.min.css', 'dark.min.css', 'customizer.min.css'] as $asset) {
+            self::assertStringContainsString($asset . '?v={{ version|url_encode }}', $body);
+        }
+        self::assertStringNotContainsString('hs-monitor.css', $body);
+        self::assertStringContainsString('width="96" height="96"', $cards);
+        self::assertStringContainsString('class="img-fluid"', $cards);
+        self::assertStringContainsString('overflow-hidden', $cards);
+        self::assertStringContainsString('width="112" height="112"', $editor);
+        self::assertStringContainsString('class="img-thumbnail"', $editor);
     }
 
     public function testHistoryRuntimeIsNativeAndVersionedToEvictLegacyJqueryCache(): void
