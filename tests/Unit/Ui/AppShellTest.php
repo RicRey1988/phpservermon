@@ -72,6 +72,7 @@ final class AppShellTest extends TestCase
         self::assertStringContainsString('html[data-bs-theme="dark"] .auth-card.card', $styles);
         self::assertStringContainsString('legend {', $styles);
         self::assertStringContainsString('border-bottom:', $styles);
+        self::assertStringContainsString('.push-device-card .card-header > .d-flex', $styles);
     }
 
     public function testFooterIdentifiesHostingSupremoFork(): void
