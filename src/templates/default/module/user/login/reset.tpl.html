@@ -1,11 +1,21 @@
 {% import 'main/macros.tpl.html' as macro %}
-<div class="auth-shell auth-layout auth-layout-single">
-  <section class="auth-form-pane"><form class="auth-card card" method="post">{{ macro.input_csrf() }}<div class="card-body p-0">
-    <a href="index.php" class="navbar-brand d-inline-flex align-items-center gap-3 mb-5">{% if site_logo_url %}<img class="brand-logo brand-logo--auth" src="{{ site_logo_url }}" alt="">{% else %}<span class="brand-mark">HS</span>{% endif %}<span class="h4 mb-0">{{ title }}</span></a>
-    <h1 class="h2 text-center mb-4">{{ title_reset }}</h1>
-    <div class="mb-3"><label class="form-label" for="input-username">{{ label_username }}</label><input type="text" id="input-username" class="form-control form-control-lg" value="{{ value_user_name }}" autocomplete="username" disabled></div>
-    <div class="mb-3"><label class="form-label" for="input-password">{{ label_password }}</label><input type="password" id="input-password" name="user_password_new" class="form-control form-control-lg" autocomplete="new-password" required autofocus></div>
-    <div class="mb-4"><label class="form-label" for="input-password-repeat">{{ label_password_repeat }}</label><input type="password" id="input-password-repeat" name="user_password_repeat" class="form-control form-control-lg" autocomplete="new-password" required></div>
-    <button class="btn btn-lg btn-primary w-100" type="submit">{{ label_reset }}</button>
-  </div></form></section><aside class="auth-visual" aria-hidden="true"></aside>
+<div class="container-fluid p-0 min-vh-100">
+  <div class="row g-0 min-vh-100">
+    <div class="col-12 col-lg-6 d-flex align-items-center justify-content-center p-4 p-md-5">
+      <div class="w-100"><div class="row justify-content-center"><div class="col-12 col-sm-10 col-md-8 col-lg-10 col-xl-8">
+        <form class="card border-0 shadow-none bg-transparent" method="post">
+          {{ macro.input_csrf() }}
+          <div class="card-body p-0">
+            <a href="index.php" class="navbar-brand d-inline-flex align-items-center gap-3 mb-5">{% if site_logo_url %}<img width="48" height="48" class="img-fluid rounded-3" src="{{ site_logo_url }}" alt="">{% else %}<span class="avatar-50 rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center fw-bold" aria-hidden="true">HS</span>{% endif %}<span class="h4 mb-0">{{ title }}</span></a>
+            <h1 class="h2 text-center mb-4">{{ title_reset }}</h1>
+            <div class="mb-3"><label class="form-label" for="input-username">{{ label_username }}</label><input type="text" id="input-username" class="form-control form-control-lg" value="{{ value_user_name }}" autocomplete="username" disabled></div>
+            <div class="mb-3"><label class="form-label" for="input-password">{{ label_password }}</label><input type="password" id="input-password" name="user_password_new" class="form-control form-control-lg" autocomplete="new-password" required autofocus></div>
+            <div class="mb-4"><label class="form-label" for="input-password-repeat">{{ label_password_repeat }}</label><input type="password" id="input-password-repeat" name="user_password_repeat" class="form-control form-control-lg" autocomplete="new-password" required></div>
+            <button class="btn btn-lg btn-primary w-100" type="submit">{{ label_reset }}</button>
+          </div>
+        </form>
+      </div></div></div>
+    </div>
+    <div class="col-lg-6 d-none d-lg-flex align-items-center justify-content-center bg-primary p-5" aria-hidden="true"><img src="src/templates/default/static/hope/images/auth/01.png" class="img-fluid" alt=""></div>
+  </div>
 </div>
