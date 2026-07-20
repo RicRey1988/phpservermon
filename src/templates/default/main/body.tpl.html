@@ -58,7 +58,7 @@
         {% if add_footer %}<footer class="footer app-footer" role="contentinfo"><div class="container-fluid d-flex flex-wrap justify-content-between gap-2"><span>PHP Server Monitor {{ version }} · <a href="https://github.com/RicRey1988/phpservermon" target="_blank" rel="noopener noreferrer">Mejorado por Hosting Supremo</a> <span class="text-danger">{{ update_available|raw }}</span></span><a href="#main-content">{{ label_back_to_top }}</a></div></footer>{% endif %}
     </main>
 
-    {% if user_level != 30 %}{% include 'main/appearance-customizer.tpl.html' %}{% endif %}
+    {% include 'main/appearance-customizer.tpl.html' %}
     {{ html_modal|default('')|raw }}
     <script src="src/templates/default/static/hope/js/bootstrap.bundle.min.js?v={{ version|url_encode }}"></script>
     {% if needs_charts|default(false) %}<script src="src/templates/default/static/hope/js/apexcharts.min.js?v={{ version|url_encode }}"></script>{% endif %}

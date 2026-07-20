@@ -1,39 +1,14 @@
 {% import 'main/macros.tpl.html' as macro %}
-<form name="edit_user" action="{{ url_save|raw }}" class="col-md-6 pl-0 pr-0" id="edit_user" method="post" autocomplete="off">
-	<fieldset>
-		<legend>{{ titlemode }}</legend>
-		<div class="col">
-			<!-- Username -->
-			{{ macro.input_field("text", "user_name", null, "user_name", label_user_name, edit_value_user_name, null, "255", null, null, null, null, true) }}
-			<!-- Name -->
-			{{ macro.input_field("text", "name", null, "name", label_name, edit_value_name, null, "255", null, null, null, null, true) }}
-			<!-- Level -->
-			{{ macro.input_select("level", "level", label_level, levels, user_level) }}
-			<!-- Password -->
-			{{ macro.input_field("password", "password", null, "password", label_password, edit_value_password, placeholder_password, "255") }}
-			<!-- Password repeat -->
-			{{ macro.input_field("password", "password_repeat", null, "password_repeat", label_password_repeat, edit_value_password_repeat, placeholder_password, "255") }}
-			<!-- Email -->
-			{{ macro.input_field("email", "email", null, "email", label_email, edit_value_email, null, "255") }}
-			<!-- Mobile -->
-			{{ macro.input_field("tel", "mobile", null, "mobile", label_mobile, edit_value_mobile, null, "20") }}
-            <!-- Discord -->
-			{{ macro.input_field("text", "discord", null, "discord", label_discord, edit_value_discord, null, "255") }}
-			<!-- Webhook_url -->
-			{{ macro.input_field("text", "webhook_url", null, "webhook_url", label_webhook_url, edit_value_webhook_url, null, "255") }}
-			<!-- Webhook_json -->
-			{{ macro.input_field("text", "webhook_json", null, "webhook_json", label_webhook_json, edit_value_webhook_json, null, "255") }}
-			<!-- Pushover_key -->
-			{{ macro.input_field("text", "pushover_key", null, "pushover_key", label_pushover_key, edit_value_pushover_key, null, "255") }}
-			<!-- Pushover_device -->
-			{{ macro.input_field("text", "pushover_device", null, "pushover_device", label_pushover_device, edit_value_pushover_device, null, "255") }}
-			<!-- Telegram_id -->
-			{{ macro.input_field("text", "telegram_id", null, "telegram_id", label_telegram_id, edit_value_telegram_id, null, "255") }}
-			<!-- Servers -->
-			{{ macro.input_select_multiple("server_id", "server_id[]", label_servers, label_search, servers, label_please_select) }}
-		</div>
-		{{ macro.button_save(null, label_save) }}
-		<a class="btn" href="{{ url_go_back|raw }}">{{ label_go_back }}</a>
-	</fieldset>
-	{{ macro.input_csrf() }}
+<form name="edit_user" action="{{ url_save|raw }}" class="user-editor-card card col-12 col-xxl-10 p-0" id="edit_user" method="post" autocomplete="off">
+    <div class="card-header"><h2 class="h5 mb-1">{{ titlemode }}</h2><p class="text-muted mb-0">{{ label_description }}</p></div>
+    <div class="card-body">
+        <div class="row g-4">
+            <div class="col-12 col-xl-6"><fieldset class="h-100" data-form-section="identity"><legend>Identidad y acceso</legend>{{ macro.input_field("text", "user_name", null, "user_name", label_user_name, edit_value_user_name, null, "255", null, null, null, null, true, true, "username") }}{{ macro.input_field("text", "name", null, "name", label_name, edit_value_name, null, "255", null, null, null, null, true, null, "name") }}{{ macro.input_select("level", "level", label_level, levels, user_level) }}{{ macro.input_field("email", "email", null, "email", label_email, edit_value_email, null, "255", null, null, null, null, true, null, "email") }}{{ macro.input_field("tel", "mobile", null, "mobile", label_mobile, edit_value_mobile, null, "20", null, null, null, null, null, null, "tel") }}</fieldset></div>
+            <div class="col-12 col-xl-6"><fieldset class="h-100" data-form-section="security"><legend>Seguridad</legend>{{ macro.input_field("password", "password", null, "password", label_password, edit_value_password, placeholder_password, "255", null, null, null, null, null, null, "new-password") }}{{ macro.input_field("password", "password_repeat", null, "password_repeat", label_password_repeat, edit_value_password_repeat, placeholder_password, "255", null, null, null, null, null, null, "new-password") }}<div class="alert alert-info small mb-0"><i class="fas fa-shield-alt me-2" aria-hidden="true"></i>{{ placeholder_password }}</div></fieldset></div>
+            <div class="col-12"><fieldset data-form-section="notifications"><legend>Canales de notificación</legend><div class="row row-cols-1 row-cols-lg-2 g-3"><div class="col">{{ macro.input_field("text", "telegram_id", null, "telegram_id", label_telegram_id, edit_value_telegram_id, null, "255") }}</div><div class="col">{{ macro.input_field("text", "discord", null, "discord", label_discord, edit_value_discord, null, "255") }}</div><div class="col">{{ macro.input_field("text", "pushover_key", null, "pushover_key", label_pushover_key, edit_value_pushover_key, null, "255") }}</div><div class="col">{{ macro.input_field("text", "pushover_device", null, "pushover_device", label_pushover_device, edit_value_pushover_device, null, "255") }}</div><div class="col">{{ macro.input_field("url", "webhook_url", null, "webhook_url", label_webhook_url, edit_value_webhook_url, null, "255") }}</div><div class="col">{{ macro.input_field("text", "webhook_json", null, "webhook_json", label_webhook_json, edit_value_webhook_json, null, "255") }}</div></div></fieldset></div>
+            <div class="col-12"><fieldset data-form-section="servers"><legend>{{ label_servers }}</legend>{{ macro.input_select_multiple("server_id", "server_id[]", label_servers, label_search, servers, label_please_select) }}</fieldset></div>
+        </div>
+        {{ macro.input_csrf() }}
+    </div>
+    <div class="card-footer d-flex flex-wrap justify-content-end gap-2"><a class="btn btn-soft-secondary" href="{{ url_go_back|raw }}">{{ label_go_back }}</a>{{ macro.button_save(null, label_save) }}</div>
 </form>

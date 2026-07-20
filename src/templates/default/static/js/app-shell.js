@@ -30,6 +30,17 @@
 			sidebar: activeValue('sidebar', 'default'), sidebar_types: [], sidebar_active: activeValue('sidebar_active', 'rounded-one-side'), navbar: activeValue('navbar', 'default')
 		};
 		each('[data-preference="sidebar_types"].active', function (control) { state.sidebar_types.push(control.dataset.value); });
+		if (!body.dataset.appearanceUrl) {
+			try {
+				var localState = JSON.parse(window.localStorage.getItem('psmAppearance') || 'null');
+				if (localState && typeof localState === 'object') {
+					Object.keys(allowed).forEach(function (key) {
+						if (key === 'sidebar_types' && Array.isArray(localState[key])) { state[key] = localState[key].filter(function (value) { return allowed[key].indexOf(value) !== -1; }); }
+						else if (allowed[key].indexOf(localState[key]) !== -1) { state[key] = localState[key]; }
+					});
+				}
+			} catch (error) { /* Storage may be disabled. */ }
+		}
 		var acknowledged = JSON.parse(JSON.stringify(state));
 
 		function resolvedScheme() { return state.scheme === 'auto' ? (media && media.matches ? 'dark' : 'light') : state.scheme; }
@@ -76,7 +87,7 @@
 		}
 		function save() {
 			var url = body.dataset.appearanceUrl;
-			if (!url) { acknowledged = JSON.parse(JSON.stringify(state)); return Promise.resolve(); }
+			if (!url) { try { window.localStorage.setItem('psmAppearance', JSON.stringify(state)); } catch (error) { /* Storage may be disabled. */ } acknowledged = JSON.parse(JSON.stringify(state)); return Promise.resolve(); }
 			var params = new URLSearchParams({
 				csrf: body.dataset.appearanceCsrf || '', ui_scheme: state.scheme, ui_accent: state.accent, ui_direction: state.direction,
 				ui_sidebar: state.sidebar, ui_sidebar_active: state.sidebar_active, ui_navbar: state.navbar

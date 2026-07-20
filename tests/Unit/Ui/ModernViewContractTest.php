@@ -182,6 +182,29 @@ final class ModernViewContractTest extends TestCase
         self::assertStringContainsString('role="tablist"', $view);
     }
 
+    public function testEveryApplicationPageUsesModernHopeUiContracts(): void
+    {
+        $templates = [
+            'module/server/log.tpl.html', 'module/server/server/update.tpl.html',
+            'module/user/user/list.tpl.html', 'module/user/user/update.tpl.html', 'module/user/profile.tpl.html',
+            'module/user/notification/index.tpl.html', 'module/user/login/login.tpl.html', 'module/user/login/forgot.tpl.html',
+            'module/user/login/reset.tpl.html', 'module/user/login/register.tpl.html', 'module/config/config.tpl.html',
+            'module/config/system.tpl.html', 'module/config/system-updated.tpl.html', 'module/install/index.tpl.html',
+            'module/install/main.tpl.html', 'module/install/config_new.tpl.html', 'module/install/config_new_user.tpl.html',
+            'module/install/config_upgrade.tpl.html', 'module/install/results.tpl.html', 'module/install/success.tpl.html',
+            'module/error/401.tpl.html', 'util/module/modal.tpl.html', 'util/module/sidebar.tpl.html',
+        ];
+        foreach ($templates as $template) {
+            $html = $this->read($template);
+            self::assertStringNotContainsString('<table', $html, $template);
+            self::assertStringNotContainsString('data-toggle=', $html, $template);
+            self::assertStringNotContainsString('data-dismiss=', $html, $template);
+            self::assertDoesNotMatchRegularExpression('/\b(?:pl|pr|ml|mr|float)-(?:0|auto|left|right)\b|\bform-row\b|width\s*:\s*\d+(?:vw|px)/i', $html, $template);
+        }
+        self::assertStringContainsString('user-editor-card', $this->read('module/user/user/update.tpl.html'));
+        self::assertStringContainsString('error-state-card', $this->read('module/error/401.tpl.html'));
+    }
+
     private function read(string $path): string
     {
         $contents = @file_get_contents($this->root . $path);
