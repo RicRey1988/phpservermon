@@ -85,7 +85,6 @@ abstract class AbstractServerController extends AbstractController
 					`s`.`webhook`,
 					`s`.`pushover`,
 					`s`.`telegram`,
-					`s`.`jabber`,
 					`s`.`warning_threshold`,
 					`s`.`warning_threshold_counter`,
                     `s`.`ssl_cert_expiry_days`,

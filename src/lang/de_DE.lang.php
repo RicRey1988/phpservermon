@@ -224,7 +224,6 @@ $sm_lang = array(
  Anwendungs-API-Token hier eingeben.',
         'telegram_status' => 'Telegram Nachrichten erlauben?',
         'telegram_add_url' => 'Server URL an Nachricht anhängen?',
-        'jabber_status' => 'Allow sending Jabber (XMPP) messages',
         'alert_type' => 'Wann möchten Sie benachrichtigt werden?',
         'alert_type_description' => '<b>Status geändert:</b> ... wenn sich der Status ändert<br>z. B. online ->
  offline oder offline -> online.<br><br><b>Offline: </b>Sie bekommen eine

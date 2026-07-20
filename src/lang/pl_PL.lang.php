@@ -143,9 +143,6 @@ $sm_lang = array(
         'telegram_bot_username_error_token' => '401 - Błąd autoryzacji. Proszę sprawdzić czy API token jest
  prawidłowy.',
         'telegram_bot_error' => 'Wystąpił błąd podczas aktywowania notyfikacji Telegram: %s',
-        'jabber' => 'Jabber',
-        'jabber_label' => 'Jabber',
-        'jabber_description' => 'Twoje konto Jabber',
         'webhook' => 'Webhook',
         'webhook_description' => 'Wyślij json webhook do wybranego endpoint. <br/>Zapytanie json może być dowolnie
  dostosowane np.  {"text":"servermon: #message"}',
@@ -183,7 +180,6 @@ $sm_lang = array(
         'pushover' => 'Pushover',
         'webhook' => 'Webhook',
         'telegram' => 'Telegram',
-        'jabber' => 'Jabber',
         'no_logs' => 'Brak logów',
         'clear' => 'Wyczyść log',
         'delete_title' => 'Wyczyść log',
@@ -258,8 +254,6 @@ $sm_lang = array(
         'send_pushover' => 'Wyślij powiadomienie Pushover',
         'telegram' => 'Telegram',
         'send_telegram' => 'Wyślij powiadomienie Telegram',
-        'jabber' => 'Jabber',
-        'send_jabber' => 'Wyślij powiadomienie Jabber',
         'users' => 'Użytkownicy',
         'delete_title' => 'Usuń serwer',
         'delete_message' => 'Czy jesteś pewny że chcesz usunąć serwer \'%1\'?',
@@ -298,7 +292,6 @@ $sm_lang = array(
         'warning_notifications_disabled_webhook' => 'Powiadomienia Webhook są wyłączone.',
         'warning_notifications_disabled_pushover' => 'Powiadomienia Pushover są wyłączone.',
         'warning_notifications_disabled_telegram' => 'Powiadomienia Telegram są wyłączone.',
-        'warning_notifications_disabled_jabber' => 'Powiadomienia Jabber są wyłączone.',
         'error_server_no_match' => 'Nie odnaleziono serwera.',
         'error_server_label_bad_length' => 'Etykieta musi mieć pomiędzy 1 a 255 znaków.',
         'error_server_ip_bad_length' => 'Domena/IP musi mieć pomiędzy 1 a 255 znaków.',
@@ -367,21 +360,6 @@ $sm_lang = array(
         'telegram_api_token_description' => 'Zanim zaczniesz używać Telegram, potrzebujesz uzyskać API Token.
  Odwiedź strone z <a href="http://docs.phpservermonitor.org/"
  target="_blank">dokumentacją</a> żeby uzyskać pomocy.',
-        'jabber_status' => 'Zezwól na wysyłanie powiadomień Jabber (XMPP)',
-        'jabber_description' => 'Odwiedź stronę <a href="http://docs.phpservermonitor.org/">dokumentacją</a> aby
- uzyskać więcej informaji oraz przewodnik po instalacji.',
-        'jabber_host' => 'Host',
-        'jabber_host_description' => 'Adres host dostawcy Twojego konta Jabber. Dla konta Google użyj
- talk.google.com.',
-        'jabber_port' => 'Port',
-        'jabber_port_description' => 'Port Twojego dostawcy Jabber. Domyślnie 5222. Dla konta Google użyj 5223.',
-        'jabber_username' => 'Nazwa użytkownika',
-        'jabber_username_description' => 'Dla konta Google użyj razem z domeną np. example@google.com.',
-        'jabber_domain' => 'Domena',
-        'jabber_domain_description' => 'Domena Twojego dostawy Jabber. Zostaw puste dla konta Google.',
-        'jabber_password' => 'Hasło',
-        'jabber_password_description' => 'Wypełnij tylko żeby ustawić lub zmienić.',
-        'jabber_check' => 'Sprawdź swoje konto Jabber czy powiadomienie zostało odebrane.',
         'alert_type' => 'Wybierz kiedy chcesz być powiadomiony.',
         'alert_type_description' => '<b>Zmiana statusu:</b> Otrzymasz powiadomienie gdy serwer zmieni status. Z online
  -> offline lub offline -> online.<br><br /><b>Offline:</b> Otrzymasz
@@ -407,7 +385,6 @@ $sm_lang = array(
         'log_pushover' => 'Notyfikacje Pushover wysłane przez skrypt',
         'log_webhook' => 'Notyfikacje Webhook wysłane przez skrypt',
         'log_telegram' => 'Notyfikacje Telegram wysłane przez skrypt',
-        'log_jabber' => 'Notyfikacje Jabber wysłane przez skrypt',
         'updated' => 'Konfiguracja została zaktualizowana.',
         'tab_email' => 'Email',
         'tab_sms' => 'SMS',
@@ -415,14 +392,12 @@ $sm_lang = array(
         'tab_pushover' => 'Pushover',
         'tab_webhook' => 'Webhook',
         'tab_telegram' => 'Telegram',
-        'tab_jabber' => 'Jabber',
         'settings_email' => 'Ustawienia Email',
         'settings_sms' => 'Ustawienia SMS',
         'settings_discord' => 'Ustawienie Discord',
         'settings_pushover' => 'Ustawienia Pushover',
         'settings_webhook' => 'Ustawienia Webhook',
         'settings_telegram' => 'Ustawienia Telegram',
-        'settings_jabber' => 'Ustawienia Jabber',
         'settings_notification' => 'Ustawienia powiadomień',
         'settings_log' => 'Ustawienia Logowania',
         'settings_proxy' => 'Ustawienia serwera Proxy',
@@ -438,8 +413,6 @@ $sm_lang = array(
  profilu użytkownika.',
         'test_webhook' => 'Powiadomienia Webhook zostanie wysłane do endpoint o podanym URL.',
         'test_telegram' => 'Powiadomienie Telegram zostanie wysłane na chat id podane w Twoim profilu użytkownika.',
-        'test_jabber' => 'Powiadomienie Telegram zostanie wysłane na konto Jabber podane w Twoim profilu
- użytkownika.',
         'send' => 'Wyślij',
         'test_subject' => 'Test',
         'test_message' => 'Testowa wiadomość',
@@ -470,12 +443,6 @@ $sm_lang = array(
  ustawieniach systemu.',
         'telegram_error_noid' => 'Nie można wysłać testowego powiadomienia: brak chat id w ustawieniach profilu
  Twojego użytkownika.',
-        'jabber_sent' => 'Powiadomienie Jabber zostało wysłane',
-        'jabber_error' => 'Wystąpił błąd podczas wysyłania powiadomienia Jabber: %s',
-        'jabber_error_noconfig' => 'Nie można wysłać testowego powiadomienia: brak konfiguracji konta Jabber w
- głównych ustawieniach systemu.',
-        'jabber_error_noaccount' => 'Nie można wysłać testowego powiadomienia: brak konfiguracji konta Jabber w
- ustawieniach profilu Twojego użytkownika.',
         'log_retention_period' => 'Czas rotacji logów',
         'log_retention_period_description' => 'Liczba dni przez którą należy przetrzymywać logi powiadomień i
  archiwizować uptime serwera. Wpisz 0 aby wyłączyć czyszczenie
@@ -500,8 +467,6 @@ $sm_lang = array(
  %PORT%<br>Błąd: %ERROR%<br>Data: %DATE%',
         'off_telegram_message' => 'Błąd połączenia do serwera:<br><br>Serwer: %LABEL%<br>IP: %IP%<br>Port:
  %PORT%<br>Błąd: %ERROR%<br>Data: %DATE%',
-        'off_jabber_message' => 'Błąd połączenia do serwera:<br><br>Serwer: %LABEL%<br>IP: %IP%<br>Port:
- %PORT%<br>Błąd: %ERROR%<br>Data: %DATE%',
         'on_sms' => 'Serwer \'%LABEL%\' działa poprawnie: ip=%IP%, port=%PORT%, it was down for
  %LAST_OFFLINE_DURATION%',
         'on_email_subject' => 'Uwaga: Serwer \'%LABEL%\' działa poprawnie',
@@ -522,9 +487,6 @@ $sm_lang = array(
         'on_telegram_message' => 'Serwer \'%LABEL%\' znów działa poprawnie, był offline przez
  %LAST_OFFLINE_DURATION%:<br><br>Serwer: %LABEL%<br>IP: %IP%<br>Port: %PORT%<br>Data:
  %DATE%',
-        'on_jabber_message' => 'Serwer \'%LABEL%\' znów działa poprawnie, był offline przez
- %LAST_OFFLINE_DURATION%:<br><br>Serwer: %LABEL%<br>IP: %IP%<br>Port: %PORT%<br>Data:
- %DATE%',
         'combi_email_subject' => 'WAŻNE: \'%UP%\' serverów znowu ONLINE, \'%DOWN%\' serverów jest OFFLINE',
         'combi_webhook_subject' => '\'%UP%\' serverów jest znowu ONLINE UP, \'%DOWN%\' serverów jest OFFLINE',
         'combi_pushover_subject' => '\'%UP%\' serverów jest znowu ONLINE UP, \'%DOWN%\' serverów jest OFFLINE',
@@ -537,8 +499,6 @@ $sm_lang = array(
         'combi_pushover_message' => '<b>Następujące serwery są offline:</b><br>%DOWN_SERVERS%<br><b>Następujące
  serwery są znowu online:</b><br>%UP_SERVERS%',
         'combi_telegram_message' => '<b>Następujące serwery są offline:</b><br>%DOWN_SERVERS%<br><b>Następujące
- serwery są znowu online:</b><br>%UP_SERVERS%',
-        'combi_jabber_message' => '<b>Następujące serwery są offline:</b><br>%DOWN_SERVERS%<br><b>Następujące
  serwery są znowu online:</b><br>%UP_SERVERS%',
     ),
     'login' => array(

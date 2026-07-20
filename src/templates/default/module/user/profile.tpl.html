@@ -40,12 +40,6 @@
 		<button type="button" class="btn btn-primary show-modal" data-toggle="modal" data-modal-id="activateTelegram">{{ label_activate_telegram }}</button>
 		{{ macro.input_hidden("activate_telegram", "0") }}
 	</fieldset>
-	<!-- Jabber settings -->
-	<fieldset>
-		<legend>{{ label_jabber }}</legend>
-		<!-- jabber -->
-		{{ macro.input_field("text", "jabber", null, "jabber", label_jabber, jabber, label_jabber, "255", "jabber_help", label_jabber_description) }}
-    </fieldset>
     <!-- Discord settings -->
     <fieldset>
         <legend>{{ label_discord }}</legend>

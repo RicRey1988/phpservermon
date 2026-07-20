@@ -14,3 +14,5 @@ __MACOSX/
 .settings/
 /.vscode
 /.vs
+/composer.phar
+/.phpunit.cache/

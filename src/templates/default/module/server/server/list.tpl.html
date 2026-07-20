@@ -65,12 +65,6 @@
 					{% if server.telegram|lower == 'yes' and config.telegram|lower%}
                         <i class="fab fa-telegram" title="{{ label_telegram }}"></i>
 					{% endif %}
-					{% if server.jabber|lower == 'yes'%}
-					<span class="fa-layers">
-                        <i class="fas fa-circle" title="{{ label_jabber }}"></i>
-                        <span class="fa-layers-text fa-inverse" style="font-weight:400; font-size:75%">J</span>
-                    </span>
-                    {% endif %}
                     {% if server.discord|lower == 'yes' and config.discord|lower %}
                         <i class="fab fa-discord" title="{{ label_discord }}"></i>
                     {% endif %}

@@ -20,7 +20,7 @@ Features:
 ---------
 
 * Monitor services and websites (see below).
-* Email, SMS, Discord, Pushover, Telegram and Jabber notifications.
+* Email, SMS, Discord, Webhook, Pushover and Telegram notifications.
 * View history graphs of uptime and latency.
 * User authentication with 2 levels (administrator and regular user).
 * Logs of connection errors, outgoing emails and text messages.
@@ -45,7 +45,7 @@ There are two different ways to monitor a server:
   In both cases the script will return a "status offline", and will start sending out notifications.
 
 Each server has its own settings regarding notification.
-You can choose for email, text message (SMS), Pushover.net, Telegram and Jabber notifications.
+You can choose email, text message (SMS), Discord, Webhook, Pushover.net and Telegram notifications.
 The following SMS gateways are currently available:
 
 * Clickatell - <https://www.clickatell.com>

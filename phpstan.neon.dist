@@ -1,0 +1,7 @@
+parameters:
+    level: 5
+    paths:
+        - src/psm/Notification
+        - src/psm/Util/Cron
+        - src/psm/Util/Install/PlatformRequirements.php
+        - src/psm/Service/PhpInfoService.php

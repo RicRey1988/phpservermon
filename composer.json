@@ -4,24 +4,31 @@
 	"license": "GPL-3.0-or-later",
 	"homepage": "https://www.phpservermonitor.org",
 	"require": {
-		"php": "^7.4|>=8.1",
+		"php": "^8.5",
+		"ext-ctype": "*",
 		"ext-curl": "*",
+		"ext-filter": "*",
+		"ext-hash": "*",
 		"ext-json": "*",
+		"ext-libxml": "*",
+		"ext-mbstring": "*",
+		"ext-openssl": "*",
 		"ext-pdo": "*",
+		"ext-pdo_mysql": "*",
 		"ext-xml": "*",
-		"phpmailer/phpmailer": "^6.9",
-		"symfony/config": "6.4",
-		"symfony/dependency-injection": "6.4",
-		"symfony/event-dispatcher": "6.4",
-		"symfony/http-foundation": "6.4.16",
-		"symfony/filesystem": "6.4",
-		"symfony/deprecation-contracts": "^2.5",
-		"symfony/event-dispatcher-contracts": "^2.5",
-		"php-pushover/php-pushover": "^1.0",
-		"paragonie/random_compat": "^9.99",
-		"twig/twig": "^3.8",
-		"jaxl/jaxl": "^3.1",
+		"phpmailer/phpmailer": "^7.1",
+		"symfony/config": "^7.4",
+		"symfony/dependency-injection": "^7.4",
+		"symfony/event-dispatcher": "^7.4",
+		"symfony/filesystem": "^7.4",
+		"symfony/http-client": "^7.4",
+		"symfony/http-foundation": "^7.4",
+		"twig/twig": "^3.28",
 		"viharm/psm-ldap-auth": "^1.1"
+	},
+	"require-dev": {
+		"phpstan/phpstan": "^2.1",
+		"phpunit/phpunit": "^12.0"
 	},
 	"autoload": {
 		"files": [
@@ -33,6 +40,7 @@
 		}
 	},
 	"config": {
+		"sort-packages": true,
 		"allow-plugins": {
 			"mnsami/composer-custom-directory-installer": true
 		}

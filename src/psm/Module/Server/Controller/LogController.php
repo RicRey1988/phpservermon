@@ -59,7 +59,6 @@ class LogController extends AbstractServerController
             'label_pushover' => psm_get_lang('log', 'pushover'),
             'label_webhook' => psm_get_lang('log', 'webhook'),
             'label_telegram' => psm_get_lang('log', 'telegram'),
-            'label_jabber' => psm_get_lang('log', 'jabber'),
             'label_title' => psm_get_lang('log', 'title'),
             'label_server' => psm_get_lang('servers', 'server'),
             'label_type' => psm_get_lang('log', 'type'),
@@ -91,7 +90,7 @@ class LogController extends AbstractServerController
             );
         }
 
-        $log_types = array('status', 'email', 'sms', 'pushover', 'telegram', 'jabber', 'discord', 'webhook');
+        $log_types = array('status', 'email', 'sms', 'pushover', 'telegram', 'discord', 'webhook');
 
         foreach ($log_types as $key) {
             $records = $this->getEntries($key);
