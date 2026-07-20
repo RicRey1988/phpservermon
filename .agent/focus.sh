@@ -1,11 +1,25 @@
 #!/usr/bin/env bash
-set -euo pipefail
-vendor/bin/phpunit tests/Unit/Ui/BrandingContractTest.php
-vendor/bin/phpunit tests/Unit/Ui/ModernViewContractTest.php --filter testUserCollectionAndLogsUseCardsRatherThanTables
-vendor/bin/phpunit tests/Unit/Ui/ModernViewContractTest.php --filter testModernViewsDoNotUseBootstrapFourDataAttributes
-vendor/bin/phpunit tests/Unit/Ui/NativeHopeUiContractTest.php --filter testJavaScriptUsesDataHooksRatherThanRemovedPresentationClasses
+set -Eeuo pipefail
+REPORT=.agent/focus-result.txt
+: > "$REPORT"
+CURRENT=setup
+trap 'code=$?; printf "FAIL %s (%s)\n" "$CURRENT" "$code" >> "$REPORT"; exit "$code"' ERR
+step() {
+  CURRENT=$1
+  shift
+  printf 'RUN %s\n' "$CURRENT" >> "$REPORT"
+  "$@"
+  printf 'PASS %s\n' "$CURRENT" >> "$REPORT"
+}
+step branding vendor/bin/phpunit tests/Unit/Ui/BrandingContractTest.php
+step user-collection vendor/bin/phpunit tests/Unit/Ui/ModernViewContractTest.php --filter testUserCollectionAndLogsUseCardsRatherThanTables
+step bootstrap5-attributes vendor/bin/phpunit tests/Unit/Ui/ModernViewContractTest.php --filter testModernViewsDoNotUseBootstrapFourDataAttributes
+step data-hooks vendor/bin/phpunit tests/Unit/Ui/NativeHopeUiContractTest.php --filter testJavaScriptUsesDataHooksRatherThanRemovedPresentationClasses
+CURRENT=twig-parse
 php -r 'require "vendor/autoload.php"; $loader = new Twig\Loader\FilesystemLoader("src/templates/default"); $twig = new Twig\Environment($loader); $twig->addFunction(new Twig\TwigFunction("csrf_token", static fn (): string => "")); foreach (["module/user/user/list.tpl.html","module/user/user/update.tpl.html","module/user/profile.tpl.html","module/user/notification/index.tpl.html","main/app-navbar.tpl.html"] as $file) { $twig->parse($twig->tokenize(new Twig\Source((string) file_get_contents("src/templates/default/" . $file), $file))); }'
-node --check src/templates/default/static/js/notifications.js
+printf 'PASS %s\n' "$CURRENT" >> "$REPORT"
+step notifications-js node --check src/templates/default/static/js/notifications.js
+CURRENT=static-contract
 python3 - <<'PY'
 from pathlib import Path
 import re
@@ -31,3 +45,5 @@ assert 'data-user-editor' in text
 assert 'data-notification-item' in text
 assert 'data-notification-count' in text
 PY
+printf 'PASS %s\n' "$CURRENT" >> "$REPORT"
+printf 'ALL PASS\n' >> "$REPORT"
