@@ -1,3 +1,4 @@
+{% import 'main/icons.tpl.html' as hope %}
 {% macro card(title, body, class) %}
 <section class="card {{ class|default('') }}">
 	{% if title %}<div class="card-header"><h2 class="h5 mb-0">{{ title }}</h2></div>{% endif %}
@@ -20,7 +21,7 @@
 	<div class="input-group">
 		<input class="form-control" type="password" id="{{ id }}" name="{{ name }}"{% if help %} aria-describedby="{{ id }}-help"{% endif %}
 			{% if autocomplete %}autocomplete="{{ autocomplete }}"{% endif %}{% if required %} required{% endif %}>
-		<button class="btn btn-outline-secondary" type="button" data-password-toggle="{{ id }}" aria-label="Mostrar contraseña"><i class="fas fa-eye" aria-hidden="true"></i></button>
+		<button class="btn btn-outline-secondary" type="button" data-password-toggle="{{ id }}" aria-label="Mostrar contraseña">{{ hope.icon('eye') }}</button>
 	</div>
 	{% if help %}<div class="form-text" id="{{ id }}-help">{{ help }}</div>{% endif %}
 </div>
@@ -54,7 +55,7 @@
 
 {% macro dropzone(id, name, label, accept, help) %}
 <label class="dropzone-field" for="{{ id }}" data-dropzone>
-	<i class="fas fa-cloud-upload-alt" aria-hidden="true"></i><span>{{ label }}</span>
+	{{ hope.icon('cloud-upload-alt') }}<span>{{ label }}</span>
 	<input class="visually-hidden" type="file" id="{{ id }}" name="{{ name }}" accept="{{ accept }}">
 	{% if help %}<small>{{ help }}</small>{% endif %}
 </label>
@@ -63,5 +64,5 @@
 {% macro status_badge(label, tone) %}<span class="badge bg-{{ tone }}">{{ label }}</span>{% endmacro %}
 
 {% macro empty_state(title, body) %}
-<div class="empty-state card"><div class="card-body text-center py-5"><i class="fas fa-inbox fa-2x mb-3" aria-hidden="true"></i><h2 class="h5">{{ title }}</h2><p class="text-muted mb-0">{{ body }}</p></div></div>
+<div class="empty-state card"><div class="card-body text-center py-5">{{ hope.icon('inbox','fa-2x mb-3') }}<h2 class="h5">{{ title }}</h2><p class="text-muted mb-0">{{ body }}</p></div></div>
 {% endmacro %}

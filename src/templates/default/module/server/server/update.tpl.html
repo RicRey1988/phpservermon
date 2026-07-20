@@ -1,3 +1,4 @@
+{% import 'main/icons.tpl.html' as hope %}
 {% import 'main/macros.tpl.html' as macro %}
 <form name="edit_server" action="{{ url_save|raw }}" class="server-form col-12 col-xxl-9" id="edit_server" method="post"
 	 enctype="multipart/form-data" autocomplete="off">
@@ -125,7 +126,7 @@
 		<div class="dropzone-field" data-dropzone tabindex="0" role="button" aria-controls="server_image">
 			<img class="dropzone-preview" src="{{ edit_image_url }}" alt="Vista previa" data-image-preview>
 			<div class="dropzone-copy">
-				<i class="fas fa-cloud-upload-alt fa-2x" aria-hidden="true"></i>
+				{{ hope.icon('cloud-upload-alt','fa-2x') }}
 				<label class="form-label d-block mb-1" for="server_image">Arrastra una imagen aquí o selecciónala</label>
 				<small class="text-muted">JPEG, PNG o WebP; máximo 5 MiB. Se normalizará automáticamente.</small>
 			</div>
@@ -189,7 +190,7 @@
         <legend class="mt-4">{{ label_delete }}</legend>
         <a class="btn btn-danger show-modal" href="{{ url_delete|raw }}" title="{{ label_delete }}" data-modal-id="delete"
 			data-modal-param="{{ edit_value_label }}">
-            <i class="fas fa-trash"></i> {{ label_delete }}
+            {{ hope.icon('trash') }} {{ label_delete }}
         </a>
     </fieldset>
     {% endif %}

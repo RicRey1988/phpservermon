@@ -1,3 +1,4 @@
+{% import 'main/icons.tpl.html' as hope %}
 <div class="offcanvas offcanvas-end hope-settings" tabindex="-1" id="hope-ui-settings" data-bs-scroll="true" aria-labelledby="hope-ui-settings-label">
     <div class="offcanvas-header border-bottom">
         <div>
@@ -10,15 +11,15 @@
         <section class="settings-section" aria-labelledby="setting-scheme">
             <h3 class="h6 mb-3" id="setting-scheme">Esquema</h3>
             <div class="d-grid gap-2 grid-cols-3">
-                <button type="button" class="btn btn-border setting-choice{% if appearance.scheme == 'auto' %} active{% endif %}" data-setting="color-mode" data-name="color" data-preference="scheme" data-value="auto" aria-pressed="{{ appearance.scheme == 'auto' ? 'true' : 'false' }}"><i class="fas fa-bolt me-1" aria-hidden="true"></i>Auto</button>
-                <button type="button" class="btn btn-border setting-choice{% if appearance.scheme == 'dark' %} active{% endif %}" data-setting="color-mode" data-name="color" data-preference="scheme" data-value="dark" aria-pressed="{{ appearance.scheme == 'dark' ? 'true' : 'false' }}"><i class="fas fa-moon me-1" aria-hidden="true"></i>Oscuro</button>
-                <button type="button" class="btn btn-border setting-choice{% if appearance.scheme == 'light' %} active{% endif %}" data-setting="color-mode" data-name="color" data-preference="scheme" data-value="light" aria-pressed="{{ appearance.scheme == 'light' ? 'true' : 'false' }}"><i class="fas fa-sun me-1" aria-hidden="true"></i>Claro</button>
+                <button type="button" class="btn btn-border setting-choice{% if appearance.scheme == 'auto' %} active{% endif %}" data-setting="color-mode" data-name="color" data-preference="scheme" data-value="auto" aria-pressed="{{ appearance.scheme == 'auto' ? 'true' : 'false' }}">{{ hope.icon('bolt','me-1') }}Auto</button>
+                <button type="button" class="btn btn-border setting-choice{% if appearance.scheme == 'dark' %} active{% endif %}" data-setting="color-mode" data-name="color" data-preference="scheme" data-value="dark" aria-pressed="{{ appearance.scheme == 'dark' ? 'true' : 'false' }}">{{ hope.icon('moon','me-1') }}Oscuro</button>
+                <button type="button" class="btn btn-border setting-choice{% if appearance.scheme == 'light' %} active{% endif %}" data-setting="color-mode" data-name="color" data-preference="scheme" data-value="light" aria-pressed="{{ appearance.scheme == 'light' ? 'true' : 'false' }}">{{ hope.icon('sun','me-1') }}Claro</button>
             </div>
         </section>
 
         <hr>
         <section class="settings-section" aria-labelledby="setting-accent">
-            <div class="d-flex align-items-center justify-content-between"><h3 class="h6 mb-3" id="setting-accent">Color principal</h3><i class="fas fa-sync-alt text-primary" aria-hidden="true"></i></div>
+            <div class="d-flex align-items-center justify-content-between"><h3 class="h6 mb-3" id="setting-accent">Color principal</h3>{{ hope.icon('refresh','text-primary') }}</div>
             <div class="d-grid gap-2 grid-cols-6 accent-grid">
                 {% for value, label in {'default':'Original','blue':'Azul','gray':'Gris','red':'Rojo','yellow':'Naranja','pink':'Rosa'} %}
                 <button type="button" class="accent-choice{% if appearance.accent == value %} active{% endif %}" data-setting="color-mode1" data-name="color"
@@ -89,7 +90,7 @@
 </div>
 
 <button class="btn btn-fixed-end btn-warning btn-icon btn-setting" type="button" data-bs-toggle="offcanvas" data-bs-target="#hope-ui-settings" aria-controls="hope-ui-settings" aria-label="Abrir personalizador de diseño">
-    <i class="fas fa-cog animated-rotate" aria-hidden="true"></i>
+    {{ hope.icon('gear','animated-rotate') }}
 </button>
 
 <div class="toast-container position-fixed bottom-0 end-0 p-3"><div class="toast" data-appearance-toast role="status" aria-live="polite" aria-atomic="true"><div class="toast-header"><strong class="me-auto">Apariencia</strong><button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Cerrar"></button></div><div class="toast-body">Preferencia guardada.</div></div></div>

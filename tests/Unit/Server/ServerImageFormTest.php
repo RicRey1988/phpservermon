@@ -118,7 +118,7 @@ final class ServerImageFormTest extends TestCase
     {
         $root = dirname(__DIR__, 3) . '/src/templates/default/static/';
         $javascript = file_get_contents($root . 'js/app-shell.js');
-        $styles = file_get_contents($root . 'css/app-shell.css');
+        $styles = file_get_contents($root . 'css/hs-monitor.css');
         self::assertIsString($javascript);
         self::assertIsString($styles);
 

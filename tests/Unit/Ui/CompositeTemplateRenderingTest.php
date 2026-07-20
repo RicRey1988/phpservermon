@@ -45,7 +45,8 @@ final class CompositeTemplateRenderingTest extends TestCase
         ]);
 
         self::assertStringContainsString('id="overview-tab"', $html);
-        self::assertStringContainsString('fas fa-info-circle', $html);
+        self::assertStringContainsString('class="hope-icon', $html);
+        self::assertStringNotContainsString('fas fa-', $html);
         self::assertStringContainsString('Monitoreo', $html);
         self::assertStringContainsString('bg-success">Sí', $html);
         self::assertStringContainsString('id="modal_last_output"', $html);

@@ -10,7 +10,7 @@ final class ResponsiveLayoutContractTest extends TestCase
 {
     public function testStylesFixOverflowAtTheComponentInsteadOfHidingIt(): void
     {
-        $css = file_get_contents(dirname(__DIR__, 3) . '/src/templates/default/static/css/app-shell.css');
+        $css = file_get_contents(dirname(__DIR__, 3) . '/src/templates/default/static/css/hs-monitor.css');
         self::assertIsString($css);
         self::assertDoesNotMatchRegularExpression('/body\s*\{[^}]*overflow-x\s*:\s*(?:hidden|clip)/s', $css);
         self::assertDoesNotMatchRegularExpression('/(?:width|min-width)\s*:\s*\d+vw/', $css);

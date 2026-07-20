@@ -1,3 +1,4 @@
+{% import 'main/icons.tpl.html' as hope %}
 {% import 'main/macros.tpl.html' as macro %}
 {{ macro.input_csrf() }}
 
@@ -10,7 +11,7 @@
     {% for notification in notifications %}
     <article class="card notification-card notification-{{ notification.transition }}{% if notification.read_at is null %} notification-unread{% endif %}" data-notification-id="{{ notification.notification_id }}">
         <div class="card-body d-flex flex-column flex-md-row align-items-md-center gap-3">
-            <span class="notification-icon" aria-hidden="true"><i class="fas fa-{% if notification.transition == 'down' %}exclamation-triangle{% else %}check-circle{% endif %}"></i></span>
+            <span class="notification-icon" aria-hidden="true">{{ hope.icon(notification.transition == 'down' ? 'warning' : 'category') }}</span>
             <div class="min-w-0 flex-grow-1">
                 <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
                     <h3 class="h5 mb-0">{{ notification.title }}</h3>
@@ -26,6 +27,6 @@
         </div>
     </article>
     {% else %}
-    <div class="card"><div class="card-body text-center py-5"><i class="fas fa-bell-slash fa-2x text-muted mb-3" aria-hidden="true"></i><p class="text-muted mb-0">Todavía no hay notificaciones.</p></div></div>
+    <div class="card"><div class="card-body text-center py-5">{{ hope.icon('bell-slash','fa-2x text-muted mb-3') }}<p class="text-muted mb-0">Todavía no hay notificaciones.</p></div></div>
     {% endfor %}
 </div>

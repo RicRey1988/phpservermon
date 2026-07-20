@@ -1,6 +1,16 @@
 Changelog
 =========
 
+v4.3.0-hs (released July 20, 2026)
+----------------------------------
+
+* Replaced the hybrid legacy skin with the complete native Hope UI 2.0 shell,
+  local SVG iconography and coordinated light/dark design tokens.
+* Rebuilt Estado cards with fixed proportional images and complete names.
+* Rebuilt Registro so timeline content cannot collapse into vertical letters.
+* Ported all authentication views to the original split Hope UI composition.
+* Removed the obsolete CSS layers and refreshed the PWA asset cache.
+
 v4.2.3-hs (released July 20, 2026)
 ----------------------------------
 

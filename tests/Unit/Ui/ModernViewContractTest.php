@@ -54,7 +54,7 @@ final class ModernViewContractTest extends TestCase
     public function testApplicationShellProvidesModernFormInteractions(): void
     {
         $javascript = $this->read('static/js/app-shell.js');
-        $styles = $this->read('static/css/app-shell.css');
+        $styles = $this->read('static/css/hs-monitor.css');
         $macros = $this->read('main/macros.tpl.html');
 
         self::assertStringContainsString('[data-card-search]', $javascript);

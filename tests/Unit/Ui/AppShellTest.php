@@ -34,7 +34,7 @@ final class AppShellTest extends TestCase
         self::assertIsString($body);
         self::assertIsString($navbar);
         self::assertIsString($customizer);
-        self::assertStringContainsString('sidebar sidebar-default sidebar-white sidebar-base', $body);
+        self::assertStringContainsString('sidebar sidebar-default sidebar-base navs-rounded-all', $body);
         self::assertStringContainsString('<main class="main-content"', $body);
         self::assertStringContainsString('iq-navbar-header', $body);
         self::assertStringContainsString('content-inner mt-n5 py-0', $body);

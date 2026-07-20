@@ -1,7 +1,8 @@
+{% import 'main/icons.tpl.html' as hope %}
 <div class="d-flex flex-wrap align-items-center justify-content-end gap-2">
-    <button type="button" class="btn btn-light btn-sm" data-run-update data-update-url="{{ url_update|raw }}"><i class="fas fa-sync-alt me-1" aria-hidden="true"></i><span data-update-label>Actualizar ahora</span></button>
+    <button type="button" class="btn btn-light btn-sm" data-run-update data-update-url="{{ url_update|raw }}">{{ hope.icon('sync-alt','me-1') }}<span data-update-label>Actualizar ahora</span></button>
     <div class="btn-group btn-group-sm" role="group" aria-label="Presentación de servidores">
-        <button type="button" class="btn btn-light{% if block_layout_active %} active{% endif %}" id="block-layout" aria-label="Tarjetas" onclick="psm_saveLayout(0)"><i class="fas fa-th" aria-hidden="true"></i></button>
-        <button type="button" class="btn btn-light{% if list_layout_active %} active{% endif %}" id="table-layout" aria-label="Lista de tarjetas" onclick="psm_saveLayout(1)"><i class="fas fa-bars" aria-hidden="true"></i></button>
+        <button type="button" class="btn btn-light{% if block_layout_active %} active{% endif %}" id="block-layout" aria-label="Tarjetas" onclick="psm_saveLayout(0)">{{ hope.icon('th') }}</button>
+        <button type="button" class="btn btn-light{% if list_layout_active %} active{% endif %}" id="table-layout" aria-label="Lista de tarjetas" onclick="psm_saveLayout(1)">{{ hope.icon('bars') }}</button>
     </div>
 </div>

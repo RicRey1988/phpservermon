@@ -49,7 +49,9 @@ final class StatusDashboardTest extends TestCase
         self::assertStringContainsString('dashboard_json', $statistics);
         self::assertStringContainsString('server-image-box', $cards);
         self::assertStringContainsString('src="{{ server.image_url }}"', $cards);
-        self::assertStringContainsString('width="80" height="80"', $cards);
+        self::assertStringContainsString('width="96" height="96"', $cards);
+        self::assertStringContainsString('status-card-title', $cards);
+        self::assertStringNotContainsString('text-truncate', $cards);
         self::assertStringContainsString('aria-label="{{ server.status_label }}"', $cards);
         self::assertStringContainsString('data-server-id="{{ server.server_id }}"', $cards);
         self::assertStringContainsString('name="range"', $header);
@@ -62,7 +64,7 @@ final class StatusDashboardTest extends TestCase
 
     public function testDashboardAssetsEnforceFixedImagesAndSafeJsonParsing(): void
     {
-        $styles = $this->read('src/templates/default/static/css/app-shell.css');
+        $styles = $this->read('src/templates/default/static/css/hs-monitor.css');
         $javascript = $this->read('src/templates/default/static/js/dashboard.js');
         $body = $this->read('src/templates/default/main/body.tpl.html');
 

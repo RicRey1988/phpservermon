@@ -1,3 +1,4 @@
+{% import 'main/icons.tpl.html' as hope %}
 {% macro input_csrf() %}
     <input type="hidden" name="csrf" value="{{ csrf_token(csrf_key|default('')) }}" />
 {% endmacro input_csrf %}
@@ -47,7 +48,7 @@
     <div class="form-group form-row">
         {% if warning %}
         <div class="alert alert-warning col-md-12" role="alert">
-            <i class="fas fa-exclamation-triangle" title="Warning"></i> {{ warning_label }}
+            {{ hope.icon('exclamation-triangle') }} {{ warning_label }}
         </div>
         {% endif %}
         <label for="{{ id }}" class="col-form-label col-md-3">{{ label }}</label>
@@ -106,7 +107,7 @@
 {% macro table_search(label) %}
     <noscript><div hidden></noscript>
     <div class="searchbar input-group mb-3">
-        <span class="input-group-text"><i class="fas fa-search" aria-hidden="true"></i></span>
+        <span class="input-group-text">{{ hope.icon('search') }}</span>
         <input class="form-control search_input" type="search" maxlength="255" placeholder="{{ label }}..." aria-label="{{ label }}" data-card-search>
     </div>
     <noscript></div></noscript>

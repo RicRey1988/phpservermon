@@ -1,3 +1,4 @@
+{% import 'main/icons.tpl.html' as hope %}
 {% import 'main/macros.tpl.html' as macro %}
 <div class="row g-4">
   <div class="col-12 col-xxl-8">
@@ -9,7 +10,7 @@
           <div class="row row-cols-1 row-cols-md-2 g-3">
             {% for check in checks %}
               <div class="col"><article class="card border shadow-none h-100"><div class="card-body d-flex gap-3">
-                <span class="avatar bg-soft-{{ check.status == 'ok' ? 'success' : (check.status == 'warning' ? 'warning' : 'danger') }} text-{{ check.status == 'ok' ? 'success' : (check.status == 'warning' ? 'warning' : 'danger') }}"><i class="fas fa-{{ check.status == 'ok' ? 'check' : 'exclamation' }}" aria-hidden="true"></i></span>
+                <span class="avatar bg-soft-{{ check.status == 'ok' ? 'success' : (check.status == 'warning' ? 'warning' : 'danger') }} text-{{ check.status == 'ok' ? 'success' : (check.status == 'warning' ? 'warning' : 'danger') }}">{{ hope.icon(check.status == 'ok' ? 'category' : 'warning') }}</span>
                 <div><h4 class="h6 mb-1">{{ check.label }}</h4><p class="fw-semibold mb-1">{{ check.value }}</p><p class="small text-muted mb-0">{{ check.detail }}</p></div>
               </div></article></div>
             {% endfor %}
@@ -27,13 +28,13 @@
         {% elseif release %}
           <div class="d-flex align-items-center justify-content-between mb-3"><span>Última versión HS</span><span class="badge bg-{{ update_available ? 'success' : 'soft-primary' }}{% if not update_available %} text-primary{% endif %}">{{ release.version }}</span></div>
           <h3 class="h6">{{ release.name }}</h3><p class="small text-muted release-notes">{{ release.notes ?: 'Sin notas adicionales.' }}</p>
-          <p class="small"><i class="fas fa-shield-alt me-2 text-success" aria-hidden="true"></i>El manifiesto se valida con la firma RSA de Hosting Supremo y el paquete con SHA-256 antes de instalar.</p>
+          <p class="small">{{ hope.icon('shield-alt','me-2 text-success') }}El manifiesto se valida con la firma RSA de Hosting Supremo y el paquete con SHA-256 antes de instalar.</p>
           {% if update_available %}
             <form action="{{ install_url|raw }}" method="post">
               {{ macro.input_csrf() }}
               <div class="mb-3"><label class="form-label" for="target_version">Escribe <strong>{{ release.version }}</strong> para confirmar</label><input class="form-control" id="target_version" name="target_version" type="text" required autocomplete="off" pattern="[0-9]+\.[0-9]+\.[0-9]+-hs"></div>
               <div class="form-check mb-3"><input class="form-check-input" id="confirm_update" name="confirm_update" value="yes" type="checkbox" required><label class="form-check-label" for="confirm_update">Confirmo la instalación de {{ release.version }}</label></div>
-              <button class="btn btn-primary w-100" type="submit"><i class="fas fa-cloud-download-alt me-2" aria-hidden="true"></i>Verificar e instalar</button>
+              <button class="btn btn-primary w-100" type="submit">{{ hope.icon('cloud-download-alt','me-2') }}Verificar e instalar</button>
             </form>
           {% else %}<div class="alert alert-success mb-0">El sistema está actualizado.</div>{% endif %}
           <a class="btn btn-link w-100 mt-2" href="{{ release.htmlUrl }}" target="_blank" rel="noopener noreferrer">Ver release en GitHub</a>

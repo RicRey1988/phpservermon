@@ -1,5 +1,24 @@
 # Changelog
 
+## [4.3.0-hs] - 2026-07-20
+
+### Changed
+- Replaced the hybrid legacy skin with the native Hope UI 2.0 shell supplied
+  by the project owner: sidebar, navbar, header, settings drawer, cards,
+  forms, authentication screens and responsive layouts now share one design.
+- Replaced Font Awesome markup with a local inline Hope-style SVG icon library.
+- Rebuilt Estado cards with bounded 96 px media, responsive columns and full
+  wrapping server names; the live status board remains separate from charts.
+- Ported login, registration and password recovery to the original Hope UI
+  split authentication composition and bundled `auth/01.png` artwork.
+
+### Fixed
+- Removed the legacy `custom.css` rules that forced dark backgrounds while the
+  selected theme was light.
+- Removed the `timeline-item` grid rule that compressed Registro content to a
+  one-rem column and rendered words vertically.
+- Updated the PWA cache to install the new component stylesheet and auth asset.
+
 ## [4.2.3-hs] - 2026-07-20
 
 ### Fixed

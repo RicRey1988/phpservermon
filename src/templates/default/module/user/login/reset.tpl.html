@@ -1,23 +1,11 @@
 {% import 'main/macros.tpl.html' as macro %}
-<div class="auth-layout auth-layout-single">
-  <form class="auth-card card" method="post">
-    {{ macro.input_csrf() }}
-    <div class="card-body p-4 p-lg-5">
-      <p class="eyebrow mb-2">Cuenta protegida</p>
-      <h1 class="h3 mb-4">{{ title_reset }}</h1>
-      <div class="mb-3">
-        <label class="form-label" for="input-username">{{ label_username }}</label>
-        <input type="text" name="user_name" id="input-username" class="form-control" value="{{ value_user_name }}" autocomplete="username" disabled>
-      </div>
-      <div class="mb-3">
-        <label class="form-label" for="input-password">{{ label_password }}</label>
-        <input type="password" id="input-password" name="user_password_new" class="form-control" autocomplete="new-password" required autofocus>
-      </div>
-      <div class="mb-4">
-        <label class="form-label" for="input-password-repeat">{{ label_password_repeat }}</label>
-        <input type="password" id="input-password-repeat" name="user_password_repeat" class="form-control" autocomplete="new-password" required>
-      </div>
-      <button class="btn btn-lg btn-primary w-100" type="submit">{{ label_reset }}</button>
-    </div>
-  </form>
+<div class="auth-shell auth-layout auth-layout-single">
+  <section class="auth-form-pane"><form class="auth-card card" method="post">{{ macro.input_csrf() }}<div class="card-body p-0">
+    <a href="index.php" class="navbar-brand d-inline-flex align-items-center gap-3 mb-5"><span class="brand-mark">HS</span><span class="h4 mb-0">Server Monitor</span></a>
+    <h1 class="h2 text-center mb-4">{{ title_reset }}</h1>
+    <div class="mb-3"><label class="form-label" for="input-username">{{ label_username }}</label><input type="text" id="input-username" class="form-control form-control-lg" value="{{ value_user_name }}" autocomplete="username" disabled></div>
+    <div class="mb-3"><label class="form-label" for="input-password">{{ label_password }}</label><input type="password" id="input-password" name="user_password_new" class="form-control form-control-lg" autocomplete="new-password" required autofocus></div>
+    <div class="mb-4"><label class="form-label" for="input-password-repeat">{{ label_password_repeat }}</label><input type="password" id="input-password-repeat" name="user_password_repeat" class="form-control form-control-lg" autocomplete="new-password" required></div>
+    <button class="btn btn-lg btn-primary w-100" type="submit">{{ label_reset }}</button>
+  </div></form></section><aside class="auth-visual" aria-hidden="true"></aside>
 </div>

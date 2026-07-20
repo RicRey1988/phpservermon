@@ -1,5 +1,6 @@
+{% import 'main/icons.tpl.html' as hope %}
 <div class="searchbar input-group mb-4">
-    <span class="input-group-text"><i class="fas fa-search" aria-hidden="true"></i></span>
+    <span class="input-group-text">{{ hope.icon('search') }}</span>
     <input class="form-control" type="search" maxlength="255" placeholder="{{ label_search }}..." aria-label="{{ label_search }}" data-card-search>
 </div>
 
@@ -10,9 +11,9 @@
             <div class="server-media-frame">
                 <img src="{{ server.image_url }}" alt="" class="server-media" loading="lazy" decoding="async">
                 <span class="status-indicator" title="{{ server.status }}">
-                    {% if server.status|lower == 'on' %}<i class="fas fa-check-circle" aria-hidden="true"></i>
-                    {% elseif server.status|lower == 'warning' %}<i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
-                    {% else %}<i class="fas fa-times-circle" aria-hidden="true"></i>{% endif %}
+                    {% if server.status|lower == 'on' %}{{ hope.icon('check-circle') }}
+                    {% elseif server.status|lower == 'warning' %}{{ hope.icon('exclamation-triangle') }}
+                    {% else %}{{ hope.icon('times-circle') }}{% endif %}
                     <span class="visually-hidden">{{ server.status }}</span>
                 </span>
             </div>
@@ -30,18 +31,18 @@
                     <div><dt>{{ label_last_offline }}</dt><dd>{{ server.last_offline }}</dd></div>
                 </dl>
                 <div class="channel-chips mt-auto mb-3" aria-label="{{ label_monitoring }}">
-                    <span class="channel-chip" title="{{ server.active_title }}"><i class="fas fa-{% if server.active|lower == 'yes' %}eye{% else %}eye-slash{% endif %}" aria-hidden="true"></i></span>
-                    {% if server.email|lower == 'yes' and config.email|lower %}<span class="channel-chip" title="{{ label_email }}"><i class="fas fa-envelope" aria-hidden="true"></i></span>{% endif %}
-                    {% if server.sms|lower == 'yes' and config.sms|lower %}<span class="channel-chip" title="{{ label_sms }}"><i class="fas fa-sms" aria-hidden="true"></i></span>{% endif %}
+                    <span class="channel-chip" title="{{ server.active_title }}">{{ hope.icon(server.active|lower == 'yes' ? 'eye' : 'warning') }}</span>
+                    {% if server.email|lower == 'yes' and config.email|lower %}<span class="channel-chip" title="{{ label_email }}">{{ hope.icon('envelope') }}</span>{% endif %}
+                    {% if server.sms|lower == 'yes' and config.sms|lower %}<span class="channel-chip" title="{{ label_sms }}">{{ hope.icon('sms') }}</span>{% endif %}
                     {% if server.pushover|lower == 'yes' and config.pushover|lower %}<span class="channel-chip" title="{{ label_pushover }}">P</span>{% endif %}
-                    {% if server.telegram|lower == 'yes' and config.telegram|lower %}<span class="channel-chip" title="{{ label_telegram }}"><i class="fab fa-telegram" aria-hidden="true"></i></span>{% endif %}
-                    {% if server.discord|lower == 'yes' and config.discord|lower %}<span class="channel-chip" title="{{ label_discord }}"><i class="fab fa-discord" aria-hidden="true"></i></span>{% endif %}
+                    {% if server.telegram|lower == 'yes' and config.telegram|lower %}<span class="channel-chip" title="{{ label_telegram }}">{{ hope.icon('telegram') }}</span>{% endif %}
+                    {% if server.discord|lower == 'yes' and config.discord|lower %}<span class="channel-chip" title="{{ label_discord }}">{{ hope.icon('discord') }}</span>{% endif %}
                     {% if server.webhook|lower == 'yes' and config.webhook|lower %}<span class="channel-chip" title="{{ label_webhook }}">W</span>{% endif %}
                 </div>
                 {% if user_level == 10 %}
                 <div class="position-relative d-flex gap-2">
-                    <a class="btn btn-outline-primary flex-grow-1 position-relative" href="{{ server.url_edit|raw }}"><i class="fas fa-edit me-1" aria-hidden="true"></i>{{ label_edit }}</a>
-                    <a class="btn btn-outline-danger show-modal position-relative" href="{{ server.url_delete|raw }}" data-modal-id="delete" data-modal-param="{{ server.label }}"><i class="fas fa-trash" aria-hidden="true"></i><span class="visually-hidden">{{ label_delete }}</span></a>
+                    <a class="btn btn-outline-primary flex-grow-1 position-relative" href="{{ server.url_edit|raw }}">{{ hope.icon('edit','me-1') }}{{ label_edit }}</a>
+                    <a class="btn btn-outline-danger show-modal position-relative" href="{{ server.url_delete|raw }}" data-modal-id="delete" data-modal-param="{{ server.label }}">{{ hope.icon('trash') }}<span class="visually-hidden">{{ label_delete }}</span></a>
                 </div>
                 {% endif %}
             </div>

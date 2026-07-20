@@ -15,19 +15,19 @@
     <link href="src/templates/default/static/hope/css/hope-ui.min.css?v={{ version|url_encode }}" rel="stylesheet">
     <link href="src/templates/default/static/hope/css/dark.min.css?v={{ version|url_encode }}" rel="stylesheet">
     <link href="src/templates/default/static/hope/css/customizer.min.css?v={{ version|url_encode }}" rel="stylesheet">
-    <link href="src/templates/default/static/css/custom.css?v={{ version|url_encode }}" rel="stylesheet">
-    <link href="src/templates/default/static/css/app-shell.css?v={{ version|url_encode }}" rel="stylesheet">
+    <link href="src/templates/default/static/css/hs-monitor.css?v={{ version|url_encode }}" rel="stylesheet">
 </head>
 <body class="{{ appearance.body_classes }}{% if html_menu is not defined or not html_menu %} no-menu{% endif %}" data-authenticated="{{ user_level != 30 ? 'true' : 'false' }}" data-appearance-url="{{ appearance_save_url|default('')|raw }}" data-appearance-csrf="{{ appearance_csrf|default('') }}">
     <a class="visually-hidden-focusable skip-link" href="#main-content">Ir al contenido principal</a>
 
+    {% import 'main/icons.tpl.html' as hope %}
     {% if html_menu is defined and html_menu %}
-    <aside class="sidebar sidebar-default sidebar-white sidebar-base {{ appearance.sidebar_classes }}" aria-label="Navegación principal">
+    <aside class="sidebar sidebar-default sidebar-base navs-rounded-all {{ appearance.sidebar_classes }}" aria-label="Navegación principal">
         <div class="sidebar-header d-flex align-items-center justify-content-start">
             <a href="index.php" class="navbar-brand d-flex align-items-center gap-2">
                 <span class="brand-mark" aria-hidden="true">HS</span><h4 class="logo-title mb-0">{{ title }}</h4>
             </a>
-            <button type="button" class="sidebar-toggle btn btn-icon" data-toggle="sidebar" data-active="true" aria-label="Contraer menú" aria-expanded="true"><i class="fas fa-arrow-left" aria-hidden="true"></i></button>
+            <button type="button" class="sidebar-toggle btn btn-icon" data-toggle="sidebar" data-active="true" aria-label="Contraer menú" aria-expanded="true">{{ hope.icon('arrow-left') }}</button>
         </div>
         <div class="sidebar-body pt-0 data-scrollbar"><div class="sidebar-list">{{ html_menu|raw }}</div></div>
         <div class="sidebar-footer"></div>
@@ -35,6 +35,7 @@
     {% endif %}
 
     <main class="main-content" id="main-content">
+        {% if html_menu is defined and html_menu %}
         <div class="position-relative iq-banner">
             {% include 'main/app-navbar.tpl.html' %}
             <div class="iq-navbar-header p-3 p-md-4">
@@ -56,15 +57,16 @@
         </div>
 
         {% if add_footer %}<footer class="footer app-footer" role="contentinfo"><div class="container-fluid d-flex flex-wrap justify-content-between gap-2"><span>PHP Server Monitor {{ version }} · <a href="https://github.com/RicRey1988/phpservermon" target="_blank" rel="noopener noreferrer">Mejorado por Hosting Supremo</a> <span class="text-danger">{{ update_available|raw }}</span></span><a href="#main-content">{{ label_back_to_top }}</a></div></footer>{% endif %}
+        {% else %}
+        <div class="auth-messages position-fixed top-0 start-50 translate-middle-x mt-3" aria-live="polite">{% for msg in messages %}<div class="alert alert-{{ msg.class }} alert-dismissible fade show shadow" role="alert"><strong>{{ msg.message|raw }}</strong><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button></div>{% endfor %}</div>
+        <div id="content" class="auth-page-content">{{ html_content|raw }}</div>
+        {% endif %}
     </main>
 
-    {% include 'main/appearance-customizer.tpl.html' %}
+    {% if html_menu is defined and html_menu %}{% include 'main/appearance-customizer.tpl.html' %}{% endif %}
     {{ html_modal|default('')|raw }}
     <script src="src/templates/default/static/hope/js/bootstrap.bundle.min.js?v={{ version|url_encode }}"></script>
     {% if needs_charts|default(false) %}<script src="src/templates/default/static/hope/js/apexcharts.min.js?v={{ version|url_encode }}"></script>{% endif %}
-    <script defer src="src/templates/default/static/plugin/font-awesome/js/solid.min.js"></script>
-    <script defer src="src/templates/default/static/plugin/font-awesome/js/fontawesome.min.js" data-auto-replace-svg="nest"></script>
-    <script defer src="src/templates/default/static/plugin/font-awesome/js/brands.min.js"></script>
     <script src="src/templates/default/static/hope/js/hope-ui.js?v={{ version|url_encode }}"></script>
     <script src="src/templates/default/static/hope/js/plugins/setting.js?v={{ version|url_encode }}"></script>
     <script src="src/templates/default/static/js/app-shell.js?v={{ version|url_encode }}"></script>

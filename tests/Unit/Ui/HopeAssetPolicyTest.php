@@ -55,6 +55,51 @@ final class HopeAssetPolicyTest extends TestCase
         }
     }
 
+    public function testApplicationLoadsOnlyNativeHopeUiAndHsComponentStyles(): void
+    {
+        $root = dirname(__DIR__, 3);
+        $body = file_get_contents($root . '/src/templates/default/main/body.tpl.html');
+
+        self::assertIsString($body);
+        self::assertFileExists($root . '/src/templates/default/static/css/hs-monitor.css');
+        self::assertStringContainsString('static/css/hs-monitor.css', $body);
+        self::assertStringNotContainsString('static/css/custom.css', $body);
+        self::assertStringNotContainsString('static/css/app-shell.css', $body);
+        self::assertStringNotContainsString('font-awesome', $body);
+        self::assertFileDoesNotExist($root . '/src/templates/default/static/css/custom.css');
+        self::assertFileDoesNotExist($root . '/src/templates/default/static/css/app-shell.css');
+    }
+
+    public function testShellUsesLocalHopeSvgIconLibrary(): void
+    {
+        $root = dirname(__DIR__, 3) . '/src/templates/default/main/';
+        $icons = file_get_contents($root . 'icons.tpl.html');
+        $shell = file_get_contents($root . 'body.tpl.html')
+            . file_get_contents($root . 'menu.tpl.html')
+            . file_get_contents($root . 'app-navbar.tpl.html')
+            . file_get_contents($root . 'appearance-customizer.tpl.html');
+
+        self::assertIsString($icons);
+        self::assertStringContainsString('{% macro icon(', $icons);
+        self::assertStringContainsString("import 'main/icons.tpl.html'", $shell);
+        self::assertDoesNotMatchRegularExpression('/\\bfa(?:s|r|b)?\\s+fa-|\\bfa-[a-z]/', $shell);
+    }
+
+    public function testApplicationTemplatesDoNotUseFontAwesomeMarkup(): void
+    {
+        $root = dirname(__DIR__, 3) . '/src/templates/default';
+        $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($root));
+
+        foreach ($files as $file) {
+            if (!$file->isFile() || !str_ends_with($file->getFilename(), '.tpl.html')) {
+                continue;
+            }
+            $contents = file_get_contents($file->getPathname());
+            self::assertIsString($contents);
+            self::assertDoesNotMatchRegularExpression('/\\bfa(?:s|r|b)?\\s+fa-|\\bfa-[a-z]/', $contents, $file->getPathname());
+        }
+    }
+
     public function testHopeRuntimeDoesNotDependOnDataTablesOrJquery(): void
     {
         $runtime = file_get_contents(dirname(__DIR__, 3) . '/src/templates/default/static/hope/js/hope-ui.js');

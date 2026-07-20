@@ -1,16 +1,13 @@
 {% import 'main/macros.tpl.html' as macro %}
-<section class="auth-panel card border-0 shadow-lg">
-  <div class="card-body p-4 p-lg-5">
-    <div class="auth-brand mb-4"><span class="brand-mark" aria-hidden="true">HS</span><div><p class="eyebrow mb-1">Hosting Supremo</p><h1 class="h3 mb-0">Crear cuenta</h1></div></div>
-    <p class="text-muted">Completa tu perfil para <strong>{{ email }}</strong>.</p>
-    <form action="" method="post" autocomplete="on">
-      {{ macro.input_csrf() }}
-      <input type="hidden" name="invitation_token" value="{{ invitation_token }}">
-      <div class="mb-3"><label class="form-label" for="name">Nombre</label><input class="form-control form-control-lg" id="name" name="name" type="text" value="{{ value_name }}" maxlength="255" required autocomplete="name"></div>
-      <div class="mb-3"><label class="form-label" for="user_name">Usuario</label><input class="form-control form-control-lg" id="user_name" name="user_name" type="text" value="{{ value_user_name }}" maxlength="64" pattern="[A-Za-z0-9_.]{2,64}" required autocomplete="username"></div>
-      <div class="mb-3"><label class="form-label" for="password">Contraseña</label><input class="form-control form-control-lg" id="password" name="password" type="password" maxlength="255" required autocomplete="new-password"></div>
-      <div class="mb-4"><label class="form-label" for="password_repeat">Repetir contraseña</label><input class="form-control form-control-lg" id="password_repeat" name="password_repeat" type="password" maxlength="255" required autocomplete="new-password"></div>
-      <button class="btn btn-primary btn-lg w-100" type="submit">Crear mi cuenta</button>
-    </form>
-  </div>
-</section>
+<div class="auth-shell auth-layout">
+  <section class="auth-form-pane"><form class="auth-card card" action="" method="post" autocomplete="on">{{ macro.input_csrf() }}<div class="card-body p-0">
+    <a href="index.php" class="navbar-brand d-inline-flex align-items-center gap-3 mb-4"><span class="brand-mark">HS</span><span class="h4 mb-0">Server Monitor</span></a>
+    <h1 class="h2 text-center mb-2">Crear cuenta</h1><p class="text-muted text-center mb-4">Completa tu perfil para <strong>{{ email }}</strong>.</p>
+    <input type="hidden" name="invitation_token" value="{{ invitation_token }}">
+    <div class="mb-3"><label class="form-label" for="name">Nombre</label><input class="form-control form-control-lg" id="name" name="name" type="text" value="{{ value_name }}" maxlength="255" required autocomplete="name"></div>
+    <div class="mb-3"><label class="form-label" for="user_name">Usuario</label><input class="form-control form-control-lg" id="user_name" name="user_name" type="text" value="{{ value_user_name }}" maxlength="64" pattern="[A-Za-z0-9_.]{2,64}" required autocomplete="username"></div>
+    <div class="mb-3"><label class="form-label" for="password">Contraseña</label><input class="form-control form-control-lg" id="password" name="password" type="password" maxlength="255" required autocomplete="new-password"></div>
+    <div class="mb-4"><label class="form-label" for="password_repeat">Repetir contraseña</label><input class="form-control form-control-lg" id="password_repeat" name="password_repeat" type="password" maxlength="255" required autocomplete="new-password"></div>
+    <button class="btn btn-primary btn-lg w-100" type="submit">Crear mi cuenta</button>
+  </div></form></section><aside class="auth-visual" aria-hidden="true"></aside>
+</div>
