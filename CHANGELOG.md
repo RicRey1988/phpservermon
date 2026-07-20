@@ -10,16 +10,29 @@
   and controlled group-permission remedy.
 
 ### Changed
+- Removed the project-specific `hs-monitor.css` stylesheet completely. Runtime
+  pages now load only the bundled Hope UI `hope-ui.min.css`, `dark.min.css` and
+  `customizer.min.css` assets.
+- Migrated the application shell, server views, configuration, diagnostics,
+  users, notifications, authentication and installer to native Hope UI and
+  Bootstrap 5 composition.
 - Authenticated sessions persist for one year with rotating secure tokens and
   remain explicitly revocable through Logout.
 - Estado cards now show prominent semantic online, offline, warning and paused
   banners that update immediately after an XHR check.
+- Rotated the PWA cache to `psm-static-4.3.2-hs-r2` so installed clients evict
+  the deleted stylesheet.
 
 ### Fixed
+- Aligned the light/dark, settings and notification controls in the top bar and
+  rebuilt the search field with Hope UI's native joined input group.
+- Restored the native sidebar arrow placement and rotation, removed the
+  duplicated lower user session block and repaired mobile open/close behavior,
+  including Escape, outside-click and navigation closing.
 - VAPID key generation is no longer blocked by validation of the empty public
   key field and accepts plain contact email addresses.
-- Password visibility and quick light/dark controls now have explicit SVG
-  contrast and display rules in both themes.
+- Password visibility and quick light/dark controls now use consistently sized
+  Hope UI icons and Bootstrap display utilities in both themes.
 
 ## [4.3.1-hs] - 2026-07-20
 
