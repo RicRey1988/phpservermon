@@ -1,0 +1,238 @@
+# commit-message: refactor: replace presentation class hooks with data attributes
+diff --git a/src/psm/Module/Server/Controller/LogController.php b/src/psm/Module/Server/Controller/LogController.php
+index 89588066..73518b58 100644
+--- a/src/psm/Module/Server/Controller/LogController.php
++++ b/src/psm/Module/Server/Controller/LogController.php
+@@ -83,9 +83,9 @@ class LogController extends AbstractServerController
+                 'clear_logn',
+                 psm_get_lang('log', 'clear'),
+                 psm_build_url(array('mod' => 'server_log', 'action' => 'delete')),
+                 'trash',
+-                'danger show-modal',
++                'danger',
+                 psm_get_lang('log', 'delete_title'),
+                 'delete'
+             );
+         }
+diff --git a/src/templates/default/main/macros.tpl.html b/src/templates/default/main/macros.tpl.html
+index 76dab6fe..b7383a47 100644
+--- a/src/templates/default/main/macros.tpl.html
++++ b/src/templates/default/main/macros.tpl.html
+@@ -94,9 +94,9 @@
+     <input type="hidden" name="{{ name }}" value="{{ value }}">
+ {% endmacro input_hidden %}
+ 
+ {% macro button_test(data_modal_id, label) %}
+-    <button class="btn btn-primary show-modal" type="button" data-bs-toggle="modal" data-modal-id="{{ data_modal_id }}">{{ label }}</button>
++    <button class="btn btn-primary" type="button" data-modal-trigger data-bs-toggle="modal" data-modal-id="{{ data_modal_id }}">{{ label }}</button>
+ {% endmacro button_test %}
+ 
+ {% macro button_save(name, label) %}
+     <button class="btn btn-success" type="submit" {% if name %}name="{{ name }}"{% endif %}>{{ label }}</button>
+diff --git a/src/templates/default/module/config/config.tpl.html b/src/templates/default/module/config/config.tpl.html
+index c72c6a1c..5af1568f 100644
+--- a/src/templates/default/module/config/config.tpl.html
++++ b/src/templates/default/module/config/config.tpl.html
+@@ -1,6 +1,6 @@
+ {% import 'main/macros.tpl.html' as macro %}
+-<form name="edit_config" class="config-form" action="index.php?mod=config&action=save" id="edit_config" method="post" enctype="multipart/form-data">
++<form name="edit_config" data-config-form action="index.php?mod=config&action=save" id="edit_config" method="post" enctype="multipart/form-data">
+     <!-- Nav tabs -->
+     <div class="row g-4">
+     <ul class="nav nav-pills flex-row flex-xl-column flex-nowrap gap-2 col-12 col-xl-3 overflow-auto" id="config_tab" role="tablist" aria-orientation="vertical">
+         <li class="nav-item">
+diff --git a/src/templates/default/module/server/server/list.tpl.html b/src/templates/default/module/server/server/list.tpl.html
+index 8e57f36f..af8e469d 100644
+--- a/src/templates/default/module/server/server/list.tpl.html
++++ b/src/templates/default/module/server/server/list.tpl.html
+@@ -45,9 +45,9 @@
+                 </div>
+                 {% if user_level == 10 %}
+                 <div class="position-relative d-flex gap-2">
+                     <a class="btn btn-outline-primary flex-grow-1 position-relative" href="{{ server.url_edit|raw }}">{{ hope.icon('edit','me-1') }}{{ label_edit }}</a>
+-                    <a class="btn btn-outline-danger show-modal position-relative" href="{{ server.url_delete|raw }}" data-modal-id="delete" data-modal-param="{{ server.label }}">{{ hope.icon('trash') }}<span class="visually-hidden">{{ label_delete }}</span></a>
++                    <a class="btn btn-outline-danger position-relative" data-modal-trigger href="{{ server.url_delete|raw }}" data-modal-id="delete" data-modal-param="{{ server.label }}">{{ hope.icon('trash') }}<span class="visually-hidden">{{ label_delete }}</span></a>
+                 </div>
+                 {% endif %}
+             </div>
+         </article>
+diff --git a/src/templates/default/module/server/server/update.tpl.html b/src/templates/default/module/server/server/update.tpl.html
+index d9670b97..543409ef 100644
+--- a/src/templates/default/module/server/server/update.tpl.html
++++ b/src/templates/default/module/server/server/update.tpl.html
+@@ -1,7 +1,7 @@
+ {% import 'main/icons.tpl.html' as hope %}
+ {% import 'main/macros.tpl.html' as macro %}
+-<form name="edit_server" action="{{ url_save|raw }}" class="server-form col-12 col-xxl-9 mx-auto" id="edit_server" method="post"
++<form name="edit_server" action="{{ url_save|raw }}" class="col-12 col-xxl-9 mx-auto" data-server-form id="edit_server" method="post"
+ 	 enctype="multipart/form-data" autocomplete="off">
+ 	<fieldset class="card mb-4" data-form-section="identification-check">
+ 		<legend class="card-header h5 float-none w-100 mb-0">{{ titlemode }}</legend>
+ 		<div class="card-body">
+@@ -202,9 +202,9 @@
+     {% if edit_server_id > 0 %}
+     <fieldset class="card mb-4">
+         <legend class="card-header h5 float-none w-100 mb-0">{{ label_delete }}</legend>
+         <div class="card-body">
+-        <a class="btn btn-danger show-modal" href="{{ url_delete|raw }}" title="{{ label_delete }}" data-modal-id="delete"
++        <a class="btn btn-danger" data-modal-trigger href="{{ url_delete|raw }}" title="{{ label_delete }}" data-modal-id="delete"
+ 			data-modal-param="{{ edit_value_label }}">
+             {{ hope.icon('trash') }} {{ label_delete }}
+         </a>
+     </div>
+diff --git a/src/templates/default/module/server/statistics/index.tpl.html b/src/templates/default/module/server/statistics/index.tpl.html
+index 2fb2d6e5..7843607b 100644
+--- a/src/templates/default/module/server/statistics/index.tpl.html
++++ b/src/templates/default/module/server/statistics/index.tpl.html
+@@ -1,7 +1,7 @@
+ {% import 'main/icons.tpl.html' as hope %}
+ <section data-statistics-dashboard data-statistics-range="{{ range }}">
+-    <div class="dashboard-summary row row-cols-1 row-cols-sm-2 row-cols-xl-4 g-4 mb-4" aria-label="Resumen de monitoreo">
++    <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-4 g-4 mb-4" data-dashboard-summary aria-label="Resumen de monitoreo">
+         {% set summary_cards = [
+             {key:'online',label:'En línea',value:dashboard.summary.online,icon:'check-circle',tone:'primary',caption:'Servidores operativos'},
+             {key:'active_incidents',label:'Incidentes activos',value:dashboard.summary.active_incidents,icon:'exclamation-triangle',tone:'danger',caption:'Requieren atención'},
+             {key:'uptime_percentage',label:'Disponibilidad',value:dashboard.summary.uptime_percentage is null ? '—' : dashboard.summary.uptime_percentage ~ '%',icon:'chart-line',tone:'info',caption:'Periodo seleccionado'},
+diff --git a/src/templates/default/module/user/profile.tpl.html b/src/templates/default/module/user/profile.tpl.html
+index 2184cfc0..e0efb228 100644
+--- a/src/templates/default/module/user/profile.tpl.html
++++ b/src/templates/default/module/user/profile.tpl.html
+@@ -36,9 +36,9 @@
+ 		</div>
+ 		<div class="col">
+ 			<fieldset class="card h-100">
+ 				<legend class="card-header h5 float-none w-100 mb-0">{{ label_telegram }}</legend>
+-				<div class="card-body"><p class="text-muted">{{ label_telegram_description|raw }}</p><a class="btn btn-primary mb-3" href="{{ telegram_get_chat_id_url }}">{{ label_telegram_get_chat_id }}</a>{{ macro.input_field("text", "telegram_id", null, "telegram_id", label_telegram_chat_id, telegram_id, label_telegram_chat_id, "255", "telegram_id_help", label_telegram_id_description) }}<button type="button" class="btn btn-outline-primary show-modal" data-bs-toggle="modal" data-modal-id="activateTelegram">{{ label_activate_telegram }}</button>{{ macro.input_hidden("activate_telegram", "0") }}</div>
++				<div class="card-body"><p class="text-muted">{{ label_telegram_description|raw }}</p><a class="btn btn-primary mb-3" href="{{ telegram_get_chat_id_url }}">{{ label_telegram_get_chat_id }}</a>{{ macro.input_field("text", "telegram_id", null, "telegram_id", label_telegram_chat_id, telegram_id, label_telegram_chat_id, "255", "telegram_id_help", label_telegram_id_description) }}<button type="button" class="btn btn-outline-primary" data-modal-trigger data-bs-toggle="modal" data-modal-id="activateTelegram">{{ label_activate_telegram }}</button>{{ macro.input_hidden("activate_telegram", "0") }}</div>
+ 			</fieldset>
+ 		</div>
+ 		<div class="col">
+ 			<fieldset class="card h-100">
+diff --git a/src/templates/default/module/user/user/list.tpl.html b/src/templates/default/module/user/user/list.tpl.html
+index 452c2c63..d6773a44 100644
+--- a/src/templates/default/module/user/user/list.tpl.html
++++ b/src/templates/default/module/user/user/list.tpl.html
+@@ -37,9 +37,9 @@
+           </div>
+         </div>
+         <div class="d-flex gap-2 mt-auto">
+           <a class="btn btn-outline-primary flex-grow-1" href="{{ user.url_edit|raw }}">{{ hope.icon('edit','me-1') }}{{ label_edit }}</a>
+-          <a class="btn btn-outline-danger show-modal" href="{{ user.url_delete|raw }}" data-modal-id="delete" data-modal-param="{{ user.user_name }}">{{ hope.icon('trash') }}<span class="visually-hidden">{{ label_delete }}</span></a>
++          <a class="btn btn-outline-danger" data-modal-trigger href="{{ user.url_delete|raw }}" data-modal-id="delete" data-modal-param="{{ user.user_name }}">{{ hope.icon('trash') }}<span class="visually-hidden">{{ label_delete }}</span></a>
+         </div>
+       </div>
+     </article>
+   </div>
+diff --git a/src/templates/default/static/js/app-shell.js b/src/templates/default/static/js/app-shell.js
+index c3bd1fe6..0a921b4f 100644
+--- a/src/templates/default/static/js/app-shell.js
++++ b/src/templates/default/static/js/app-shell.js
+@@ -182,9 +182,9 @@
+ 		if (media && typeof media.addEventListener === 'function') { media.addEventListener('change', function () { if (state.scheme === 'auto') { apply(); } }); }
+ 	}
+ 
+ 	function initializeModals() {
+-		each('.show-modal', function (origin) {
++		each('[data-modal-trigger]', function (origin) {
+ 			origin.addEventListener('click', function (event) {
+ 				event.preventDefault();
+ 				var modalId = origin.dataset.modalId || 'main';
+ 				var modalElement = document.getElementById(modalId + 'Modal');
+diff --git a/src/templates/default/static/js/scripts.js b/src/templates/default/static/js/scripts.js
+index 5184e3fb..3c941bc1 100644
+--- a/src/templates/default/static/js/scripts.js
++++ b/src/templates/default/static/js/scripts.js
+@@ -1,6 +1,6 @@
+ $().ready(function () {
+-	$('.show-modal').click(function (e) {
++	$('[data-modal-trigger]').click(function (e) {
+ 		var $this = $(this);
+ 		if ($this.is('a')) {
+ 			e.preventDefault();
+ 		}
+diff --git a/src/templates/default/util/module/sidebar.tpl.html b/src/templates/default/util/module/sidebar.tpl.html
+index d33e04a6..2bc7fcfb 100644
+--- a/src/templates/default/util/module/sidebar.tpl.html
++++ b/src/templates/default/util/module/sidebar.tpl.html
+@@ -4,9 +4,9 @@
+ 	{% for item in items %}
+ 		{% if item.type == 'link' %}
+ 			<a class="btn btn-outline-primary {{ item.class_active }}" href="{{ item.url|raw }}">{{ hope.icon(item.icon,'me-1') }}{{ item.label }}</a>
+ 		{% elseif item.type == 'button' %}
+-			<a class="btn btn-{{ item.btn_class }} {{ item.class_active }}" title="{{ item.title }}" href="{{ item.url|raw }}"{% if item.modal_id != null %} data-bs-toggle="modal" data-modal-id="{{ item.modal_id }}"{% endif %}>{{ hope.icon(item.icon,'me-1') }}{{ item.label }}</a>
++			<a class="btn btn-{{ item.btn_class }} {{ item.class_active }}" title="{{ item.title }}" href="{{ item.url|raw }}"{% if item.modal_id != null %} data-modal-trigger data-bs-toggle="modal" data-modal-id="{{ item.modal_id }}"{% endif %}>{{ hope.icon(item.icon,'me-1') }}{{ item.label }}</a>
+ 		{% elseif item.type == 'dropdown' %}
+ 			<div class="dropdown">
+ 				<button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">{{ hope.icon(item.icon,'me-1') }}{{ item.label }}</button>
+ 				<div class="dropdown-menu">
+diff --git a/tests/Unit/Server/StatusDashboardTest.php b/tests/Unit/Server/StatusDashboardTest.php
+index 7c9a778a..e3db4cc2 100644
+--- a/tests/Unit/Server/StatusDashboardTest.php
++++ b/tests/Unit/Server/StatusDashboardTest.php
+@@ -40,10 +40,10 @@ final class StatusDashboardTest extends TestCase
+         $cards = $this->read('src/templates/default/module/server/status/cards.tpl.html');
+         $header = $this->read('src/templates/default/module/server/statistics/header.tpl.html');
+ 
+         self::assertStringContainsString('data-status-board', $index);
+-        self::assertStringNotContainsString('dashboard-summary', $index);
+-        self::assertStringContainsString('dashboard-summary', $statistics);
++        self::assertStringNotContainsString('data-dashboard-summary', $index);
++        self::assertStringContainsString('data-dashboard-summary', $statistics);
+         self::assertStringContainsString('uptime-chart', $statistics);
+         self::assertStringContainsString('latency-chart', $statistics);
+         self::assertStringContainsString('type="application/json"', $statistics);
+         self::assertStringContainsString('dashboard_json', $statistics);
+diff --git a/tests/Unit/Ui/ModernViewContractTest.php b/tests/Unit/Ui/ModernViewContractTest.php
+index 667b8dbf..ea80bb4c 100644
+--- a/tests/Unit/Ui/ModernViewContractTest.php
++++ b/tests/Unit/Ui/ModernViewContractTest.php
+@@ -85,27 +85,27 @@ final class ModernViewContractTest extends TestCase
+         $status = $this->read('module/server/status/index.tpl.html');
+         self::assertStringContainsString('data-status-board', $status);
+         self::assertStringNotContainsString('uptime-chart', $status);
+         self::assertStringNotContainsString('latency-chart', $status);
+-        self::assertStringNotContainsString('dashboard-summary', $status);
++        self::assertStringNotContainsString('data-dashboard-summary', $status);
+     }
+ 
+     public function testStatisticsOwnsKpisAndCharts(): void
+     {
+         $statistics = $this->read('module/server/statistics/index.tpl.html');
+         self::assertStringContainsString('data-statistics-dashboard', $statistics);
+         self::assertStringContainsString('uptime-chart', $statistics);
+         self::assertStringContainsString('latency-chart', $statistics);
+-        self::assertStringContainsString('dashboard-summary', $statistics);
++        self::assertStringContainsString('data-dashboard-summary', $statistics);
+     }
+ 
+     public function testServerFormAndInstallerExposeModernSections(): void
+     {
+         $server = $this->read('module/server/server/update.tpl.html');
+         $installer = $this->read('module/install/main.tpl.html');
+         $database = $this->read('module/install/config_new.tpl.html');
+ 
+-        self::assertStringContainsString('class="server-form', $server);
++        self::assertStringContainsString('data-server-form', $server);
+         self::assertGreaterThanOrEqual(6, substr_count($server, 'data-form-section'));
+         self::assertStringNotContainsString('custom-select', $server);
+         self::assertStringContainsString('data-install-stepper', $installer);
+         self::assertStringContainsString('class="form-control"', $database);
+diff --git a/tests/Unit/Ui/NativeHopeUiContractTest.php b/tests/Unit/Ui/NativeHopeUiContractTest.php
+index 35dec3d2..806eb9e9 100644
+--- a/tests/Unit/Ui/NativeHopeUiContractTest.php
++++ b/tests/Unit/Ui/NativeHopeUiContractTest.php
+@@ -101,12 +101,12 @@ final class NativeHopeUiContractTest extends TestCase
+             $this->read('src/templates/default/static/js/history.js'),
+             $this->read('src/templates/default/static/js/notifications.js'),
+         ]);
+ 
+-        foreach (['sidebar-open', 'status-banner', 'status-badge--', 'history-panel', 'notification-unread'] as $selector) {
++        foreach (['sidebar-open', 'status-banner', 'status-badge--', 'history-panel', 'notification-unread', 'show-modal'] as $selector) {
+             self::assertStringNotContainsString($selector, $javascript);
+         }
+-        foreach (['data-status-board', 'data-server-card', 'data-notification-item'] as $hook) {
++        foreach (['data-status-board', 'data-server-card', 'data-notification-item', 'data-modal-trigger'] as $hook) {
+             self::assertStringContainsString($hook, $this->applicationTemplateContents() . $javascript);
+         }
+     }
+ 
