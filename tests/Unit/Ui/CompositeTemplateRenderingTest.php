@@ -11,6 +11,32 @@ use Twig\TwigFunction;
 
 final class CompositeTemplateRenderingTest extends TestCase
 {
+    public function testServerEditorRendersEnabledNotificationWarningsWithoutMissingMacros(): void
+    {
+        set_error_handler(static function (int $severity, string $message, string $file, int $line): never {
+            throw new \ErrorException($message, 0, $severity, $file, $line);
+        });
+
+        try {
+            $html = $this->twig()->render('module/server/server/update.tpl.html', [
+                'edit_server_id' => 0,
+                'warning_email' => true,
+                'warning_sms' => true,
+                'warning_pushover' => true,
+                'warning_telegram' => true,
+                'warning_discord' => true,
+                'warning_webhook' => true,
+                'label_warning_email' => 'Email no configurado',
+            ]);
+        } finally {
+            restore_error_handler();
+        }
+
+        self::assertStringContainsString('id="edit_server"', $html);
+        self::assertStringContainsString('Email no configurado', $html);
+        self::assertStringContainsString('class="hope-icon', $html);
+    }
+
     public function testServerDetailRendersTupleDataAsScalarValues(): void
     {
         $html = $this->twig()->render('module/server/server/view.tpl.html', [

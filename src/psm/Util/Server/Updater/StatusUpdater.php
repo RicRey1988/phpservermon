@@ -473,35 +473,49 @@ class StatusUpdater
         // execute PING
         exec($ping_command . " -c " . $max_runs . " " . $server_ip . " 2>&1", $output);
 
-        // Check if output is PING and if transmitted packets is equal to received packets.
-        preg_match(
-            '/^(\d{1,3}) packets transmitted, (\d{1,3}).*$/',
-            $output[count($output) - 2],
-            $output_package_loss
-        );
+        return $this->parseNonWindowsPingOutput($output);
+    }
+
+    /**
+     * Parse Linux/iputils ping output without assuming a fixed number of lines.
+     *
+     * @param array<int, string> $output
+     */
+    private function parseNonWindowsPingOutput(array $output): bool
+    {
+        $output = array_values(array_filter($output, static fn ($line): bool => is_string($line)));
+        $this->header = $output === [] ? '-' : implode("\n", $output) . "\n";
+
+        $packetSummary = null;
+        $timingSummary = null;
+        foreach ($output as $line) {
+            if (str_contains($line, 'packets transmitted')) {
+                $packetSummary = $line;
+            }
+            if (str_contains($line, 'min/avg/max')) {
+                $timingSummary = $line;
+            }
+        }
+
+        $packetCounts = [];
+        $timings = [];
+        $hasPacketCounts = $packetSummary !== null
+            && preg_match('/^(\d{1,3}) packets transmitted, (\d{1,3})(?: packets)? received/', $packetSummary, $packetCounts) === 1;
+        $hasTimings = $timingSummary !== null
+            && preg_match('/=\s*[\d.]+\/([\d.]+)\//', $timingSummary, $timings) === 1;
 
         if (
-            substr($output[0], 0, 4) == 'PING' &&
-            !empty($output_package_loss) &&
-            $output_package_loss[1] === $output_package_loss[2]
+            isset($output[0]) &&
+            str_starts_with($output[0], 'PING') &&
+            $hasPacketCounts &&
+            $packetCounts[1] === $packetCounts[2] &&
+            $hasTimings
         ) {
-            // Gets avg from 'round-trip min/avg/max/stddev = 7.109/7.109/7.109/0.000 ms'
-            preg_match_all("/(\d+\.\d+)/", $output[count($output) - 1], $result);
-            // Converted to milliseconds
-            $this->rtime = floatval($result[0][1]) / 1000;
-
-            $this->header = "";
-            foreach ($output as $key => $value) {
-                $this->header .= $value . "\n";
-            }
+            $this->rtime = (float) $timings[1] / 1000;
             return true;
         }
 
-        $this->header = "-";
-        foreach ($output as $key => $value) {
-            $this->header .= $value . "\n";
-        }
-        $this->error = $output[count($output) - 2];
+        $this->error = $packetSummary ?? ($output === [] ? 'Ping command returned no output.' : end($output));
         return false;
     }
 }

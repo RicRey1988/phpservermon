@@ -1,12 +1,12 @@
 {% import 'main/icons.tpl.html' as hope %}
 <nav aria-label="Secciones">
     <ul class="navbar-nav iq-main-menu" id="sidebar-menu">
-        {% for item in menu %}<li class="nav-item"><a class="nav-link {{ item.active }}" href="{{ item.url|raw }}"{% if item.active %} aria-current="page"{% endif %}><span class="icon">{{ hope.icon(item.icon) }}</span><span class="item-name">{{ item.label }}</span>{% if item.active %}<span class="visually-hidden"> ({{ label_current }})</span>{% endif %}</a></li>{% endfor %}
+        {% for item in menu %}<li class="nav-item"><a class="nav-link {{ item.active }}" href="{{ item.url|raw }}"{% if item.active %} aria-current="page"{% endif %}><i class="icon">{{ hope.icon(item.icon, 'icon-20') }}</i><span class="item-name">{{ item.label }}</span>{% if item.active %}<span class="visually-hidden"> ({{ label_current }})</span>{% endif %}</a></li>{% endfor %}
     </ul>
     <hr class="hr-horizontal">
     <ul class="navbar-nav iq-main-menu sidebar-user">
         <li class="nav-item px-3 pb-2"><small class="text-muted">{{ label_usermenu }}</small></li>
-        <li class="nav-item"><a class="nav-link" href="{{ url_profile|raw }}"><span class="icon">{{ hope.icon('user') }}</span><span class="item-name">{{ label_profile }}</span></a></li>
-        <li class="nav-item"><a class="nav-link" href="{{ url_logout|raw }}"><span class="icon">{{ hope.icon('logout') }}</span><span class="item-name">{{ label_logout }}</span></a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_profile|raw }}"><i class="icon">{{ hope.icon('user', 'icon-20') }}</i><span class="item-name">{{ label_profile }}</span></a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_logout|raw }}"><i class="icon">{{ hope.icon('logout', 'icon-20') }}</i><span class="item-name">{{ label_logout }}</span></a></li>
     </ul>
 </nav>

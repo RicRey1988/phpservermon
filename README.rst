@@ -1,7 +1,7 @@
 PHP Server Monitor HS
 =====================
 
-Version 4.3.0-hs — latest signed Hosting Supremo release
+Version 4.3.1-hs — latest signed Hosting Supremo release
 
 PHP Server Monitor HS checks websites and network services and presents their
 availability, latency and history in a modern web dashboard. This Hosting
@@ -12,8 +12,8 @@ original PHP Server Monitor project.
 Download
 --------
 
-Download the signed ``4.3.0-hs`` package and review its release notes at
-https://github.com/RicRey1988/phpservermon/releases/tag/v4.3.0-hs. The Release
+Download the signed ``4.3.1-hs`` package and review its release notes at
+https://github.com/RicRey1988/phpservermon/releases/tag/v4.3.1-hs. The Release
 includes the production ZIP, its canonical SHA-256 manifest and a detached
 RSA-SHA256 signature used by the built-in updater.
 
@@ -39,7 +39,9 @@ Highlights
   A down incident opens once, sends one alert per configured recipient and
   channel, and sends a recovery notification when service returns.
 * Installable PWA with an offline shell, per-device Web Push subscriptions and
-  VAPID key management. Dynamic authenticated responses are never cached.
+  VAPID key management. The service worker shows automatic down and recovery
+  notifications even when the monitor is not the active browser tab. Dynamic
+  authenticated responses are never cached.
 * Administrator invitation links with expiry, revocation and single-use
   registration.
 * Safe system diagnostics for PHP, extensions, database, disk, cron, delivery
@@ -93,6 +95,25 @@ After installation, an administrator can generate VAPID credentials in the
 PWA/Web Push configuration and each user can subscribe the current device from
 their profile.
 
+How Web Push works
+------------------
+
+Web Push is configured once by an administrator with a VAPID contact and key
+pair. The public key identifies this installation; the private key stays
+encrypted on the server. On HTTPS, each user explicitly enables notifications
+from Profile. The browser then creates an endpoint and encryption keys for that
+specific browser/device, which PHP Server Monitor stores as a subscription.
+
+When ``cron/status.cron.php`` detects a real transition to down or recovered,
+the incident queue creates one delivery for each subscribed recipient. The
+server encrypts the message and sends it to the browser vendor's push service.
+The bundled service worker receives it and displays the operating-system
+notification; selecting it opens the monitor. Every browser/device must be
+subscribed separately. Regenerating the VAPID keys invalidates existing
+subscriptions, so users must enable them again. Installing the PWA is optional,
+but HTTPS, the service worker, permission from the user and a running cron are
+required for reliable Web Push.
+
 Upgrade
 -------
 
@@ -106,7 +127,7 @@ images and runtime update data, then run::
 The web installer can also apply additive database migrations. The in-app
 updater accepts no arbitrary URL: it can install only a newer stable HS release
 whose three release assets and detached signature pass verification. Version
-``4.3.0-hs`` is published through that signed channel and can be installed from
+``4.3.1-hs`` is published through that signed channel and can be installed from
 the System page by an administrator running an older HS version.
 
 More documentation

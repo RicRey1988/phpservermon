@@ -1,5 +1,25 @@
 # Changelog
 
+## [4.3.1-hs] - 2026-07-20
+
+### Fixed
+- Restored readable navbar actions and account text in light mode.
+- Switched the sidebar to Hope UI's native mini markup and single collapse
+  controller, preserving icons when labels are collapsed.
+- Fixed server create/edit rendering when notification warnings are enabled by
+  scoping the Hope icon macro inside the macros that use it.
+- Rebuilt fieldset headings as contained card headers in Configuration,
+  Profile and editor forms.
+- Removed the dark card surface that overrode the transparent Hope UI login,
+  registration and password-recovery composition.
+- Added Hope-style SVG mappings for status, refresh, layout and form actions.
+- Made Linux ping parsing tolerant of empty and variant PHP 8.5 command output,
+  eliminating undefined-offset and null ``preg_match`` warnings from cron.
+
+### Documentation
+- Expanded the README with PHP 8.5+, PWA installation and the complete Web Push
+  subscription, incident, cron and service-worker flow.
+
 ## [4.3.0-hs] - 2026-07-20
 
 ### Changed

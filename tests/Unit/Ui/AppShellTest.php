@@ -45,6 +45,35 @@ final class AppShellTest extends TestCase
         }
     }
 
+    public function testSidebarUsesHopeUiNativeMiniMarkupAndSingleController(): void
+    {
+        $root = dirname(__DIR__, 3) . '/src/templates/default/';
+        $menu = file_get_contents($root . 'main/menu.tpl.html');
+        $body = file_get_contents($root . 'main/body.tpl.html');
+        $javascript = file_get_contents($root . 'static/js/app-shell.js');
+
+        self::assertIsString($menu);
+        self::assertIsString($body);
+        self::assertIsString($javascript);
+        self::assertStringContainsString('<i class="icon">', $menu);
+        self::assertStringNotContainsString('<span class="icon">', $menu);
+        self::assertStringContainsString('<i class="icon">', $body);
+        self::assertStringNotContainsString('function initializeSidebar()', $javascript);
+        self::assertStringNotContainsString('sidebar-collapsed', $javascript);
+    }
+
+    public function testLightNavbarAndAuthenticationHaveExplicitThemeSafeSurfaces(): void
+    {
+        $styles = file_get_contents(dirname(__DIR__, 3) . '/src/templates/default/static/css/hs-monitor.css');
+        self::assertIsString($styles);
+
+        self::assertStringContainsString('html[data-bs-theme="light"] .iq-navbar .nav-link', $styles);
+        self::assertStringContainsString('.auth-card.card', $styles);
+        self::assertStringContainsString('html[data-bs-theme="dark"] .auth-card.card', $styles);
+        self::assertStringContainsString('legend {', $styles);
+        self::assertStringContainsString('border-bottom:', $styles);
+    }
+
     public function testFooterIdentifiesHostingSupremoFork(): void
     {
         $body = file_get_contents(dirname(__DIR__, 3) . '/src/templates/default/main/body.tpl.html');

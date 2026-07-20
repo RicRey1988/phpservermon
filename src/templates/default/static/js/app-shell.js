@@ -113,21 +113,6 @@
 		if (media && typeof media.addEventListener === 'function') { media.addEventListener('change', function () { if (state.scheme === 'auto') { apply(); } }); }
 	}
 
-	function initializeSidebar() {
-		each('[data-sidebar-toggle], [data-toggle="sidebar"]', function (button) {
-			button.addEventListener('click', function () {
-				if (window.matchMedia('(max-width: 991.98px)').matches) {
-					document.body.classList.toggle('sidebar-open');
-				} else {
-					document.body.classList.toggle('sidebar-collapsed');
-				}
-				button.setAttribute('aria-expanded', String(
-					document.body.classList.contains('sidebar-open') || !document.body.classList.contains('sidebar-collapsed')
-				));
-			});
-		});
-	}
-
 	function initializeModals() {
 		each('.show-modal', function (origin) {
 			origin.addEventListener('click', function (event) {
@@ -307,7 +292,6 @@
 
 	document.addEventListener('DOMContentLoaded', function () {
 		initializeTheme();
-		initializeSidebar();
 		initializeModals();
 		initializeConditionalForms();
 		initializeCardSearch();

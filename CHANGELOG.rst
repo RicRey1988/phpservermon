@@ -1,6 +1,17 @@
 Changelog
 =========
 
+v4.3.1-hs (released July 20, 2026)
+----------------------------------
+
+* Fixed light-mode navbar contrast and preserved Hope UI icons in mini sidebar.
+* Fixed server create/edit rendering when notification warnings are active.
+* Removed PHP 8.5 ping-parser warnings from cron when the command returns no
+  output or a different iputils line layout.
+* Rebuilt form section titles and restored transparent Hope UI authentication
+  layouts in both light and dark modes.
+* Documented PHP 8.5+, PWA and the complete automatic Web Push incident flow.
+
 v4.3.0-hs (released July 20, 2026)
 ----------------------------------
 
