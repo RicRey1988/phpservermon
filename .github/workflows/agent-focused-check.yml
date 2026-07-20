@@ -21,3 +21,11 @@ jobs:
       - run: composer install --no-interaction --prefer-dist
       - name: Run task verification
         run: bash .agent/focus.sh
+      - name: Upload focused verification report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: agent-focused-report
+          path: .agent/focus-result.txt
+          retention-days: 1
+          if-no-files-found: warn
