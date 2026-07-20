@@ -35,7 +35,7 @@ use psm\Service\Database;
 class LoginController extends AbstractController
 {
 
-    public function __construct(Database $db, \Twig_Environment $twig)
+    public function __construct(Database $db, \Twig\Environment $twig)
     {
         parent::__construct($db, $twig);
 
@@ -93,7 +93,8 @@ class LoginController extends AbstractController
     {
         if (isset($_POST['user_name'])) {
             $user = $this->getUser()->getUserByUsername($_POST['user_name']);
-
+            $this->addMessage(psm_get_lang('login', 'success_password_forgot'), 'success');
+            
             if (!empty($user)) {
                 $token = $this->getUser()->generatePasswordResetToken($user->user_id);
                 // we have a token, send it along
@@ -102,11 +103,8 @@ class LoginController extends AbstractController
                     $user->email,
                     $token
                 );
-
-                $this->addMessage(psm_get_lang('login', 'success_password_forgot'), 'success');
+                
                 return $this->executeLogin();
-            } else {
-                $this->addMessage(psm_get_lang('login', 'error_user_incorrect'), 'error');
             }
         }
 

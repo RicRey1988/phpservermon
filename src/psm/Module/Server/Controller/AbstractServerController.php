@@ -81,6 +81,8 @@ abstract class AbstractServerController extends AbstractController
 					`s`.`active`,
 					`s`.`email`,
 					`s`.`sms`,
+					`s`.`discord`,
+					`s`.`webhook`,
 					`s`.`pushover`,
 					`s`.`telegram`,
 					`s`.`jabber`,
@@ -93,7 +95,8 @@ abstract class AbstractServerController extends AbstractController
 					`s`.`website_password`,
 					`s`.`last_error`,
 					`s`.`last_error_output`,
-					`s`.`last_output`
+					`s`.`last_output`,
+                    `s`.`custom_header`
 				FROM `" . PSM_DB_PREFIX . "servers` AS `s`
 				{$sql_join}
 				{$sql_where}
@@ -114,7 +117,7 @@ abstract class AbstractServerController extends AbstractController
      */
     protected function formatServer($server)
     {
-        $server['rtime'] = round((float) $server['rtime'], 4);
+        $server['rtime'] = $server['rtime'];
         $server['last_online'] = psm_timespan($server['last_online']);
         $server['last_offline'] = psm_timespan($server['last_offline']);
         if ($server['last_offline'] != psm_get_lang('system', 'never')) {

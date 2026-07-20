@@ -2,10 +2,14 @@ PHP Server Monitor
 ==================
 
 .. image:: https://badges.gitter.im/Join%20Chat.svg
-   :alt: Join the chat at https://gitter.im/erickrf/nlpnet
+   :alt: Join the chat at https://gitter.im/phpservermon/phpservermon
    :target: https://gitter.im/phpservermon/phpservermon
 
 Version 3.5.3-hs
+
+.. image:: https://img.shields.io/discord/1359923330798456992?logo=discord&logoColor=white&label=Discord&labelColor=%235865F2&link=https%3A%2F%2Fdiscord.gg%2FRv7nRP4HVq
+   :alt: Join the discord at https://discord.gg/Rv7nRP4HVq
+   :target: https://discord.gg/Rv7nRP4HVq
 
 PHP Server Monitor is a script that checks whether your websites and servers are up and running.
 It comes with a web based user interface where you can manage your services and websites,
@@ -16,7 +20,7 @@ Features:
 ---------
 
 * Monitor services and websites (see below).
-* Email, SMS, Pushover, Telegram and Jabber notifications.
+* Email, SMS, Discord, Pushover, Telegram and Jabber notifications.
 * View history graphs of uptime and latency.
 * User authentication with 2 levels (administrator and regular user).
 * Logs of connection errors, outgoing emails and text messages.
@@ -48,24 +52,36 @@ The following SMS gateways are currently available:
 * Inetworx - <https://www.inetworx.ch>
 * Messagebird - <https://www.messagebird.com>
 * Mosms - <https://www.mosms.com>
-* Smsglobal - <https://smsglobal.com/>
-* SMSit - <https://www.smsit.dk/>
+* Smsglobal - <https://smsglobal.com>
+* SMSit - <https://www.smsit.dk>
 * Spryng - <https://www.spryng.nl>
 * Textmarketer - <https://www.textmarketer.co.uk>
 * FreeVoipDeal - <https://www.freevoipdeal.com>
-* Nexmo - <https://www.nexmo.com/>
-* OctoPush - <https://www.octopush.com/>
-* FreeMobile (FR) - <https://mobile.free.fr/>
+* Nexmo - <https://www.nexmo.com>
+* OctoPush - <https://www.octopush.com>
+* FreeMobile (FR) - <https://mobile.free.fr>
 * Twilio - <https://twilio.com>
-* CM Telecom - <https://www.cm.com/>
-* GatewayAPI - <https://gatewayapi.com/>
-* SolutionsInfini - <https://solutionsinfini.com/>
-* Plivo - <https://www.plivo.com/>
-* Callr - <https://www.callr.com/>
-
-
+* CM Telecom - <https://www.cm.com>
+* GatewayAPI - <https://gatewayapi.com>
+* SolutionsInfini - <https://solutionsinfini.com>
+* Plivo - <https://www.plivo.com>
+* Callr - <https://www.callr.com>
+* SMSAPI - <https://www.smsapi.com/en>
+* OVH SMS PRO - <https://www.ovhtelecom.fr/sms>
+* PromoSMS - <https://promosms.com>
+* Infobip - <https://www.infobip.com>
+* LabsMobile - <https://www.labsmobile.com>
+* Tele2 Messaging - <https://portal.tele2messaging.com>
 
 Please note: for these gateways you will need an account with sufficient credits.
+
+
+Join the community
+------------------
+
+.. image:: https://discord.com/api/guilds/1359923330798456992/widget.png?style=banner4
+   :alt: Join the discord at https://discord.gg/Rv7nRP4HVq
+   :target: https://discord.gg/Rv7nRP4HVq
 
 
 Download
@@ -79,12 +95,21 @@ Requirements
 
 * Web server
 * MySQL database
-* For PHP5: 5.6.0+
+* For PHP5: 5.5.9+
 * For PHP7: 7.0.8+
-* PHP cURL package
-* PHP PDO mysql driver
-* PHP-XML
+* PHP Extensions (modules)
 
+  * ext-curl
+  * ext-ctype
+  * ext-filter
+  * ext-hash
+  * ext-json
+  * ext-libxml
+  * ext-openssl
+  * ext-pdo
+  * ext-pcre
+  * ext-sockets
+  * ext-xml
 
 Install
 -------
@@ -107,7 +132,7 @@ If you are familiar with Vagrant (https://www.vagrantup.com)::
 Documentation
 -------------
 
-The documentation is available in the docs folder or http://docs.phpservermonitor.org.
+The documentation is available in the docs folder or https://docs.phpservermonitor.org.
 
 
 License
@@ -124,7 +149,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with PHP Server Monitor.  If not, see http://www.gnu.org/licenses/.
+along with PHP Server Monitor.  If not, see https://www.gnu.org/licenses/.
 
 Docker
 -------

@@ -135,3 +135,8 @@ a.btn {
     max-width: 50px;
     margin-right: 0.35rem;
 }
+
+/*# Used to override main styles for custom layout adjustments and colors. */
+.container-fluid {
+    max-width: 100%;
+}

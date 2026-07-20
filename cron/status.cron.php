@@ -41,13 +41,19 @@ namespace {
 
         // define won't accept array before php 7.0.0
         // check if data is serialized (not needed when using php 7.0.0 and higher)
-        $data = @unserialize(PSM_CRON_ALLOW);
+        $data = (defined('PHP_MAJOR_VERSION') && PHP_MAJOR_VERSION >= 7) ? false : @unserialize(PSM_CRON_ALLOW);
         $allow = $data === false ? PSM_CRON_ALLOW : $data;
 
-        if (!in_array($_SERVER['REMOTE_ADDR'], $allow) && !in_array($_SERVER["HTTP_X_FORWARDED_FOR"], $allow)
-          && ! (array_key_exists ("webcron_key", $_GET) &&
-             $_GET["webcron_key"]==PSM_WEBCRON_KEY && (PSM_WEBCRON_KEY != ""))
-        ) {
+        $ipWhitelistCheckPassed = in_array($_SERVER['REMOTE_ADDR'], $allow)
+            && in_array($_SERVER["HTTP_X_FORWARDED_FOR"], $allow)
+            && PSM_WEBCRON_ENABLE_IP_WHITELIST;
+
+        $webCronKeyCheckPassed =
+            array_key_exists ("webcron_key", $_GET)
+            && $_GET["webcron_key"] == PSM_WEBCRON_KEY
+            && (PSM_WEBCRON_KEY != "");
+
+        if (!$ipWhitelistCheckPassed && !$webCronKeyCheckPassed) {
             header('HTTP/1.0 403 Forbidden');
             die('
         <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN"><html>
@@ -63,7 +69,7 @@ namespace {
     }
 
     $cron_timeout = PSM_CRON_TIMEOUT;
-// parse a couple of arguments
+	// parse a couple of arguments
     if (!empty($_SERVER['argv'])) {
         foreach ($_SERVER['argv'] as $argv) {
             $argi = explode('=', ltrim($argv, '--'));
@@ -83,10 +89,10 @@ namespace {
         }
     }
 
-// prevent cron from running twice at the same time
-// however if the cron has been running for X mins, we'll assume it died and run anyway
-// if you want to change PSM_CRON_TIMEOUT, have a look in src/includes/psmconfig.inc.php.
-// or you can provide the --timeout=x argument
+	// prevent cron from running twice at the same time
+	// however if the cron has been running for X mins, we'll assume it died and run anyway
+	// if you want to change PSM_CRON_TIMEOUT, have a look in src/includes/psmconfig.inc.php.
+	// or you can provide the --timeout=x argument
 
     $status = null;
     if (PHP_SAPI === 'cli') {

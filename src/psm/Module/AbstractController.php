@@ -109,7 +109,7 @@ abstract class AbstractController implements ControllerInterface
 
     /**
      * Twig object
-     * @var \Twig_Environment $twig
+     * @var \Twig\Environment $twig
      */
     protected $twig;
 
@@ -124,7 +124,7 @@ abstract class AbstractController implements ControllerInterface
      * @var int $user_level_required
      * @see setMinUserLevelRequired()
      */
-    protected $user_level_required = PSM_USER_USER;
+    protected $user_level_required = (PSM_PUBLIC && PSM_PUBLIC_PAGE) ? PSM_USER_ANONYMOUS : PSM_USER_USER;
 
     /**
      * Required user level for certain actions
@@ -146,7 +146,7 @@ abstract class AbstractController implements ControllerInterface
      */
     protected $xhr = false;
 
-    public function __construct(Database $db, \Twig_Environment $twig)
+    public function __construct(Database $db, \Twig\Environment $twig)
     {
         $this->db = $db;
         $this->twig = $twig;
@@ -217,7 +217,7 @@ abstract class AbstractController implements ControllerInterface
         if (!$this->xhr) {
             // in XHR mode, we will not add the main template
             $tpl_data = array(
-                'title' => strtoupper(psm_get_lang('system', 'title')),
+                'title' => psm_get_conf('site_title', strtoupper(psm_get_lang('system', 'title'))),
                 'label_back_to_top' => psm_get_lang('system', 'back_to_top'),
                 'add_footer' => $this->add_footer,
                 'version' => 'v' . PSM_VERSION,
