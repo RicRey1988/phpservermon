@@ -2,6 +2,7 @@
 html { scroll-behavior: smooth; max-width: 100%; }
 body { min-height: 100vh; max-width: 100%; }
 .hope-icon { display: inline-block; flex: 0 0 auto; vertical-align: -.2em; }
+.hope-icon-lg { width: 2rem; height: 2rem; }
 a { color: var(--psm-accent); }
 .skip-link { position: fixed; z-index: 1200; top: .75rem; left: .75rem; padding: .75rem 1rem; background: #fff; color: #111; border-radius: .5rem; }
 .place-items-center { place-items: center; }
