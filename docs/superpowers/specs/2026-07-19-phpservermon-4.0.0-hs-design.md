@@ -18,7 +18,7 @@ La rama oficial `develop` contiene mejoras posteriores a 3.5.2 que deben aprovec
 - Retirar integraciones y paquetes obsoletos o incompatibles.
 - Añadir información PHP segura y exclusiva para administradores.
 - Probar una instalación nueva y una actualización desde `3.5.3-hs`.
-- Actualizar el VPS a PHP 8.5 con respaldo, etapa aislada y reversión.
+- Actualizar el VPS a PHP 8.5 con etapa aislada y reversión, sin crear respaldos nuevos porque el propietario ya conserva uno externo.
 
 ## Fuera de alcance
 
@@ -170,11 +170,11 @@ Tras corregir un fallo se repetirá primero la prueba afectada. Al final se real
 
 ## VPS, despliegue y reversión
 
-Antes de cambiar producción se crearán y verificarán respaldos de base de datos, aplicación, configuración Apache y cron. PHP 8.5 se instalará en paralelo y `4.0.0-hs` se desplegará primero en una ubicación y base de datos aisladas.
+No se crearán respaldos nuevos en el VPS: el propietario confirmó que ya conserva un respaldo externo en su PC y pidió omitir ese trabajo. PHP 8.5 se instalará en paralelo y `4.0.0-hs` se desplegará primero en una ubicación y base de datos aisladas.
 
-La prueba aislada confirmará instalador, actualización, interfaz, imágenes, cron y Telegram. Solo entonces se cambiará producción mediante una operación reversible. PHP 7.4, la aplicación anterior y el respaldo de base de datos se conservarán temporalmente hasta terminar las comprobaciones posteriores.
+La prueba aislada confirmará instalador, actualización, interfaz, imágenes, cron y Telegram. Solo entonces se cambiará producción mediante una operación reversible. PHP 7.4 y la aplicación anterior se conservarán temporalmente hasta terminar las comprobaciones posteriores.
 
-La reversión restaurará la aplicación anterior, la configuración PHP/Apache y, si la migración modificó datos incompatibles, el respaldo de base de datos. No se retirará el camino de reversión en el mismo cambio que activa PHP 8.5.
+Las migraciones de producción deberán ser aditivas o no destructivas para permitir que el código anterior siga leyendo los datos si hay que revertir. La reversión restaurará la aplicación anterior y la configuración PHP/Apache, sin depender de un respaldo creado durante este trabajo. No se ejecutará una migración irreversible ni se retirará el camino de reversión en el mismo cambio que activa PHP 8.5.
 
 ## Changelog y publicación
 
