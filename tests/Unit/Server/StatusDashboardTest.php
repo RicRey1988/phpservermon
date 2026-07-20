@@ -15,33 +15,38 @@ final class StatusDashboardTest extends TestCase
         $this->root = dirname(__DIR__, 3);
     }
 
-    public function testControllerBuildsScopedRangeSnapshotAndImageUrls(): void
+    public function testControllersSeparateLiveStatusFromScopedStatistics(): void
     {
-        $controller = $this->read('src/psm/Module/Server/Controller/StatusController.php');
+        $statusController = $this->read('src/psm/Module/Server/Controller/StatusController.php');
+        $statisticsController = $this->read('src/psm/Module/Server/Controller/StatisticsController.php');
 
-        self::assertStringContainsString('StatisticsRange::tryFrom(', $controller);
-        self::assertStringContainsString('StatisticsRange::Day', $controller);
-        self::assertStringContainsString('service.dashboard_statistics', $controller);
-        self::assertStringContainsString('service.server_image.storage', $controller);
-        self::assertStringContainsString('getUserId()', $controller);
-        self::assertStringContainsString('getUserLevel() === PSM_USER_ADMIN', $controller);
-        self::assertStringContainsString("['image_url']", $controller);
-        self::assertStringContainsString("['status_label']", $controller);
-        self::assertStringContainsString("['status_tone']", $controller);
-        self::assertStringContainsString('JSON_HEX_TAG', $controller);
+        self::assertStringNotContainsString('service.dashboard_statistics', $statusController);
+        self::assertStringContainsString('service.server_image.storage', $statusController);
+        self::assertStringContainsString("['image_url']", $statusController);
+        self::assertStringContainsString("['status_label']", $statusController);
+        self::assertStringContainsString("['status_tone']", $statusController);
+        self::assertStringContainsString('StatisticsRange::tryFrom(', $statisticsController);
+        self::assertStringContainsString('StatisticsRange::Day', $statisticsController);
+        self::assertStringContainsString('service.dashboard_statistics', $statisticsController);
+        self::assertStringContainsString('getUserId()', $statisticsController);
+        self::assertStringContainsString('getUserLevel() === PSM_USER_ADMIN', $statisticsController);
+        self::assertStringContainsString('JSON_HEX_TAG', $statisticsController);
     }
 
     public function testDashboardUsesSummaryChartsAccessibleCardsAndNoTables(): void
     {
         $index = $this->read('src/templates/default/module/server/status/index.tpl.html');
+        $statistics = $this->read('src/templates/default/module/server/statistics/index.tpl.html');
         $cards = $this->read('src/templates/default/module/server/status/cards.tpl.html');
-        $header = $this->read('src/templates/default/module/server/status/header.tpl.html');
+        $header = $this->read('src/templates/default/module/server/statistics/header.tpl.html');
 
-        self::assertStringContainsString('dashboard-summary', $index);
-        self::assertStringContainsString('uptime-chart', $index);
-        self::assertStringContainsString('latency-chart', $index);
-        self::assertStringContainsString('type="application/json"', $index);
-        self::assertStringContainsString('dashboard_json', $index);
+        self::assertStringContainsString('data-status-board', $index);
+        self::assertStringNotContainsString('dashboard-summary', $index);
+        self::assertStringContainsString('dashboard-summary', $statistics);
+        self::assertStringContainsString('uptime-chart', $statistics);
+        self::assertStringContainsString('latency-chart', $statistics);
+        self::assertStringContainsString('type="application/json"', $statistics);
+        self::assertStringContainsString('dashboard_json', $statistics);
         self::assertStringContainsString('server-image-box', $cards);
         self::assertStringContainsString('src="{{ server.image_url }}"', $cards);
         self::assertStringContainsString('width="80" height="80"', $cards);
@@ -51,8 +56,8 @@ final class StatusDashboardTest extends TestCase
         foreach (['24h', '7d', '30d', '90d'] as $range) {
             self::assertStringContainsString('value="' . $range . '"', $header);
         }
-        self::assertStringNotContainsString('<table', $index . $cards . $header);
-        self::assertStringNotContainsString('DataTable', $index . $cards . $header);
+        self::assertStringNotContainsString('<table', $index . $statistics . $cards . $header);
+        self::assertStringNotContainsString('DataTable', $index . $statistics . $cards . $header);
     }
 
     public function testDashboardAssetsEnforceFixedImagesAndSafeJsonParsing(): void
@@ -62,7 +67,7 @@ final class StatusDashboardTest extends TestCase
         $body = $this->read('src/templates/default/main/body.tpl.html');
 
         self::assertMatchesRegularExpression('/\.server-image-box\s*\{[^}]*width:\s*6rem;[^}]*height:\s*6rem;/s', $styles);
-        self::assertStringContainsString('object-fit: contain', $styles);
+        self::assertMatchesRegularExpression('/object-fit:\s*contain/', $styles);
         self::assertStringContainsString("getElementById('dashboard-data')", $javascript);
         self::assertStringContainsString('JSON.parse(', $javascript);
         self::assertStringContainsString('new ApexCharts', $javascript);

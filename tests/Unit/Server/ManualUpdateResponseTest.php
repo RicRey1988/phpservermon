@@ -48,15 +48,15 @@ final class ManualUpdateResponseTest extends TestCase
     public function testDashboardButtonPostsThenAppliesReturnedCardsImmediately(): void
     {
         $header = $this->read('src/templates/default/module/server/status/header.tpl.html');
-        $javascript = $this->read('src/templates/default/static/js/dashboard.js');
+        $javascript = $this->read('src/templates/default/static/js/status.js');
 
         self::assertStringContainsString('data-run-update', $header);
         self::assertStringContainsString('data-update-url', $header);
         self::assertStringContainsString("method: 'POST'", $javascript);
         self::assertStringContainsString('X-Requested-With', $javascript);
-        self::assertStringContainsString('applyStatusCards', $javascript);
+        self::assertStringContainsString('applyCards', $javascript);
         self::assertStringContainsString('data-server-id', $javascript);
-        self::assertStringContainsString('refreshSnapshot', $javascript);
+        self::assertStringContainsString('refreshStatus', $javascript);
         self::assertStringContainsString("cache: 'no-store'", $javascript);
     }
 
