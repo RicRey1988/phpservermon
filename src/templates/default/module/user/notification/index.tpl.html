@@ -7,26 +7,26 @@
     <button type="button" class="btn btn-outline-primary" data-notifications-read-all data-action="{{ url_mark_all_read|raw }}">Marcar todas como leídas</button>
 </div>
 
-<div class="notification-feed d-grid gap-3">
+<div class="d-grid gap-3" data-notification-list>
     {% for notification in notifications %}
-    <article class="card notification-card notification-{{ notification.transition }}{% if notification.read_at is null %} notification-unread{% endif %}" data-notification-id="{{ notification.notification_id }}">
+    <article class="card{% if notification.read_at is null %} border-start border-4 border-primary{% endif %}" data-notification-item data-notification-id="{{ notification.notification_id }}">
         <div class="card-body d-flex flex-column flex-md-row align-items-md-center gap-3">
-            <span class="notification-icon" aria-hidden="true">{{ hope.icon(notification.transition == 'down' ? 'warning' : 'category') }}</span>
-            <div class="min-w-0 flex-grow-1">
+            <span class="avatar-40 rounded-circle bg-soft-primary text-primary d-inline-flex align-items-center justify-content-center" aria-hidden="true">{{ hope.icon(notification.transition == 'down' ? 'warning' : 'category') }}</span>
+            <div class="flex-grow-1 text-break">
                 <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
                     <h3 class="h5 mb-0">{{ notification.title }}</h3>
-                    {% if notification.read_at is null %}<span class="badge bg-primary">Nueva</span>{% endif %}
+                    {% if notification.read_at is null %}<span class="badge bg-primary" data-notification-unread-badge>Nueva</span>{% endif %}
                 </div>
                 <p class="mb-1">{{ notification.body }}</p>
                 <small class="text-muted">{{ notification.server_label }} · {{ notification.created_at }}</small>
             </div>
-            <div class="d-flex gap-2 position-relative">
+            <div class="d-flex flex-wrap gap-2 position-relative">
                 {% if notification.can_view %}<a class="btn btn-sm btn-outline-secondary" href="{{ notification.url_view|raw }}">Ver servidor</a>{% endif %}
-                {% if notification.read_at is null %}<button type="button" class="btn btn-sm btn-primary" data-notification-read data-action="{{ url_mark_read|raw }}">Marcar leída</button>{% endif %}
+                {% if notification.read_at is null %}<button type="button" class="btn btn-sm btn-primary" data-notification-mark-read data-action="{{ url_mark_read|raw }}">Marcar leída</button>{% endif %}
             </div>
         </div>
     </article>
     {% else %}
-    <div class="card"><div class="card-body text-center py-5">{{ hope.icon('bell-slash','hope-icon-lg text-muted mb-3') }}<p class="text-muted mb-0">Todavía no hay notificaciones.</p></div></div>
+    <div class="card"><div class="card-body text-center py-5">{{ hope.icon('bell-slash','icon-32 text-muted mb-3') }}<p class="text-muted mb-0">Todavía no hay notificaciones.</p></div></div>
     {% endfor %}
 </div>
