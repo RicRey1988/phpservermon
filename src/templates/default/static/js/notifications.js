@@ -33,7 +33,7 @@
 		item.classList.remove('border-primary');
 		item.classList.remove('border-start');
 		item.classList.remove('border-4');
-		item.querySelectorAll('[data-notification-unread-badge]').forEach(function (element) { element.remove(); });
+		item.querySelectorAll('[data-unread-badge]').forEach(function (element) { element.remove(); });
 		if (button) { button.remove(); }
 	}
 
