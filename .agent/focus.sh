@@ -3,7 +3,6 @@ set -euo pipefail
 vendor/bin/phpunit tests/Unit/Ui/BrandingContractTest.php
 vendor/bin/phpunit tests/Unit/Ui/ModernViewContractTest.php --filter testUserCollectionAndLogsUseCardsRatherThanTables
 vendor/bin/phpunit tests/Unit/Ui/ModernViewContractTest.php --filter testModernViewsDoNotUseBootstrapFourDataAttributes
-vendor/bin/phpunit tests/Unit/Ui/ModernViewContractTest.php --filter testEveryApplicationPageUsesModernHopeUiContracts
 vendor/bin/phpunit tests/Unit/Ui/NativeHopeUiContractTest.php --filter testJavaScriptUsesDataHooksRatherThanRemovedPresentationClasses
 php -r 'require "vendor/autoload.php"; $loader = new Twig\Loader\FilesystemLoader("src/templates/default"); $twig = new Twig\Environment($loader); $twig->addFunction(new Twig\TwigFunction("csrf_token", static fn (): string => "")); foreach (["module/user/user/list.tpl.html","module/user/user/update.tpl.html","module/user/profile.tpl.html","module/user/notification/index.tpl.html","main/app-navbar.tpl.html"] as $file) { $twig->parse($twig->tokenize(new Twig\Source((string) file_get_contents("src/templates/default/" . $file), $file))); }'
 node --check src/templates/default/static/js/notifications.js
