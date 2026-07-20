@@ -13,6 +13,8 @@ on:
 
 permissions:
   contents: write
+  issues: write
+  pull-requests: write
 
 jobs:
   release:
@@ -80,18 +82,24 @@ jobs:
             -signature "$RUNNER_TEMP/verify.sig" "dist/phpservermon-$version.json"
           rm -f "$RUNNER_TEMP/release-private.pem" "$RUNNER_TEMP/manifest.sig" "$RUNNER_TEMP/verify.sig"
 
-      - name: Create release tag
+      - name: Point release tag at verified main
         run: |
           set -euo pipefail
           git config user.name 'Hosting Supremo Releases'
           git config user.email 'noreply@hostingsupremo.org'
-          if ! git rev-parse "$RELEASE_TAG" >/dev/null 2>&1; then
+          if git rev-parse "$RELEASE_TAG" >/dev/null 2>&1; then
+            tagged_sha="$(git rev-list -n 1 "$RELEASE_TAG")"
+            if [[ "$tagged_sha" != "$GITHUB_SHA" ]]; then
+              git tag -fa "$RELEASE_TAG" "$GITHUB_SHA" -m "PHP Server Monitor $RELEASE_TAG"
+              git push --force origin "refs/tags/$RELEASE_TAG"
+            fi
+          else
             git tag -a "$RELEASE_TAG" "$GITHUB_SHA" -m "PHP Server Monitor $RELEASE_TAG"
-            git push origin "$RELEASE_TAG"
+            git push origin "refs/tags/$RELEASE_TAG"
           fi
           test "$(git rev-list -n 1 "$RELEASE_TAG")" = "$GITHUB_SHA"
 
-      - name: Publish GitHub release
+      - name: Publish and verify GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -108,3 +116,20 @@ jobs:
           else
             gh release create "$RELEASE_TAG" "${assets[@]}" --verify-tag --title "PHP Server Monitor $version" --notes-file "docs/releases/$RELEASE_TAG.md"
           fi
+
+          asset_names="$(gh release view "$RELEASE_TAG" --json assets --jq '.assets[].name')"
+          for expected in \
+            "phpservermon-$version.zip" \
+            "phpservermon-$version.json" \
+            "phpservermon-$version.json.sig"; do
+            grep -Fx "$expected" <<<"$asset_names"
+          done
+          release_url="$(gh release view "$RELEASE_TAG" --json url --jq '.url')"
+          {
+            echo "Release $RELEASE_TAG publicada y verificada."
+            echo
+            echo "Commit: $GITHUB_SHA"
+            echo "URL: $release_url"
+            echo "Assets: phpservermon-$version.zip, phpservermon-$version.json, phpservermon-$version.json.sig"
+          } > "$RUNNER_TEMP/release-comment.md"
+          gh pr comment 1 --body-file "$RUNNER_TEMP/release-comment.md"
