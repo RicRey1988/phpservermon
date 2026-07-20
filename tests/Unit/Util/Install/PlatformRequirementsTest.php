@@ -24,6 +24,17 @@ final class PlatformRequirementsTest extends TestCase
         self::assertContains('pdo_mysql', $requirements->missingExtensions());
     }
 
+    public function testRequiresIntlForLocalizedDateFormatting(): void
+    {
+        self::assertContains('intl', PlatformRequirements::REQUIRED_EXTENSIONS);
+
+        $extensions = array_values(array_diff(PlatformRequirements::REQUIRED_EXTENSIONS, ['intl']));
+        $requirements = new PlatformRequirements('8.5.0', $extensions);
+
+        self::assertContains('intl', $requirements->missingExtensions());
+        self::assertFalse($requirements->isSatisfied());
+    }
+
     public function testEvaluateReturnsAConsistentResult(): void
     {
         $requirements = new PlatformRequirements('8.5.0', PlatformRequirements::REQUIRED_EXTENSIONS);

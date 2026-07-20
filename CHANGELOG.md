@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.0.1-hs] - Unreleased
+
+### Fixed
+- Restored the authenticated Status and Servers pages by declaring PHP `intl`
+  as a required Composer and installer extension.
+- Production errors are now logged with a reference identifier and return a
+  safe HTTP 500 page instead of an unexplained blank response.
+
 ## [4.0.0-hs] - Unreleased
 
 ### Added

@@ -12,6 +12,7 @@ final class PlatformRequirements
         'curl',
         'filter',
         'hash',
+        'intl',
         'json',
         'libxml',
         'mbstring',

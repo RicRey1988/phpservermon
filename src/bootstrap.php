@@ -54,10 +54,14 @@ namespace {
         define('PSM_DEBUG', false);
     }
 
-    // Debug enabled: report everything
-    // Debug disabled: report error only if created manually
-    ini_set('display_errors', 1);
-    PSM_DEBUG ? error_reporting(E_ALL) : error_reporting(E_USER_ERROR);
+    // Production keeps details out of the response while logging every PHP error.
+    error_reporting(E_ALL);
+    ini_set('display_errors', PSM_DEBUG ? '1' : '0');
+    ini_set('log_errors', '1');
+
+    require_once PSM_PATH_SRC . 'psm' . DIRECTORY_SEPARATOR . 'Util' . DIRECTORY_SEPARATOR .
+        'Error' . DIRECTORY_SEPARATOR . 'RuntimeErrorHandler.php';
+    \psm\Util\Error\RuntimeErrorHandler::register(PSM_DEBUG);
 
     // check for a cron allowed ip array
     if (!defined('PSM_CRON_ALLOW')) {
