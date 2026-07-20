@@ -3,40 +3,24 @@
 {% import 'main/macros.tpl.html' as macro %}
 
 {% block install %}
-<p>Sweet, your database connection is up and running!</p>
-<p>Next, please set up a new account to access your monitor:</p>
-{{ block('results') }}
-<p>&nbsp;</p>
-<form name="psm_config" class="col-12 col-lg-8" action="install.php?action=install" id="psm_config" method="post">
-	{{ macro.input_csrf() }}
-	<fieldset>
-		<legend>Administrator</legend>
-		<div class="col">
-			<!-- Username -->
-			<div class="form-group">
-				<label for="username">Username</label>
-				<input type="text" class="form-control" autocomplete="username" name="username" id="username" maxlength="255"
-				 required autofocus>
-			</div>
-			<!-- Password -->
-			<div class="form-group">
-					<label for="password">Password</label>
-					<input type="password" class="form-control" name="password" id="password" autocomplete="new-password" maxlength="255"
-					 required>
-				</div>
-				<!-- Password repeat -->
-			<div class="form-group">
-					<label for="password_repeat">Password repeat</label>
-					<input type="password" class="form-control" name="password_repeat" id="password_repeat" autocomplete="new-password" maxlength="255"
-					 required>
-				</div>
-				<!-- Email -->
-			<div class="form-group">
-					<label for="email">Email</label>
-					<input type="email" class="form-control" autocomplete="email" name="email" id="email" maxlength="255"
-					 required>
-				</div>
-				<button class="btn btn-success btn-lg" type="submit">Install</button>
-	</fieldset>
-</form>
+<div class="row justify-content-center">
+  <div class="col-12 col-lg-8">
+    <p class="lead">Sweet, your database connection is up and running.</p>
+    <p class="text-muted">Next, set up the administrator account used to access the monitor.</p>
+    {{ block('results') }}
+    <form name="psm_config" class="card border shadow-none" action="install.php?action=install" id="psm_config" method="post">
+      {{ macro.input_csrf() }}
+      <fieldset>
+        <legend class="card-header h5 float-none w-100 mb-0">Administrator</legend>
+        <div class="card-body">
+          <div class="mb-3"><label class="form-label" for="username">Username</label><input type="text" class="form-control" autocomplete="username" name="username" id="username" maxlength="255" required autofocus></div>
+          <div class="mb-3"><label class="form-label" for="password">Password</label><input type="password" class="form-control" name="password" id="password" autocomplete="new-password" maxlength="255" required></div>
+          <div class="mb-3"><label class="form-label" for="password_repeat">Password repeat</label><input type="password" class="form-control" name="password_repeat" id="password_repeat" autocomplete="new-password" maxlength="255" required></div>
+          <div class="mb-3"><label class="form-label" for="email">Email</label><input type="email" class="form-control" autocomplete="email" name="email" id="email" maxlength="255" required></div>
+        </div>
+        <div class="card-footer text-end"><button class="btn btn-success btn-lg" type="submit">Install</button></div>
+      </fieldset>
+    </form>
+  </div>
+</div>
 {% endblock %}
