@@ -15,7 +15,7 @@
             <div class="flex-grow-1 text-break">
                 <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
                     <h3 class="h5 mb-0">{{ notification.title }}</h3>
-                    {% if notification.read_at is null %}<span class="badge bg-primary" data-notification-unread-badge>Nueva</span>{% endif %}
+                    {% if notification.read_at is null %}<span class="badge bg-primary" data-unread-badge>Nueva</span>{% endif %}
                 </div>
                 <p class="mb-1">{{ notification.body }}</p>
                 <small class="text-muted">{{ notification.server_label }} · {{ notification.created_at }}</small>
