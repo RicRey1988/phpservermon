@@ -2,9 +2,12 @@ Changelog
 =========
 
 
-Not yet released
-----------------
-\-
+v3.5.3-hs (released July 19, 2026)
+----------------------------------
+
+* Added the dark interface deployed by Hosting Supremo.
+* Added PNG images for servers with a bundled fallback.
+* Based on upstream PHP Server Monitor v3.5.2.
 
 v3.5.2 (released August 12, 2020)
 -----------------------------

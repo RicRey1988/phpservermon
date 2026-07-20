@@ -1,0 +1,137 @@
+body {
+    background-color: #1F1F1F;
+}
+
+.container h1,
+.container,
+#list-layout tr {
+    color: #ffffff;
+}
+
+.card-header {
+    background-color: #545b62;
+}
+
+#flow-layout .card-header {
+    background-color: unset;
+}
+
+.list-group-item {
+    background-color: #6c757d;
+}
+
+.card {
+    background-color: #1F1F1F;
+}
+
+.footer {
+    background-color: #343a40;
+    color: #ffffff;
+}
+
+footer .text-muted {
+    color: #ffffff !important;
+}
+
+#meter:after {
+    background: #1F1F1F;
+}
+
+.table {
+    color: #ffffff;
+}
+
+.table tr:hover {
+    color: #b7b7b7 !important;
+}
+
+.table-responsive table thead {
+    background-color: #545b62;
+}
+
+.table-responsive table tbody {
+    background-color: #484848;
+}
+
+.table-bordered th,
+.table-bordered td {
+    border: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+.table-responsive {
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.table-responsive table {
+    margin: 0 !important;
+}
+
+.table-bordered thead th {
+    text-align: center;
+    background-color: #333333;
+}
+
+.table thead th {
+    border: 0;
+}
+
+a,
+a:visited {
+    color: #278CFF;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #278CFF;
+    text-decoration: underline;
+}
+
+a.btn {
+    color: #ffffff;
+}
+
+.fa-check-circle {
+    color: #0E6800;
+    background-color: #ffffff;
+    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px;
+    border-radius: 20px;
+}
+
+.fa-times-circle {
+    color: #AC1F2D;
+    background-color: #ffffff;
+    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px;
+    border-radius: 20px;
+}
+
+.card .fa-check-circle,
+.card .fa-times-circle {
+    color: #ffffff;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0;
+    background-color: unset;
+}
+
+.server-icon {
+    object-fit: contain;
+    vertical-align: middle;
+}
+
+.server-icon--card {
+    display: block;
+    height: 50px;
+    max-width: 100%;
+    margin: 0 auto 0.5rem;
+}
+
+.server-icon--inline {
+    height: 25px;
+    max-width: 50px;
+    margin-right: 0.35rem;
+}

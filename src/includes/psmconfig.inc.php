@@ -30,13 +30,13 @@
 /**
  * Current PSM version
  */
-define('PSM_VERSION', '3.5.2');
+define('PSM_VERSION', '3.5.3-hs');
 
 /**
  * URL to check for updates. Will not be checked if turned off on config page.
  * @see psm_update_available()
  */
-define('PSM_UPDATE_URL', 'https://api.github.com/repos/phpservermon/phpservermon/releases/latest');
+define('PSM_UPDATE_URL', 'https://api.github.com/repos/RicRey1988/phpservermon/releases/latest');
 
 /**
  * Default update interval (1 day). Only applicable when updates are enabled.

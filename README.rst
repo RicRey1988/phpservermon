@@ -5,7 +5,7 @@ PHP Server Monitor
    :alt: Join the chat at https://gitter.im/erickrf/nlpnet
    :target: https://gitter.im/phpservermon/phpservermon
 
-Version 3.5.2
+Version 3.5.3-hs
 
 PHP Server Monitor is a script that checks whether your websites and servers are up and running.
 It comes with a web based user interface where you can manage your services and websites,
@@ -21,6 +21,8 @@ Features:
 * User authentication with 2 levels (administrator and regular user).
 * Logs of connection errors, outgoing emails and text messages.
 * Easy cronjob implementation to automatically check your servers.
+* Dark interface.
+* Per-server PNG icons with a bundled fallback.
 
 There are two different ways to monitor a server:
 
@@ -69,7 +71,7 @@ Please note: for these gateways you will need an account with sufficient credits
 Download
 --------
 
-The latest version can be downloaded from https://github.com/phpservermon/phpservermon/releases.
+The latest Hosting Supremo edition can be downloaded from https://github.com/RicRey1988/phpservermon/releases.
 
 
 Requirements
