@@ -1,4 +1,4 @@
-Commit: 451b71a36e6d64e249e52f5bb70ed5bc6c4230af
+Commit: 4a2ce5b07718da130602fa118521f7437f2e19bb
 
 PHPUnit 12.5.31 by Sebastian Bergmann and contributors.
 
@@ -10,7 +10,7 @@ Configuration: /home/runner/work/phpservermon-Redesigned-by-hostingsupremo/phpse
 ......FF.......F....................F.......................... 189 / 215 ( 87%)
 ..........................                                      215 / 215 (100%)
 
-Time: 00:01.013, Memory: 30.00 MB
+Time: 00:00.713, Memory: 30.00 MB
 
 App Shell (Tests\Unit\Ui\AppShell)
  ✘ Shell uses hope ui bootstrap five and accessible landmarks
