@@ -1,0 +1,221 @@
+# commit-message: refactor: migrate config sections
+--- a/src/templates/default/module/config/config.tpl.html
++++ b/src/templates/default/module/config/config.tpl.html
+@@ -56,8 +56,9 @@
+     <div class="tab-content col-12 col-xl-9">
+         <div class="tab-pane {{ general_active }}" id="config-general" role="tabpanel" aria-labelledby="config-general-tab">
+             <!-- General settings -->
+-            <fieldset>
+-                <legend>{{ label_general }}</legend>
++            <fieldset class="card mb-4">
++                <legend class="card-header h5 float-none w-100 mb-0">{{ label_general }}</legend>
++                <div class="card-body">
+                 <!-- Update check -->
+                 {{ macro.input_checkbox("show_update", "show_update[]", label_show_update, show_update_checked) }}
+                 <!-- Site title -->
+@@ -75,26 +76,32 @@
+                 {{ macro.input_field("text", "password_encrypt_key", null, "password_encrypt_key", label_password_encrypt_key, password_encrypt_key, "cab03a766...", "40", "password_encrypt_key_help", label_password_encrypt_key_note) }}
+                 <!-- Custom user agent -->
+                 {{ macro.input_field("text", "user_agent", null, "user_agent", label_user_agent, user_agent, "Mozilla/5.0...", "255", "user_agent_key_help", label_user_agent_key_note) }}
++                </div>
+             </fieldset>
+             <!-- Notification settings -->
+-            <fieldset>
+-                <legend>{{ label_settings_notification }}</legend>
++            <fieldset class="card mb-4">
++                <legend class="card-header h5 float-none w-100 mb-0">{{ label_settings_notification }}</legend>
++                <div class="card-body">
+                 <!-- Combine notifications -->
+                 {{ macro.input_checkbox("combine_notifications", "combine_notifications[]", label_combine_notifications, combine_notifications_checked, "combine_notifications_help", label_combine_notifications_description) }}
+                 <!-- Alert type -->
+                 {{ macro.input_select("alert_type", "alert_type", label_alert_type, alert_type, alert_type_selected, "alert_type_help", label_alert_type_description) }}
++                </div>
+             </fieldset>
+             <!-- Log settings -->
+-            <fieldset>
+-                <legend>{{ label_settings_log }}</legend>
++            <fieldset class="card mb-4">
++                <legend class="card-header h5 float-none w-100 mb-0">{{ label_settings_log }}</legend>
++                <div class="card-body">
+                 <!-- log_enabled -->
+                 {{ macro.input_checkbox("log_status", "log_status[]", label_log_status, log_status_checked, "log_status_help", label_log_status_description ) }}
+                 <!-- log retention period -->
+                 {{ macro.input_field("text", "log_retention_period", null, "log_retention_period", label_log_retention_period, log_retention_period, "0", "3", "log_retention_period_help", null, label_days) }}
++                </div>
+             </fieldset>
+             <!-- Proxy settings -->
+-            <fieldset>
+-                <legend>{{ label_settings_proxy }}</legend>
++            <fieldset class="card mb-4">
++                <legend class="card-header h5 float-none w-100 mb-0">{{ label_settings_proxy }}</legend>
++                <div class="card-body">
+                 <!-- enable proxy -->
+                 {{ macro.input_checkbox("proxy", "proxy[]", label_proxy, proxy_checked, "proxy_help", label_alert_proxy ) }}
+                 <!-- proxy url -->
+@@ -104,12 +111,14 @@
+                 <!-- proxy password -->
+                 {{ macro.input_field("password", "proxy_password", null, "proxy_password", label_proxy_password, proxy_password, label_proxy_password, null, null, null, null, true) }}
+                 {{ macro.button_save("general_submit",  label_save) }}
++                </div>
+             </fieldset>
+         </div>
+         <div class="tab-pane {{ auth_active }}" id="config-auth" role="tabpanel" aria-labelledby="config-auth-tab">
+             <!-- Auth settings -->
+-            <fieldset>
+-                <legend>{{ label_settings_dirauth }}</legend>
++            <fieldset class="card mb-4">
++                <legend class="card-header h5 float-none w-100 mb-0">{{ label_settings_dirauth }}</legend>
++                <div class="card-body">
+                 <!-- enable ldap -->
+                 {{ macro.input_checkbox("dirauth_status", "dirauth_status[]", label_dirauth_status, dirauth_status_checked) }}
+                 <!-- Directory host -->
+@@ -141,11 +150,13 @@
+                 <!-- Default role -->
+                 {{ macro.input_select("authdir_defaultrole", "authdir_defaultrole", label_authdir_defaultrole, authdir_defaultroles, authdir_defaultrole_selected, "authdir_defaultrole_help", label_authdir_defaultrole_description) }}
+                 {{ macro.button_save("auth_submit",  label_save) }}
++                </div>
+             </fieldset>
+         </div>
+         <div class="tab-pane {{ email_active }}" id="config-email" role="tabpanel" aria-labelledby="config-email-tab">
+-            <fieldset>
+-                <legend>{{ label_settings_email }}</legend>
++            <fieldset class="card mb-4">
++                <legend class="card-header h5 float-none w-100 mb-0">{{ label_settings_email }}</legend>
++                <div class="card-body">
+                 <!-- enable email -->
+                 {{ macro.input_checkbox("email_status", "email_status[]", label_email_status, email_status_checked) }}
+                 <!-- enable email log -->
+@@ -156,9 +167,11 @@
+                 {{ macro.input_field("text", "email_from_name", null, "email_from_name", label_email_from_name, email_from_name, label_email_from_name, "255") }}
+                 <!-- email address -->
+                 {{ macro.input_field("email", "email_from_email", null, "email_from_email", label_email_from_email, email_from_email, label_email_from_email, "255") }}
++                </div>
+             </fieldset>
+-            <fieldset>
+-                <legend>SMTP</legend>
++            <fieldset class="card mb-4">
++                <legend class="card-header h5 float-none w-100 mb-0">SMTP</legend>
++                <div class="card-body">
+                 <!-- enable smtp -->
+                 {{ macro.input_checkbox("email_smtp", "email_smtp[]", label_email_smtp, email_smtp_checked) }}
+                 <!-- smtp host -->
+@@ -174,11 +187,13 @@
+                 {{ macro.button_test("testEmail", label_test) }}
+                 {{ macro.input_hidden("test_email", "0") }}
+                 {{ macro.button_save("email_submit",  label_save) }}
++                </div>
+             </fieldset>
+         </div>
+         <div class="tab-pane {{ sms_active }}" id="config-sms" role="tabpanel" aria-labelledby="config-sms-tab">
+-            <fieldset>
+-                <legend>{{ label_settings_sms }}</legend>
++            <fieldset class="card mb-4">
++                <legend class="card-header h5 float-none w-100 mb-0">{{ label_settings_sms }}</legend>
++                <div class="card-body">
+                 <!-- enable sms -->
+                 {{ macro.input_checkbox("sms_status", "sms_status[]", label_sms_status, sms_status_checked) }}
+                 <!-- enable sms log -->
+@@ -195,11 +210,13 @@
+                 {{ macro.button_test("testSms", label_test) }}
+                 {{ macro.input_hidden("test_sms", "0") }}
+                 {{ macro.button_save("sms_submit", label_save) }}
++                </div>
+             </fieldset>
+         </div>
+         <div class="tab-pane {{ discord_active }}" id="config-discord" role="tabpanel" aria-labelledby="config-discord-tab">
+-            <fieldset>
+-                <legend>{{ label_settings_discord }}</legend>
++            <fieldset class="card mb-4">
++                <legend class="card-header h5 float-none w-100 mb-0">{{ label_settings_discord }}</legend>
++                <div class="card-body">
+                 <!-- enable discord -->
+                 {{ macro.input_checkbox("discord_status", "discord_status[]", label_discord_status, discord_status_checked) }}
+                 <!-- enable discord log -->
+@@ -207,11 +224,13 @@
+                 {{ macro.button_test("testDiscord", label_test) }}
+                 {{ macro.input_hidden("test_discord", "0") }}
+                 {{ macro.button_save("discord_submit", label_save) }}
++                </div>
+             </fieldset>
+         </div>
+         <div class="tab-pane {{ pushover_active }}" id="config-pushover" role="tabpanel" aria-labelledby="config-pushover-tab">
+-            <fieldset>
+-                <legend>{{ label_settings_pushover }}</legend>
++            <fieldset class="card mb-4">
++                <legend class="card-header h5 float-none w-100 mb-0">{{ label_settings_pushover }}</legend>
++                <div class="card-body">
+                 <p>{{ label_pushover_description|raw }}</p>
+                 <!-- enable pushover -->
+                 {{ macro.input_checkbox("pushover_status", "pushover_status", label_pushover_status, pushover_status_checked) }}
+@@ -222,11 +241,13 @@
+                 {{ macro.button_test("testPushover", label_test) }}
+                 {{ macro.input_hidden("test_pushover", "0") }}
+                 {{ macro.button_save("pushover_submit",  label_save) }}
++                </div>
+             </fieldset>
+         </div>
+         <div class="tab-pane {{ telegram_active }}" id="config-telegram" role="tabpanel" aria-labelledby="config-telegram-tab">
+-            <fieldset>
+-                <legend>{{ label_settings_telegram }}</legend>
++            <fieldset class="card mb-4">
++                <legend class="card-header h5 float-none w-100 mb-0">{{ label_settings_telegram }}</legend>
++                <div class="card-body">
+                 <p>{{ label_telegram_description|raw }}</p>
+                 <!-- enable telegram -->
+                 {{ macro.input_checkbox("telegram_status", "telegram_status[]", label_telegram_status, telegram_status_checked) }}
+@@ -239,11 +260,13 @@
+                 {{ macro.button_test("testTelegram", label_test) }}
+                 {{ macro.input_hidden("test_telegram", "0") }}
+                 {{ macro.button_save("telegram_submit",  label_save) }}
++                </div>
+             </fieldset>
+         </div>
+         <div class="tab-pane {{ webhook_active }}" id="config-webhook" role="tabpanel" aria-labelledby="config-webhook-tab">
+-            <fieldset>
+-                <legend>{{ label_settings_webhook }}</legend>
++            <fieldset class="card mb-4">
++                <legend class="card-header h5 float-none w-100 mb-0">{{ label_settings_webhook }}</legend>
++                <div class="card-body">
+                 <p>{{ label_webhook_description|raw }}</p>
+                 <!-- enable webhooks -->
+                 {{ macro.input_checkbox("webhook_status", "webhook_status", label_webhook_status, webhook_status_checked) }}
+@@ -257,11 +280,13 @@
+                 {{ macro.button_test("testWebhook", label_test) }}
+                 {{ macro.input_hidden("test_webhook", "0") }}
+                 {{ macro.button_save("webhook_submit",  label_save) }}
++                </div>
+             </fieldset>
+         </div>
+         <div class="tab-pane {{ webpush_active }}" id="config-webpush" role="tabpanel" aria-labelledby="config-webpush-tab">
+-            <fieldset>
+-                <legend>Notificaciones Web Push y PWA</legend>
++            <fieldset class="card mb-4">
++                <legend class="card-header h5 float-none w-100 mb-0">Notificaciones Web Push y PWA</legend>
++                <div class="card-body">
+                 <p class="text-muted">Envía avisos automáticos a cada navegador registrado cuando un servidor se cae o se recupera.</p>
+                 {{ macro.input_checkbox("webpush_status", "webpush_status[]", "Habilitar Web Push", webpush_status_checked) }}
+                 {{ macro.input_field("text", "webpush_vapid_subject", null, "webpush_vapid_subject", "Contacto VAPID", webpush_vapid_subject, "mailto:admin@example.com", "255", "webpush_subject_help", "Use mailto:correo@dominio o una URL HTTPS.") }}
+@@ -271,11 +296,13 @@
+                     {{ macro.button_save("webpush_submit", label_save) }}
+                 </div>
+                 <div class="alert alert-warning mt-3 mb-0"><strong>Importante:</strong> al regenerar las claves, los navegadores ya registrados deberán activar sus notificaciones nuevamente.</div>
++                </div>
+             </fieldset>
+         </div>
+         <div class="tab-pane" id="config-php-info" role="tabpanel" aria-labelledby="config-php-info-tab">
+-            <fieldset>
+-                <legend>{{ label_tab_php_info }}</legend>
++            <fieldset class="card mb-4">
++                <legend class="card-header h5 float-none w-100 mb-0">{{ label_tab_php_info }}</legend>
++                <div class="card-body">
+                 <p>{{ label_php_info_safe }}</p>
+                 <div class="php-info-grid row row-cols-1 row-cols-xl-2 g-4">
+                     {% for group, values in php_info %}
+@@ -284,6 +311,7 @@
+                     </dl></div></section></div>
+                     {% endfor %}
+                 </div>
++                </div>
+             </fieldset>
+         </div>
+     </div>
