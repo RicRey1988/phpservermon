@@ -7,3 +7,4 @@ parameters:
         - src/psm/Service/PhpInfoService.php
         - src/psm/Service/Statistics
         - src/psm/Service/Incident
+        - src/psm/Service/Notification

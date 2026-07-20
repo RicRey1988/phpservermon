@@ -87,6 +87,21 @@ xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/sc
 		<service id="service.incident.manager" class="psm\Service\Incident\IncidentManager" public="true">
 			<argument type="service" id="service.incident.repository" />
 		</service>
+		<service id="service.notification.delivery_repository" class="psm\Service\Notification\DeliveryRepository">
+			<argument type="service" id="db" />
+		</service>
+		<service id="service.notification.recipient_repository" class="psm\Service\Notification\IncidentRecipientRepository">
+			<argument type="service" id="db" />
+		</service>
+		<service id="service.notification.incident_composer" class="psm\Service\Notification\IncidentMessageComposer">
+			<argument type="service" id="db" />
+		</service>
+		<service id="service.notification.incident_dispatcher" class="psm\Service\Notification\IncidentNotificationDispatcher" public="true">
+			<argument type="service" id="service.notification.delivery_repository" />
+			<argument type="service" id="service.notification.recipient_repository" />
+			<argument type="service" id="service.notification.incident_composer" />
+			<argument type="service" id="notification.registry" />
+		</service>
 		<!--SERVICES end-->
 
 		<!--UTIL start-->

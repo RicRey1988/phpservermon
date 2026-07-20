@@ -96,7 +96,13 @@ class UpdateManager
 
         $database = $this->container->get('db');
         $updater = ($this->updaterFactory)($database);
-        $notifier = ($this->notifierFactory)($database);
+        $persistentNotifications = $this->container->has('service.incident.manager')
+            && $this->container->has('service.notification.incident_dispatcher');
+        $incidentManager = $persistentNotifications ? $this->container->get('service.incident.manager') : null;
+        $dispatcher = $persistentNotifications
+            ? $this->container->get('service.notification.incident_dispatcher')
+            : null;
+        $notifier = $persistentNotifications ? null : ($this->notifierFactory)($database);
         $processed = 0;
         $failed = 0;
         $errors = [];
@@ -106,7 +112,19 @@ class UpdateManager
             try {
                 $statusOld = $server['status'] === 'on';
                 $statusNew = (bool) $updater->update($serverId);
-                $notifier->notify($serverId, $statusOld, $statusNew);
+                if ($persistentNotifications) {
+                    $transition = $incidentManager->record(
+                        $serverId,
+                        $statusOld,
+                        $statusNew,
+                        isset($updater->error) ? (string) $updater->error : null
+                    );
+                    if ($transition !== null) {
+                        $dispatcher->enqueue($transition);
+                    }
+                } else {
+                    $notifier->notify($serverId, $statusOld, $statusNew);
+                }
                 $archive = ($this->archiveFactory)($database);
                 $archive->archive($serverId);
                 $archive->cleanup($serverId);
@@ -116,7 +134,14 @@ class UpdateManager
                 $errors[$serverId] = 'Server update failed.';
             }
         }
-        if ($notifier->combine) {
+        if ($persistentNotifications) {
+            try {
+                $dispatcher->flush();
+            } catch (\Throwable) {
+                $failed++;
+                $errors[0] = 'Queued notification delivery failed.';
+            }
+        } elseif ($notifier->combine) {
             try {
                 $notifier->notifyCombined();
             } catch (\Throwable) {
