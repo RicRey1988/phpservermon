@@ -1,1 +1,1 @@
-Run complete PHPUnit diagnostics after native HOPE UI stylesheet removal.
+Run compact PHPUnit diagnostics after native HOPE UI stylesheet removal.
