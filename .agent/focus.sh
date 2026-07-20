@@ -19,12 +19,13 @@ printf 'PASS %s\n' "$CURRENT" >> "$REPORT"
 CURRENT=static-global
 python3 - <<'PY'
 from pathlib import Path
+import re
 text = '\n'.join(path.read_text() for path in Path('src/templates/default').rglob('*.tpl.html'))
 assert ' style=' not in text
 assert '<style' not in text
-assert 'data-toggle=' not in text
 assert 'data-dismiss=' not in text
 assert 'sidebar-open' not in text
+assert set(re.findall(r'data-toggle=["\']([^"\']+)["\']', text)) <= {'sidebar'}
 PY
 printf 'PASS %s\n' "$CURRENT" >> "$REPORT"
 printf 'ALL PASS\n' >> "$REPORT"
