@@ -44,6 +44,8 @@ assert ' style=' not in text
 assert 'data-user-editor' in text
 assert 'data-notification-item' in text
 assert 'data-notification-count' in text
+assert 'data-unread-badge' in text
+assert 'notification-unread' not in Path('src/templates/default/static/js/notifications.js').read_text()
 PY
 printf 'PASS %s\n' "$CURRENT" >> "$REPORT"
 printf 'ALL PASS\n' >> "$REPORT"
