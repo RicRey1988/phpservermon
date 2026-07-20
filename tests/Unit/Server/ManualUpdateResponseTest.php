@@ -21,7 +21,7 @@ final class ManualUpdateResponseTest extends TestCase
 
         self::assertStringContainsString("setCSRFKey('status')", $controller);
         self::assertStringContainsString("array('index', 'run')", $controller);
-        self::assertStringContainsString("REQUEST_METHOD", $controller);
+        self::assertStringContainsString('REQUEST_METHOD', $controller);
         self::assertStringContainsString('JsonResponse', $controller);
         self::assertStringContainsString('Response::HTTP_METHOD_NOT_ALLOWED', $controller);
         self::assertStringContainsString('Response::HTTP_CONFLICT', $controller);
@@ -45,7 +45,7 @@ final class ManualUpdateResponseTest extends TestCase
         self::assertStringNotContainsString('updatemanager', $snapshot);
     }
 
-    public function testDashboardButtonPostsThenAppliesReturnedCardsImmediately(): void
+    public function testDashboardButtonPostsThenRefreshesRenderedCardsImmediately(): void
     {
         $header = $this->read('src/templates/default/module/server/status/header.tpl.html');
         $javascript = $this->read('src/templates/default/static/js/status.js');
@@ -54,9 +54,12 @@ final class ManualUpdateResponseTest extends TestCase
         self::assertStringContainsString('data-update-url', $header);
         self::assertStringContainsString("method: 'POST'", $javascript);
         self::assertStringContainsString('X-Requested-With', $javascript);
-        self::assertStringContainsString('applyCards', $javascript);
-        self::assertStringContainsString('data-server-id', $javascript);
-        self::assertStringContainsString('refreshStatus', $javascript);
+        self::assertStringNotContainsString('applyCards', $javascript);
+        self::assertStringContainsString('refreshStatus()', $javascript);
+        self::assertStringContainsString('replaceStatus', $javascript);
+        self::assertStringContainsString('new DOMParser()', $javascript);
+        self::assertStringContainsString("querySelector('[data-status-board]')", $javascript);
+        self::assertStringContainsString('current.replaceWith(fresh)', $javascript);
         self::assertStringContainsString("cache: 'no-store'", $javascript);
     }
 
