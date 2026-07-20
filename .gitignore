@@ -17,3 +17,4 @@ __MACOSX/
 /composer.phar
 /.phpunit.cache/
 /public/server-images/*.webp
+/.psm-update/

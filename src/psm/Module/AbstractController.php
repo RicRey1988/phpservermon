@@ -225,6 +225,7 @@ abstract class AbstractController implements ControllerInterface
             // in XHR mode, we will not add the main template
             $userLevel = $this->getUser()->getUserLevel();
             $appearance = Appearance::fromPreferences([]);
+            $updateAvailable = psm_update_available();
             if (
                 $userLevel !== PSM_USER_ANONYMOUS
                 && $this->container !== null
@@ -251,9 +252,19 @@ abstract class AbstractController implements ControllerInterface
                 assert($notifications instanceof UserNotificationRepository);
                 $userId = $this->getUser()->getUserId();
                 $latest = $notifications->latestForUser($userId, 5);
+                $unread = $notifications->unreadCount($userId);
+                if ($updateAvailable && $userLevel === PSM_USER_ADMIN) {
+                    array_unshift($latest, [
+                        'title' => 'Nueva versión disponible',
+                        'body' => 'PHP Server Monitor HS puede actualizarse desde Sistema.',
+                        'read_at' => null,
+                    ]);
+                    $latest = array_slice($latest, 0, 5);
+                    $unread++;
+                }
                 $tpl_data['notification_navbar'] = [
                     'latest' => $latest,
-                    'unread' => $notifications->unreadCount($userId),
+                    'unread' => $unread,
                     'url_all' => psm_build_url(['mod' => 'user_notification']),
                 ];
             }
@@ -279,7 +290,7 @@ abstract class AbstractController implements ControllerInterface
                 $tpl_data['html_sidebar'] = $this->sidebar->createHTML();
             }
 
-            if (psm_update_available()) {
+            if ($updateAvailable) {
                 $tpl_data['update_available'] = str_replace(
                     '{version}',
                     'v' .
@@ -318,7 +329,7 @@ abstract class AbstractController implements ControllerInterface
 
         switch ($ulvl) {
             case PSM_USER_ADMIN:
-                $items = array('server_status', 'server', 'server_log', 'user', 'config', 'server_update');
+                $items = array('server_status', 'server', 'server_log', 'user', 'config', 'config_system', 'server_update');
                 break;
             case PSM_USER_USER:
                 $items = array('server_status', 'server', 'server_log', 'server_update');
@@ -334,13 +345,14 @@ abstract class AbstractController implements ControllerInterface
             'server_log' => 'history',
             'user' => 'users',
             'config' => 'sliders-h',
+            'config_system' => 'tools',
             'server_update' => 'sync-alt',
         );
         foreach ($items as $key) {
             $tpl_data['menu'][] = array(
                 'active' => ($key == psm_GET('mod')) ? 'active' : '',
                 'url' => psm_build_url(array('mod' => $key)),
-                'label' => psm_get_lang('menu', $key),
+                'label' => $key === 'config_system' ? 'Sistema' : psm_get_lang('menu', $key),
                 'icon' => $icons[$key] ?? 'circle',
             );
         }

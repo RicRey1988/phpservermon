@@ -35,6 +35,13 @@ final class PlatformRequirementsTest extends TestCase
         self::assertFalse($requirements->isSatisfied());
     }
 
+    public function testRequiresZipForSignedUpdates(): void
+    {
+        self::assertContains('zip', PlatformRequirements::REQUIRED_EXTENSIONS);
+        $extensions = array_values(array_diff(PlatformRequirements::REQUIRED_EXTENSIONS, ['zip']));
+        self::assertContains('zip', (new PlatformRequirements('8.5.0', $extensions))->missingExtensions());
+    }
+
     public function testEvaluateReturnsAConsistentResult(): void
     {
         $requirements = new PlatformRequirements('8.5.0', PlatformRequirements::REQUIRED_EXTENSIONS);

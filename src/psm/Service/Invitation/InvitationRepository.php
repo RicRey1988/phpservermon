@@ -31,7 +31,8 @@ class InvitationRepository
         if (!in_array($level, [10, 20], true)) {
             throw new InvalidArgumentException('The invitation role is invalid.');
         }
-        if ($expiresAt <= new DateTimeImmutable()) {
+        $nowDate = new DateTimeImmutable();
+        if ($expiresAt <= $nowDate || $expiresAt > $nowDate->modify('+7 days')) {
             throw new InvalidArgumentException('The invitation expiry must be in the future.');
         }
         $token = rtrim(strtr(base64_encode(($this->randomBytes)()), '+/', '-_'), '=');
@@ -41,8 +42,8 @@ class InvitationRepository
         $now = date('Y-m-d H:i:s');
         $this->database->execute(
             'INSERT INTO `' . $this->table('user_invitations') . '` '
-            . '(email, token_hash, level, created_by, created_at, expires_at, accepted_at) '
-            . 'VALUES (:email, :token_hash, :level, :created_by, :created_at, :expires_at, NULL)',
+            . '(email, token_hash, level, created_by, created_at, expires_at, accepted_at, revoked_at) '
+            . 'VALUES (:email, :token_hash, :level, :created_by, :created_at, :expires_at, NULL, NULL)',
             [
                 'email' => $email,
                 'token_hash' => hash('sha256', $token),
@@ -65,7 +66,7 @@ class InvitationRepository
         }
         $rows = $this->database->execute(
             'SELECT invitation_id, email, level FROM `' . $this->table('user_invitations') . '` '
-            . 'WHERE token_hash = :token_hash AND accepted_at IS NULL AND expires_at > :now LIMIT 1'
+            . 'WHERE token_hash = :token_hash AND accepted_at IS NULL AND revoked_at IS NULL AND expires_at > :now LIMIT 1'
             . ($lock ? ' FOR UPDATE' : ''),
             ['token_hash' => hash('sha256', $token), 'now' => date('Y-m-d H:i:s')],
         );
@@ -96,10 +97,21 @@ class InvitationRepository
     {
         $rows = $this->database->execute(
             'SELECT invitation_id, email, level, created_at, expires_at FROM `' . $this->table('user_invitations') . '` '
-            . 'WHERE accepted_at IS NULL AND expires_at > :now ORDER BY created_at DESC',
+            . 'WHERE accepted_at IS NULL AND revoked_at IS NULL AND expires_at > :now ORDER BY created_at DESC',
             ['now' => date('Y-m-d H:i:s')],
         );
         return is_array($rows) ? array_values($rows) : [];
+    }
+
+    public function revoke(int $invitationId): void
+    {
+        if ($invitationId <= 0) { return; }
+        $this->database->execute(
+            'UPDATE `' . $this->table('user_invitations') . '` SET revoked_at = :revoked_at '
+            . 'WHERE invitation_id = :invitation_id AND accepted_at IS NULL AND revoked_at IS NULL',
+            ['revoked_at' => date('Y-m-d H:i:s'), 'invitation_id' => $invitationId],
+            false,
+        );
     }
 
     private function table(string $name): string

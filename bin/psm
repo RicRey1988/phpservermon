@@ -1,0 +1,53 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+$root = dirname(__DIR__);
+$command = $argv[1] ?? '';
+if ($command === 'version') {
+    require $root . '/vendor/autoload.php';
+    fwrite(STDOUT, PSM_VERSION . PHP_EOL);
+    exit(0);
+}
+if (!in_array($command, ['migrate', 'health'], true)) {
+    fwrite(STDERR, "Usage: bin/psm version|migrate|health\n");
+    exit(2);
+}
+
+define('PSM_INSTALL', true);
+require $root . '/src/bootstrap.php';
+
+try {
+    if (!$db->status() || !psm_load_conf()) {
+        throw new RuntimeException('Database is unavailable.');
+    }
+    if ($command === 'migrate') {
+        $from = (string) psm_get_conf('version', '0.0.0');
+        if (version_compare($from, PSM_VERSION, '<')) {
+            (new psm\Util\Install\Installer($db))->upgrade($from, PSM_VERSION);
+        } elseif (version_compare($from, PSM_VERSION, '>')) {
+            throw new RuntimeException('Database belongs to a newer application version.');
+        }
+        fwrite(STDOUT, 'Database version: ' . PSM_VERSION . PHP_EOL);
+        exit(0);
+    }
+
+    $health = $router->getService('service.system.health')->collect();
+    $failed = false;
+    foreach ($health as $group => $checks) {
+        foreach ($checks as $check) {
+            $failed = $failed || ($check['status'] ?? '') === 'error';
+            fwrite(STDOUT, sprintf(
+                "[%s] %s: %s\n",
+                strtoupper((string) ($check['status'] ?? 'warning')),
+                (string) ($check['label'] ?? $group),
+                (string) ($check['value'] ?? ''),
+            ));
+        }
+    }
+    exit($failed ? 1 : 0);
+} catch (Throwable) {
+    fwrite(STDERR, 'Command failed. Review the sanitized application/PHP error log.' . PHP_EOL);
+    exit(1);
+}

@@ -9,3 +9,7 @@ parameters:
         - src/psm/Service/Incident
         - src/psm/Service/Notification
         - src/psm/Service/Push
+        - src/psm/Service/Invitation
+        - src/psm/Service/System
+        - src/psm/Service/SystemUpdate
+        - src/psm/Service/Update

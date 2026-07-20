@@ -43,6 +43,7 @@ class ConfigModule implements ModuleInterface
     {
         return array(
             'config' => __NAMESPACE__ . '\Controller\ConfigController',
+            'system' => __NAMESPACE__ . '\Controller\SystemController',
         );
     }
 }

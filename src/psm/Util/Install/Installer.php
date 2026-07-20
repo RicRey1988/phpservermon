@@ -374,9 +374,22 @@ class Installer
                 `created_at` DATETIME NOT NULL,
                 `expires_at` DATETIME NOT NULL,
                 `accepted_at` DATETIME NULL,
+                `revoked_at` DATETIME NULL,
                 PRIMARY KEY (`invitation_id`),
                 UNIQUE KEY `token_hash` (`token_hash`),
                 KEY `pending_email` (`email`,`accepted_at`,`expires_at`)
+            ) DEFAULT CHARSET=utf8mb4;",
+            PSM_DB_PREFIX . 'job_runs' => "CREATE TABLE IF NOT EXISTS `" . PSM_DB_PREFIX . "job_runs` (
+                `job_run_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+                `job_name` VARCHAR(40) NOT NULL,
+                `status` ENUM('running','success','failed') NOT NULL,
+                `started_at` DATETIME NOT NULL,
+                `finished_at` DATETIME NULL,
+                `processed` INT UNSIGNED NOT NULL DEFAULT 0,
+                `failed` INT UNSIGNED NOT NULL DEFAULT 0,
+                `summary` VARCHAR(255) NULL,
+                PRIMARY KEY (`job_run_id`),
+                KEY `job_finished` (`job_name`,`finished_at`)
             ) DEFAULT CHARSET=utf8mb4;",
         );
 
@@ -946,9 +959,22 @@ class Installer
                 `created_at` DATETIME NOT NULL,
                 `expires_at` DATETIME NOT NULL,
                 `accepted_at` DATETIME NULL,
+                `revoked_at` DATETIME NULL,
                 PRIMARY KEY (`invitation_id`),
                 UNIQUE KEY `token_hash` (`token_hash`),
                 KEY `pending_email` (`email`,`accepted_at`,`expires_at`)
+            ) DEFAULT CHARSET=utf8mb4;",
+            "CREATE TABLE IF NOT EXISTS `" . PSM_DB_PREFIX . "job_runs` (
+                `job_run_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+                `job_name` VARCHAR(40) NOT NULL,
+                `status` ENUM('running','success','failed') NOT NULL,
+                `started_at` DATETIME NOT NULL,
+                `finished_at` DATETIME NULL,
+                `processed` INT UNSIGNED NOT NULL DEFAULT 0,
+                `failed` INT UNSIGNED NOT NULL DEFAULT 0,
+                `summary` VARCHAR(255) NULL,
+                PRIMARY KEY (`job_run_id`),
+                KEY `job_finished` (`job_name`,`finished_at`)
             ) DEFAULT CHARSET=utf8mb4;"
         ));
         $this->execSQL(

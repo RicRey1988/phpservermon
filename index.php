@@ -26,6 +26,23 @@
  * @link        http://www.phpservermonitor.org/
  **/
 
+$maintenanceFile = __DIR__ . '/.psm-update/maintenance.json';
+if (is_file($maintenanceFile)) {
+    http_response_code(503);
+    header('Content-Type: text/html; charset=UTF-8');
+    header('Cache-Control: no-store, private');
+    header('Retry-After: 120');
+    $maintenance = json_decode((string) file_get_contents($maintenanceFile), true);
+    $message = is_array($maintenance) ? (string) ($maintenance['message'] ?? '') : '';
+    $requestId = is_array($maintenance) ? (string) ($maintenance['request_id'] ?? '') : '';
+    echo '<!doctype html><html lang="es"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
+        . '<title>Mantenimiento</title><body style="font-family:system-ui;display:grid;place-items:center;min-height:100vh;margin:0;background:#111827;color:#f9fafb">'
+        . '<main style="max-width:42rem;padding:2rem"><h1>Actualización en curso</h1><p>'
+        . htmlspecialchars($message !== '' ? $message : 'Intenta de nuevo en unos minutos.', ENT_QUOTES, 'UTF-8')
+        . '</p><code>' . htmlspecialchars($requestId, ENT_QUOTES, 'UTF-8') . '</code></main></body></html>';
+    exit;
+}
+
 require __DIR__ . '/src/bootstrap.php';
 
 psm_no_cache();

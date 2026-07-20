@@ -21,6 +21,7 @@ final class PlatformRequirements
         'pdo',
         'pdo_mysql',
         'xml',
+        'zip',
     ];
 
     private string $phpVersion;

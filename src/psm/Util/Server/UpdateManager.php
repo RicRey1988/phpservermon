@@ -29,6 +29,7 @@
 
 namespace psm\Util\Server;
 
+use psm\Service\System\JobRunRepository;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -71,6 +72,10 @@ class UpdateManager
      */
     public function run($skip_perms = false, $status = null)
     {
+        $jobRuns = $this->container->has('service.system.job_runs')
+            ? $this->container->get('service.system.job_runs')
+            : null;
+        $jobRunId = $jobRuns instanceof JobRunRepository ? $jobRuns->start('monitor') : 0;
         if (false === in_array($status, ['on', 'off'], true)) {
             $status = null;
         }
@@ -150,6 +155,9 @@ class UpdateManager
             }
         }
 
+        if ($jobRuns instanceof JobRunRepository) {
+            $jobRuns->finish($jobRunId, $processed, $failed, $failed === 0 ? 'Monitor check completed.' : 'Monitor check completed with failures.');
+        }
         return new UpdateSummary($processed, $failed, $errors);
     }
 }

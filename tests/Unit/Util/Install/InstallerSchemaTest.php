@@ -72,7 +72,7 @@ final class InstallerSchemaTest extends TestCase
         $installSource = strstr($this->source, 'public function upgrade(', true);
         self::assertIsString($installSource);
 
-        foreach (['incidents', 'notification_deliveries', 'user_notifications', 'push_subscriptions', 'user_invitations'] as $table) {
+        foreach (['incidents', 'notification_deliveries', 'user_notifications', 'push_subscriptions', 'user_invitations', 'job_runs'] as $table) {
             self::assertStringContainsString("PSM_DB_PREFIX . '" . $table . "'", $installSource);
             self::assertStringContainsString('CREATE TABLE IF NOT EXISTS `" . PSM_DB_PREFIX . "' . $table, $installSource);
         }
@@ -88,7 +88,7 @@ final class InstallerSchemaTest extends TestCase
         $migrationStart = strpos($this->source, 'protected function upgrade410hs()');
         self::assertIsInt($migrationStart);
         $migrationSource = substr($this->source, $migrationStart);
-        foreach (['incidents', 'notification_deliveries', 'user_notifications', 'push_subscriptions', 'user_invitations'] as $table) {
+        foreach (['incidents', 'notification_deliveries', 'user_notifications', 'push_subscriptions', 'user_invitations', 'job_runs'] as $table) {
             self::assertStringContainsString('CREATE TABLE IF NOT EXISTS `" . PSM_DB_PREFIX . "' . $table, $migrationSource);
         }
         foreach (['webpush_status', 'webpush_vapid_subject', 'webpush_vapid_public_key', 'webpush_vapid_private_key'] as $key) {

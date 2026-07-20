@@ -51,7 +51,7 @@ class UserController extends AbstractController
         $this->setCSRFKey('user');
 
         $this->setActions(array(
-            'index', 'edit', 'delete', 'save', 'invite',
+            'index', 'edit', 'delete', 'save', 'invite', 'revokeInvitation',
         ), 'index');
         $this->twig->addGlobal('subtitle', psm_get_lang('menu', 'user'));
     }
@@ -147,6 +147,10 @@ class UserController extends AbstractController
         $tpl_data = $this->getLabels();
         $tpl_data['users'] = $users;
         $tpl_data['pending_invitations'] = $this->invitations()->pending();
+        foreach ($tpl_data['pending_invitations'] as &$invitation) {
+            $invitation['url_revoke'] = psm_build_url(['mod' => 'user', 'action' => 'revokeInvitation']);
+        }
+        unset($invitation);
         $tpl_data['url_invite'] = psm_build_url(['mod' => 'user', 'action' => 'invite']);
 
         return $this->twig->render('module/user/user/list.tpl.html', $tpl_data);
@@ -193,6 +197,16 @@ class UserController extends AbstractController
             $this->addMessage(psm_get_lang('users', 'error_' . $exception->getMessage()), 'error');
         }
 
+        return $this->executeIndex();
+    }
+
+    protected function executeRevokeInvitation()
+    {
+        if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
+            return $this->executeIndex();
+        }
+        $this->invitations()->revoke((int) psm_POST('invitation_id', '0'));
+        $this->addMessage('Invitación revocada.', 'success');
         return $this->executeIndex();
     }
 

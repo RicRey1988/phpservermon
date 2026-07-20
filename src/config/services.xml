@@ -15,6 +15,8 @@ xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/sc
 		</parameter>
 
 		<parameter key="path.src" type="constant">PSM_PATH_SRC</parameter>
+		<parameter key="path.root">%path.src%..</parameter>
+		<parameter key="path.logs" type="constant">PSM_PATH_LOGS</parameter>
 		<parameter key="path.templates">%path.src%templates</parameter>
 		<parameter key="path.server_images">%path.src%../public/server-images</parameter>
 		<parameter key="url.server_images">public/server-images</parameter>
@@ -62,6 +64,33 @@ xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/sc
 		</service>
 		<service id="service.invitation.repository" class="psm\Service\Invitation\InvitationRepository" public="true">
 			<argument type="service" id="db" />
+		</service>
+		<service id="service.system.health" class="psm\Service\System\SystemHealthService" public="true">
+			<argument>%path.root%</argument>
+			<argument>%path.logs%</argument>
+			<argument type="service" id="db" />
+		</service>
+		<service id="service.system.job_runs" class="psm\Service\System\JobRunRepository" public="true">
+			<argument type="service" id="db" />
+		</service>
+		<service id="service.system.release_client" class="psm\Service\SystemUpdate\GitHubReleaseClient" public="true" />
+		<service id="service.system.package_verifier" class="psm\Service\SystemUpdate\ReleasePackageVerifier" />
+		<service id="service.system.manifest_verifier" class="psm\Service\Update\ManifestVerifier" />
+		<service id="service.system.release_installer" class="psm\Service\SystemUpdate\ReleaseInstaller">
+			<argument>%path.root%</argument>
+			<argument>%path.logs%</argument>
+		</service>
+		<service id="service.system.maintenance" class="psm\Service\SystemUpdate\MaintenanceMode">
+			<argument>%path.root%</argument>
+		</service>
+		<service id="service.system.updater" class="psm\Service\SystemUpdate\SystemUpdater" public="true">
+			<argument type="service" id="service.system.release_client" />
+			<argument type="service" id="service.system.package_verifier" />
+			<argument type="service" id="service.system.manifest_verifier" />
+			<argument type="service" id="service.system.release_installer" />
+			<argument type="service" id="service.system.maintenance" />
+			<argument>%path.root%</argument>
+			<argument type="service" id="service.system.job_runs" />
 		</service>
 		<service id="notification.registry" class="psm\Notification\ChannelRegistry" public="true">
 			<factory class="psm\Notification\ChannelRegistryFactory" method="create" />

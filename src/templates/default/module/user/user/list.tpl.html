@@ -7,7 +7,7 @@
     <div class="col-12 col-lg-3"><label class="form-label" for="invite_level">Rol</label><select class="form-select" id="invite_level" name="invite_level"><option value="20">Usuario</option><option value="10">Administrador</option></select></div>
     <div class="col-12 col-lg-3"><button class="btn btn-primary w-100" type="submit"><i class="fas fa-paper-plane me-2" aria-hidden="true"></i>Enviar invitación</button></div>
   </form>
-  {% if pending_invitations %}<div class="card-footer"><p class="small text-muted mb-2">Invitaciones pendientes</p><div class="d-flex flex-wrap gap-2">{% for invitation in pending_invitations %}<span class="badge bg-soft-info text-info">{{ invitation.email }} · {{ invitation.expires_at }}</span>{% endfor %}</div></div>{% endif %}
+  {% if pending_invitations %}<div class="card-footer"><p class="small text-muted mb-2">Invitaciones pendientes</p><div class="d-flex flex-wrap gap-2">{% for invitation in pending_invitations %}<form action="{{ invitation.url_revoke|raw }}" method="post" class="d-inline-flex align-items-center gap-1 badge bg-soft-info text-info">{{ macro.input_csrf() }}<span>{{ invitation.email }} · {{ invitation.expires_at }}</span><input type="hidden" name="invitation_id" value="{{ invitation.invitation_id }}"><button class="btn btn-sm btn-link text-danger p-0" type="submit" aria-label="Revocar invitación">×</button></form>{% endfor %}</div></div>{% endif %}
 </section>
 <div class="searchbar input-group mb-3">
   <span class="input-group-text"><i class="fas fa-search" aria-hidden="true"></i></span>
