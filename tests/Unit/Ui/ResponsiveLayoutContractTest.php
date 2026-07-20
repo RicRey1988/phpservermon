@@ -8,15 +8,29 @@ use PHPUnit\Framework\TestCase;
 
 final class ResponsiveLayoutContractTest extends TestCase
 {
-    public function testStylesFixOverflowAtTheComponentInsteadOfHidingIt(): void
+    public function testTemplatesFixOverflowAtTheComponentWithNativeUtilities(): void
     {
-        $css = file_get_contents(dirname(__DIR__, 3) . '/src/templates/default/static/css/hs-monitor.css');
-        self::assertIsString($css);
-        self::assertDoesNotMatchRegularExpression('/body\s*\{[^}]*overflow-x\s*:\s*(?:hidden|clip)/s', $css);
-        self::assertDoesNotMatchRegularExpression('/(?:width|min-width)\s*:\s*\d+vw/', $css);
-        self::assertStringContainsString('min-width: 0', $css);
-        self::assertStringContainsString('max-width: 100%', $css);
-        self::assertStringContainsString('overflow-wrap:anywhere', str_replace(' ', '', $css));
+        $root = dirname(__DIR__, 3);
+        $body = file_get_contents($root . '/src/templates/default/main/body.tpl.html');
+        $status = file_get_contents($root . '/src/templates/default/module/server/status/index.tpl.html');
+        $detail = file_get_contents($root . '/src/templates/default/module/server/server/view.tpl.html');
+        $config = file_get_contents($root . '/src/templates/default/module/config/config.tpl.html');
+
+        self::assertIsString($body);
+        self::assertIsString($status);
+        self::assertIsString($detail);
+        self::assertIsString($config);
+        self::assertFileDoesNotExist($root . '/src/templates/default/static/css/hs-monitor.css');
+        self::assertStringContainsString('container-fluid content-inner', $body);
+        self::assertStringContainsString('row row-cols-1 row-cols-md-2 row-cols-xl-3', $status);
+        self::assertStringContainsString('flex-nowrap overflow-auto', $detail);
+        self::assertStringContainsString('text-break', $detail);
+        self::assertStringContainsString('img-fluid', $detail);
+        self::assertStringContainsString('flex-nowrap gap-2 col-12 col-xl-3 overflow-auto', $config);
+
+        $templates = $body . $status . $detail . $config;
+        self::assertDoesNotMatchRegularExpression('/(?:width|min-width)\s*:\s*\d+vw/i', $templates);
+        self::assertStringNotContainsString(' style=', $templates);
     }
 
     public function testResponsiveAuditCoversRequiredWidthsAndThemes(): void
