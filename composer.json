@@ -18,6 +18,7 @@
 		"ext-pdo": "*",
 		"ext-pdo_mysql": "*",
 		"ext-xml": "*",
+		"minishlink/web-push": "^10.1",
 		"phpmailer/phpmailer": "^7.1",
 		"symfony/config": "^7.4",
 		"symfony/dependency-injection": "^7.4",

@@ -66,4 +66,33 @@ final class InstallerSchemaTest extends TestCase
         self::assertStringContainsString("addColumnIfMissing('servers', 'image_updated_at'", $migrationSource);
         self::assertDoesNotMatchRegularExpression('/\b(?:DROP|DELETE|TRUNCATE)\b/i', $migrationSource);
     }
+
+    public function testFreshAndUpgradeSchemasContainIncidentDeliveryNotificationAndPushTables(): void
+    {
+        $installSource = strstr($this->source, 'public function upgrade(', true);
+        self::assertIsString($installSource);
+
+        foreach (['incidents', 'notification_deliveries', 'user_notifications', 'push_subscriptions'] as $table) {
+            self::assertStringContainsString("PSM_DB_PREFIX . '" . $table . "'", $installSource);
+            self::assertStringContainsString('CREATE TABLE IF NOT EXISTS `" . PSM_DB_PREFIX . "' . $table, $installSource);
+        }
+        foreach ([
+            'UNIQUE KEY `incident_delivery`',
+            'UNIQUE KEY `user_incident_transition`',
+            'UNIQUE KEY `endpoint_hash`',
+            'KEY `server_state`',
+        ] as $index) {
+            self::assertStringContainsString($index, $installSource);
+        }
+
+        $migrationStart = strpos($this->source, 'protected function upgrade410hs()');
+        self::assertIsInt($migrationStart);
+        $migrationSource = substr($this->source, $migrationStart);
+        foreach (['incidents', 'notification_deliveries', 'user_notifications', 'push_subscriptions'] as $table) {
+            self::assertStringContainsString('CREATE TABLE IF NOT EXISTS `" . PSM_DB_PREFIX . "' . $table, $migrationSource);
+        }
+        foreach (['webpush_status', 'webpush_vapid_subject', 'webpush_vapid_public_key', 'webpush_vapid_private_key'] as $key) {
+            self::assertStringContainsString("('" . $key . "'", $this->source);
+        }
+    }
 }

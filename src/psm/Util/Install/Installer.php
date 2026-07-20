@@ -166,6 +166,10 @@ class Installer
                     ('telegram_status', '0'),
                     ('telegram_add_url', '0'),
                     ('telegram_api_token', ''),
+                    ('webpush_status', '0'),
+                    ('webpush_vapid_subject', ''),
+                    ('webpush_vapid_public_key', ''),
+                    ('webpush_vapid_private_key', ''),
                     ('password_encrypt_key', '" . sha1(microtime()) . "'),
                     ('alert_type', 'status'),
                     ('log_status', '1'),
@@ -309,6 +313,58 @@ class Installer
                 PRIMARY KEY (`servers_history_id`),
                 UNIQUE KEY `server_id_date` (`server_id`,`date`)
             )  DEFAULT CHARSET=utf8;",
+            PSM_DB_PREFIX . 'incidents' => "CREATE TABLE IF NOT EXISTS `" . PSM_DB_PREFIX . "incidents` (
+                `incident_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+                `server_id` INT UNSIGNED NOT NULL,
+                `opened_at` DATETIME NOT NULL,
+                `resolved_at` DATETIME NULL,
+                `opening_error` VARCHAR(255) NULL,
+                `recovery_message` VARCHAR(255) NULL,
+                PRIMARY KEY (`incident_id`),
+                KEY `server_state` (`server_id`,`resolved_at`)
+            ) DEFAULT CHARSET=utf8mb4;",
+            PSM_DB_PREFIX . 'notification_deliveries' => "CREATE TABLE IF NOT EXISTS `" . PSM_DB_PREFIX . "notification_deliveries` (
+                `delivery_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+                `incident_id` BIGINT UNSIGNED NOT NULL,
+                `user_id` INT UNSIGNED NOT NULL,
+                `channel` VARCHAR(32) NOT NULL,
+                `transition` ENUM('down','recovery') NOT NULL,
+                `state` ENUM('pending','sending','delivered','permanent_failure') NOT NULL DEFAULT 'pending',
+                `attempts` SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+                `available_at` DATETIME NOT NULL,
+                `leased_at` DATETIME NULL,
+                `delivered_at` DATETIME NULL,
+                `last_error` VARCHAR(255) NULL,
+                PRIMARY KEY (`delivery_id`),
+                UNIQUE KEY `incident_delivery` (`incident_id`,`user_id`,`channel`,`transition`)
+            ) DEFAULT CHARSET=utf8mb4;",
+            PSM_DB_PREFIX . 'user_notifications' => "CREATE TABLE IF NOT EXISTS `" . PSM_DB_PREFIX . "user_notifications` (
+                `notification_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+                `user_id` INT UNSIGNED NOT NULL,
+                `incident_id` BIGINT UNSIGNED NOT NULL,
+                `transition` ENUM('down','recovery') NOT NULL,
+                `title` VARCHAR(255) NOT NULL,
+                `body` TEXT NOT NULL,
+                `created_at` DATETIME NOT NULL,
+                `read_at` DATETIME NULL,
+                PRIMARY KEY (`notification_id`),
+                UNIQUE KEY `user_incident_transition` (`user_id`,`incident_id`,`transition`)
+            ) DEFAULT CHARSET=utf8mb4;",
+            PSM_DB_PREFIX . 'push_subscriptions' => "CREATE TABLE IF NOT EXISTS `" . PSM_DB_PREFIX . "push_subscriptions` (
+                `subscription_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+                `user_id` INT UNSIGNED NOT NULL,
+                `endpoint` TEXT NOT NULL,
+                `endpoint_hash` CHAR(64) NOT NULL,
+                `public_key` VARCHAR(255) NOT NULL,
+                `auth_token` VARCHAR(255) NOT NULL,
+                `content_encoding` VARCHAR(32) NOT NULL DEFAULT 'aes128gcm',
+                `device_name` VARCHAR(120) NOT NULL,
+                `user_agent` VARCHAR(255) NOT NULL,
+                `created_at` DATETIME NOT NULL,
+                `last_seen_at` DATETIME NOT NULL,
+                PRIMARY KEY (`subscription_id`),
+                UNIQUE KEY `endpoint_hash` (`endpoint_hash`)
+            ) DEFAULT CHARSET=utf8mb4;",
         );
 
         foreach ($tables as $name => $sql) {
@@ -815,5 +871,66 @@ class Installer
     {
         $this->addColumnIfMissing('servers', 'image_file', 'VARCHAR(255) NULL AFTER `custom_header`');
         $this->addColumnIfMissing('servers', 'image_updated_at', 'DATETIME NULL AFTER `image_file`');
+        $this->execSQL(array(
+            "CREATE TABLE IF NOT EXISTS `" . PSM_DB_PREFIX . "incidents` (
+                `incident_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+                `server_id` INT UNSIGNED NOT NULL,
+                `opened_at` DATETIME NOT NULL,
+                `resolved_at` DATETIME NULL,
+                `opening_error` VARCHAR(255) NULL,
+                `recovery_message` VARCHAR(255) NULL,
+                PRIMARY KEY (`incident_id`),
+                KEY `server_state` (`server_id`,`resolved_at`)
+            ) DEFAULT CHARSET=utf8mb4;",
+            "CREATE TABLE IF NOT EXISTS `" . PSM_DB_PREFIX . "notification_deliveries` (
+                `delivery_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+                `incident_id` BIGINT UNSIGNED NOT NULL,
+                `user_id` INT UNSIGNED NOT NULL,
+                `channel` VARCHAR(32) NOT NULL,
+                `transition` ENUM('down','recovery') NOT NULL,
+                `state` ENUM('pending','sending','delivered','permanent_failure') NOT NULL DEFAULT 'pending',
+                `attempts` SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+                `available_at` DATETIME NOT NULL,
+                `leased_at` DATETIME NULL,
+                `delivered_at` DATETIME NULL,
+                `last_error` VARCHAR(255) NULL,
+                PRIMARY KEY (`delivery_id`),
+                UNIQUE KEY `incident_delivery` (`incident_id`,`user_id`,`channel`,`transition`)
+            ) DEFAULT CHARSET=utf8mb4;",
+            "CREATE TABLE IF NOT EXISTS `" . PSM_DB_PREFIX . "user_notifications` (
+                `notification_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+                `user_id` INT UNSIGNED NOT NULL,
+                `incident_id` BIGINT UNSIGNED NOT NULL,
+                `transition` ENUM('down','recovery') NOT NULL,
+                `title` VARCHAR(255) NOT NULL,
+                `body` TEXT NOT NULL,
+                `created_at` DATETIME NOT NULL,
+                `read_at` DATETIME NULL,
+                PRIMARY KEY (`notification_id`),
+                UNIQUE KEY `user_incident_transition` (`user_id`,`incident_id`,`transition`)
+            ) DEFAULT CHARSET=utf8mb4;",
+            "CREATE TABLE IF NOT EXISTS `" . PSM_DB_PREFIX . "push_subscriptions` (
+                `subscription_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+                `user_id` INT UNSIGNED NOT NULL,
+                `endpoint` TEXT NOT NULL,
+                `endpoint_hash` CHAR(64) NOT NULL,
+                `public_key` VARCHAR(255) NOT NULL,
+                `auth_token` VARCHAR(255) NOT NULL,
+                `content_encoding` VARCHAR(32) NOT NULL DEFAULT 'aes128gcm',
+                `device_name` VARCHAR(120) NOT NULL,
+                `user_agent` VARCHAR(255) NOT NULL,
+                `created_at` DATETIME NOT NULL,
+                `last_seen_at` DATETIME NOT NULL,
+                PRIMARY KEY (`subscription_id`),
+                UNIQUE KEY `endpoint_hash` (`endpoint_hash`)
+            ) DEFAULT CHARSET=utf8mb4;"
+        ));
+        $this->execSQL(
+            "INSERT IGNORE INTO `" . PSM_DB_PREFIX . "config` (`key`, `value`) VALUES " .
+            "('webpush_status', '0'), " .
+            "('webpush_vapid_subject', ''), " .
+            "('webpush_vapid_public_key', ''), " .
+            "('webpush_vapid_private_key', '')"
+        );
     }
 }
