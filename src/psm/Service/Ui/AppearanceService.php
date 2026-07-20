@@ -19,6 +19,9 @@ final readonly class AppearanceService
             'ui_accent' => $this->user->getUserPref('ui_accent', 'blue'),
             'ui_direction' => $this->user->getUserPref('ui_direction', 'ltr'),
             'ui_sidebar' => $this->user->getUserPref('ui_sidebar', 'default'),
+            'ui_sidebar_types' => $this->user->getUserPref('ui_sidebar_types', ''),
+            'ui_sidebar_active' => $this->user->getUserPref('ui_sidebar_active', 'rounded-one-side'),
+            'ui_navbar' => $this->user->getUserPref('ui_navbar', 'default'),
         ]);
     }
 
@@ -30,6 +33,9 @@ final readonly class AppearanceService
         $this->user->setUserPref('ui_accent', $appearance->accent);
         $this->user->setUserPref('ui_direction', $appearance->direction);
         $this->user->setUserPref('ui_sidebar', $appearance->sidebar);
+        $this->user->setUserPref('ui_sidebar_types', implode(',', $appearance->sidebarTypes));
+        $this->user->setUserPref('ui_sidebar_active', $appearance->sidebarActive);
+        $this->user->setUserPref('ui_navbar', $appearance->navbar);
 
         return $appearance;
     }

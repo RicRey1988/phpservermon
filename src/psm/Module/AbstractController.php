@@ -243,6 +243,26 @@ abstract class AbstractController implements ControllerInterface
                 'appearance' => $appearance->toArray(),
                 'user_level' => $userLevel,
             );
+            if ($userLevel !== PSM_USER_ANONYMOUS) {
+                $navbarUser = $this->getUser()->getUser();
+                $navbarName = trim((string) ($navbarUser->name ?? $navbarUser->user_name ?? 'Usuario'));
+                $tpl_data['navbar_user_name'] = $navbarName;
+                $tpl_data['navbar_user_initial'] = function_exists('mb_substr')
+                    ? mb_strtoupper(mb_substr($navbarName, 0, 1))
+                    : strtoupper(substr($navbarName, 0, 1));
+                $tpl_data['navbar_profile_url'] = psm_build_url(['mod' => 'user_profile']);
+                $tpl_data['navbar_logout_url'] = psm_build_url(['logout' => 1]);
+                $tpl_data['appearance_save_url'] = psm_build_url(
+                    ['xhr' => 1, 'mod' => 'user_profile', 'action' => 'appearance'],
+                    true,
+                    false,
+                );
+                $tpl_data['appearance_csrf'] = hash_hmac(
+                    'sha256',
+                    'profile',
+                    $this->getUser()->getSession()->get('csrf_token2'),
+                );
+            }
             if (
                 $userLevel !== PSM_USER_ANONYMOUS
                 && $this->container !== null

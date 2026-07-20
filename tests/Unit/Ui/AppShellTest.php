@@ -24,6 +24,27 @@ final class AppShellTest extends TestCase
         self::assertStringNotContainsString('jquery-3.5.1', $body);
     }
 
+    public function testShellUsesAuthenticHopeUiHierarchyAndControls(): void
+    {
+        $root = dirname(__DIR__, 3) . '/src/templates/default/main/';
+        $body = file_get_contents($root . 'body.tpl.html');
+        $navbar = file_get_contents($root . 'app-navbar.tpl.html');
+        $customizer = file_get_contents($root . 'appearance-customizer.tpl.html');
+
+        self::assertIsString($body);
+        self::assertIsString($navbar);
+        self::assertIsString($customizer);
+        self::assertStringContainsString('sidebar sidebar-default sidebar-white sidebar-base', $body);
+        self::assertStringContainsString('<main class="main-content"', $body);
+        self::assertStringContainsString('iq-navbar-header', $body);
+        self::assertStringContainsString('content-inner mt-n5 py-0', $body);
+        self::assertStringContainsString('data-theme-quick-toggle', $navbar);
+        self::assertStringContainsString('data-bs-target="#hope-ui-settings"', $navbar);
+        foreach (['auto', 'dark', 'light'] as $scheme) {
+            self::assertStringContainsString('data-value="' . $scheme . '"', $customizer);
+        }
+    }
+
     public function testFooterIdentifiesHostingSupremoFork(): void
     {
         $body = file_get_contents(dirname(__DIR__, 3) . '/src/templates/default/main/body.tpl.html');
@@ -39,9 +60,10 @@ final class AppShellTest extends TestCase
         $profile = file_get_contents(dirname(__DIR__, 3) . '/src/templates/default/module/user/profile.tpl.html');
         self::assertIsString($profile);
 
-        foreach (['ui_scheme', 'ui_accent', 'ui_direction', 'ui_sidebar', 'appearance_submit'] as $field) {
+        foreach (['ui_scheme', 'ui_accent', 'ui_direction', 'ui_sidebar', 'ui_sidebar_active', 'ui_navbar', 'appearance_submit'] as $field) {
             self::assertStringContainsString('name="' . $field . '"', $profile);
         }
+        self::assertStringContainsString('name="ui_sidebar_types[]"', $profile);
     }
 
     public function testModalMarkupUsesBootstrapFiveAttributes(): void

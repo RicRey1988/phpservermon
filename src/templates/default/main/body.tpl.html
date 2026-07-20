@@ -1,96 +1,75 @@
 <!doctype html>
-<html lang="{{ language_current }}" dir="{{ appearance.direction }}"
-	data-bs-theme="{{ appearance.resolved_scheme }}"
-	data-ui-scheme="{{ appearance.scheme }}"
-	data-color-root="{{ appearance.accent }}">
+<html lang="{{ language_current }}" dir="{{ appearance.direction }}" data-bs-theme="{{ appearance.resolved_scheme }}" data-ui-scheme="{{ appearance.scheme }}" data-color-root="{{ appearance.accent }}">
 <head>
-	<meta charset="utf-8">
-	<title>{{ title }}{% if subtitle %} - {{ subtitle }}{% endif %}</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="description" content="PHP Server Monitor - {{ subtitle }}">
-	<meta name="robots" content="noindex,nofollow">
-	<meta name="theme-color" content="#3a57e8">
-	<link rel="manifest" href="manifest.webmanifest">
-	<link rel="icon" type="image/x-icon" href="favicon.ico">
-	<link rel="icon" type="image/png" href="favicon.png">
-	<link rel="apple-touch-icon" href="phpservermon.png">
-	<script>
-		(function () {
-			var root = document.documentElement;
-			if (root.dataset.uiScheme === 'auto' && window.matchMedia) {
-				root.dataset.bsTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-			}
-			if (root.dataset.bsTheme === 'dark') {
-				root.classList.add('dark');
-			}
-		}());
-	</script>
-	<link href="src/templates/default/static/hope/css/hope-ui.min.css?v={{ version|url_encode }}" rel="stylesheet">
-	<link href="src/templates/default/static/hope/css/dark.min.css?v={{ version|url_encode }}" rel="stylesheet">
-	<link href="src/templates/default/static/css/custom.css?v={{ version|url_encode }}" rel="stylesheet">
-	<link href="src/templates/default/static/css/app-shell.css?v={{ version|url_encode }}" rel="stylesheet">
+    <meta charset="utf-8">
+    <title>{{ title }}{% if subtitle %} - {{ subtitle }}{% endif %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="PHP Server Monitor - {{ subtitle }}">
+    <meta name="robots" content="noindex,nofollow">
+    <meta name="theme-color" content="#3a57e8">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="phpservermon.png">
+    <script>(function(){var r=document.documentElement,s=r.dataset.uiScheme;if(s==='auto'&&window.matchMedia){r.dataset.bsTheme=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}r.classList.toggle('dark',r.dataset.bsTheme==='dark');}());</script>
+    <link href="src/templates/default/static/hope/css/hope-ui.min.css?v={{ version|url_encode }}" rel="stylesheet">
+    <link href="src/templates/default/static/hope/css/dark.min.css?v={{ version|url_encode }}" rel="stylesheet">
+    <link href="src/templates/default/static/hope/css/customizer.min.css?v={{ version|url_encode }}" rel="stylesheet">
+    <link href="src/templates/default/static/css/custom.css?v={{ version|url_encode }}" rel="stylesheet">
+    <link href="src/templates/default/static/css/app-shell.css?v={{ version|url_encode }}" rel="stylesheet">
 </head>
-<body data-authenticated="{{ user_level != 30 ? 'true' : 'false' }}" class="{% if appearance.resolved_scheme == 'dark' %}dark {% endif %}{% if appearance.sidebar == 'dark' %}sidebar-dark {% endif %}{% if html_menu is not defined or not html_menu %}no-menu{% endif %}">
-	<a class="visually-hidden-focusable skip-link" href="#main-content">Ir al contenido principal</a>
+<body class="{{ appearance.body_classes }}{% if html_menu is not defined or not html_menu %} no-menu{% endif %}" data-authenticated="{{ user_level != 30 ? 'true' : 'false' }}" data-appearance-url="{{ appearance_save_url|default('')|raw }}" data-appearance-csrf="{{ appearance_csrf|default('') }}">
+    <a class="visually-hidden-focusable skip-link" href="#main-content">Ir al contenido principal</a>
 
-	{% if html_menu is defined and html_menu %}
-	<aside class="sidebar sidebar-default app-sidebar" aria-label="Navegación principal">
-		<div class="sidebar-header">
-			<a href="index.php" class="navbar-brand d-flex align-items-center gap-2">
-				<span class="brand-mark" aria-hidden="true">HS</span>
-				<span class="logo-title">{{ title }}</span>
-			</a>
-			<button type="button" class="btn btn-sm btn-icon sidebar-toggle" data-sidebar-toggle
-				aria-label="Contraer menú" aria-expanded="true">
-				<span aria-hidden="true">‹</span>
-			</button>
-		</div>
-		<div class="sidebar-body">{{ html_menu|raw }}</div>
-	</aside>
-	{% endif %}
+    {% if html_menu is defined and html_menu %}
+    <aside class="sidebar sidebar-default sidebar-white sidebar-base {{ appearance.sidebar_classes }}" aria-label="Navegación principal">
+        <div class="sidebar-header d-flex align-items-center justify-content-start">
+            <a href="index.php" class="navbar-brand d-flex align-items-center gap-2">
+                <span class="brand-mark" aria-hidden="true">HS</span><h4 class="logo-title mb-0">{{ title }}</h4>
+            </a>
+            <button type="button" class="sidebar-toggle btn btn-icon" data-toggle="sidebar" data-active="true" aria-label="Contraer menú" aria-expanded="true"><i class="fas fa-arrow-left" aria-hidden="true"></i></button>
+        </div>
+        <div class="sidebar-body pt-0 data-scrollbar"><div class="sidebar-list">{{ html_menu|raw }}</div></div>
+        <div class="sidebar-footer"></div>
+    </aside>
+    {% endif %}
 
-	<main class="main-content" id="main-content">
-		{% include 'main/app-navbar.tpl.html' %}
+    <main class="main-content" id="main-content">
+        <div class="position-relative iq-banner">
+            {% include 'main/app-navbar.tpl.html' %}
+            <div class="iq-navbar-header p-3 p-md-4">
+                <div class="container-fluid iq-container">
+                    <div class="row"><div class="col-md-12"><div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                        <div><p class="text-white-50 mb-1">PHP Server Monitor</p><h1 class="text-white h2 mb-0">{{ subtitle|default(title) }}</h1></div>
+                        {% if header_accessories is defined %}<div class="page-actions">{{ header_accessories|raw }}</div>{% endif %}
+                    </div></div></div>
+                </div>
+                <div class="iq-header-img"><img src="src/templates/default/static/hope/images/dashboard/top-header.png" alt="" class="theme-color-default-img img-fluid w-100" onerror="this.hidden=true"></div>
+            </div>
+        </div>
 
-		<div class="container-fluid content-inner pb-0">
-			<noscript>
-				<div class="alert alert-warning" role="alert">PHP Server Monitor funciona mejor con JavaScript activado.</div>
-			</noscript>
-			{% if header_accessories is defined %}<div class="page-actions mb-3">{{ header_accessories|raw }}</div>{% endif %}
-			<div class="message-stack" aria-live="polite" aria-atomic="true">
-				{% for msg in messages %}
-				<div class="alert alert-{{ msg.class }} alert-dismissible fade show" role="alert">
-					<strong>{{ msg.message|raw }}</strong>
-					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
-				</div>
-				{% endfor %}
-			</div>
-			{% if html_sidebar is defined %}<div class="module-actions mb-3">{{ html_sidebar|raw }}</div>{% endif %}
-			<div id="content" class="app-content">{{ html_content|raw }}</div>
-		</div>
+        <div class="container-fluid content-inner mt-n5 py-0">
+            <noscript><div class="alert alert-warning" role="alert">PHP Server Monitor funciona mejor con JavaScript activado.</div></noscript>
+            <div class="message-stack" aria-live="polite" aria-atomic="true">{% for msg in messages %}<div class="alert alert-{{ msg.class }} alert-dismissible fade show" role="alert"><strong>{{ msg.message|raw }}</strong><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button></div>{% endfor %}</div>
+            {% if html_sidebar is defined %}<div class="module-actions mb-3">{{ html_sidebar|raw }}</div>{% endif %}
+            <div id="content" class="app-content">{{ html_content|raw }}</div>
+        </div>
 
-		{% if add_footer %}
-		<footer class="footer app-footer" role="contentinfo">
-			<div class="container-fluid d-flex flex-wrap justify-content-between gap-2">
-				<span>PHP Server Monitor {{ version }} ·
-					<a href="https://github.com/RicRey1988/phpservermon" target="_blank" rel="noopener noreferrer">Mejorado por Hosting Supremo</a>
-					<span class="text-danger">{{ update_available|raw }}</span>
-				</span>
-				<a href="#main-content">{{ label_back_to_top }}</a>
-			</div>
-		</footer>
-		{% endif %}
-	</main>
+        {% if add_footer %}<footer class="footer app-footer" role="contentinfo"><div class="container-fluid d-flex flex-wrap justify-content-between gap-2"><span>PHP Server Monitor {{ version }} · <a href="https://github.com/RicRey1988/phpservermon" target="_blank" rel="noopener noreferrer">Mejorado por Hosting Supremo</a> <span class="text-danger">{{ update_available|raw }}</span></span><a href="#main-content">{{ label_back_to_top }}</a></div></footer>{% endif %}
+    </main>
 
-	{{ html_modal|default('')|raw }}
-	<script src="src/templates/default/static/hope/js/bootstrap.bundle.min.js?v={{ version|url_encode }}"></script>
-	{% if needs_charts|default(false) %}<script src="src/templates/default/static/hope/js/apexcharts.min.js?v={{ version|url_encode }}"></script>{% endif %}
-	<script defer src="src/templates/default/static/plugin/font-awesome/js/solid.min.js"></script>
-	<script defer src="src/templates/default/static/plugin/font-awesome/js/fontawesome.min.js" data-auto-replace-svg="nest"></script>
-	<script defer src="src/templates/default/static/plugin/font-awesome/js/brands.min.js"></script>
-	<script src="src/templates/default/static/js/app-shell.js?v={{ version|url_encode }}"></script>
-	{% if notification_navbar is defined %}<script src="src/templates/default/static/js/notifications.js?v={{ version|url_encode }}"></script>{% endif %}
-	<script src="src/templates/default/static/js/pwa.js?v={{ version|url_encode }}"></script>
-	{% if needs_dashboard|default(false) %}<script src="src/templates/default/static/js/dashboard.js?v={{ version|url_encode }}"></script>{% endif %}
+    {% if user_level != 30 %}{% include 'main/appearance-customizer.tpl.html' %}{% endif %}
+    {{ html_modal|default('')|raw }}
+    <script src="src/templates/default/static/hope/js/bootstrap.bundle.min.js?v={{ version|url_encode }}"></script>
+    {% if needs_charts|default(false) %}<script src="src/templates/default/static/hope/js/apexcharts.min.js?v={{ version|url_encode }}"></script>{% endif %}
+    <script defer src="src/templates/default/static/plugin/font-awesome/js/solid.min.js"></script>
+    <script defer src="src/templates/default/static/plugin/font-awesome/js/fontawesome.min.js" data-auto-replace-svg="nest"></script>
+    <script defer src="src/templates/default/static/plugin/font-awesome/js/brands.min.js"></script>
+    <script src="src/templates/default/static/hope/js/hope-ui.js?v={{ version|url_encode }}"></script>
+    <script src="src/templates/default/static/hope/js/plugins/setting.js?v={{ version|url_encode }}"></script>
+    <script src="src/templates/default/static/js/app-shell.js?v={{ version|url_encode }}"></script>
+    {% if notification_navbar is defined %}<script src="src/templates/default/static/js/notifications.js?v={{ version|url_encode }}"></script>{% endif %}
+    <script src="src/templates/default/static/js/pwa.js?v={{ version|url_encode }}"></script>
+    {% if needs_dashboard|default(false) %}<script src="src/templates/default/static/js/dashboard.js?v={{ version|url_encode }}"></script>{% endif %}
 </body>
 </html>

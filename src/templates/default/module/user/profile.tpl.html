@@ -133,6 +133,26 @@
 			<select class="form-select" id="ui_sidebar" name="ui_sidebar">
 				<option value="default"{% if appearance.sidebar == 'default' %} selected{% endif %}>Predeterminada</option>
 				<option value="dark"{% if appearance.sidebar == 'dark' %} selected{% endif %}>Oscura</option>
+				<option value="color"{% if appearance.sidebar == 'color' %} selected{% endif %}>Color</option>
+				<option value="transparent"{% if appearance.sidebar == 'transparent' %} selected{% endif %}>Transparente</option>
+			</select>
+		</div>
+		<div>
+			<label class="form-label" for="ui_sidebar_types">Tipo de barra lateral</label>
+			<select class="form-select" id="ui_sidebar_types" name="ui_sidebar_types[]" multiple size="3">
+				{% for value, label in {'mini':'Mini','hover':'Hover','boxed':'Boxed'} %}<option value="{{ value }}"{% if value in appearance.sidebar_types %} selected{% endif %}>{{ label }}</option>{% endfor %}
+			</select>
+		</div>
+		<div>
+			<label class="form-label" for="ui_sidebar_active">Elemento activo</label>
+			<select class="form-select" id="ui_sidebar_active" name="ui_sidebar_active">
+				{% for value, label in {'rounded-one-side':'Redondeado lateral','rounded-all':'Todo redondeado','pill-one-side':'Píldora lateral','pill-all':'Todo píldora'} %}<option value="{{ value }}"{% if appearance.sidebar_active == value %} selected{% endif %}>{{ label }}</option>{% endfor %}
+			</select>
+		</div>
+		<div>
+			<label class="form-label" for="ui_navbar">Barra superior</label>
+			<select class="form-select" id="ui_navbar" name="ui_navbar">
+				{% for value, label in {'default':'Predeterminada','glass':'Cristal','color':'Color','sticky':'Fija','transparent':'Transparente'} %}<option value="{{ value }}"{% if appearance.navbar == value %} selected{% endif %}>{{ label }}</option>{% endfor %}
 			</select>
 		</div>
 	</div>

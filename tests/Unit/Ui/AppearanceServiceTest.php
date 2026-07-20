@@ -18,6 +18,9 @@ final class AppearanceServiceTest extends TestCase
             'ui_accent' => '#fff;}',
             'ui_direction' => 'sideways',
             'ui_sidebar' => 'hidden',
+            'ui_sidebar_types' => ['unknown'],
+            'ui_sidebar_active' => 'square',
+            'ui_navbar' => 'javascript:alert(1)',
         ]);
 
         self::assertSame([
@@ -26,6 +29,12 @@ final class AppearanceServiceTest extends TestCase
             'accent' => 'blue',
             'direction' => 'ltr',
             'sidebar' => 'default',
+            'sidebar_types' => [],
+            'sidebar_active' => 'rounded-one-side',
+            'navbar' => 'default',
+            'body_classes' => 'auto theme-color-blue',
+            'sidebar_classes' => 'sidebar-white navs-rounded',
+            'navbar_classes' => '',
         ], $appearance->toArray());
     }
 
@@ -36,12 +45,18 @@ final class AppearanceServiceTest extends TestCase
             'ui_accent' => 'purple',
             'ui_direction' => 'rtl',
             'ui_sidebar' => 'dark',
+            'ui_sidebar_types' => ['mini', 'boxed'],
+            'ui_sidebar_active' => 'pill-all',
+            'ui_navbar' => 'glass',
         ]);
 
         self::assertSame('dark', $appearance->resolvedScheme());
         self::assertSame('purple', $appearance->accent);
         self::assertSame('rtl', $appearance->direction);
         self::assertSame('dark', $appearance->sidebar);
+        self::assertSame(['mini', 'boxed'], $appearance->sidebarTypes);
+        self::assertSame('pill-all', $appearance->sidebarActive);
+        self::assertSame('glass', $appearance->navbar);
     }
 
     public function testServiceReadsAndNormalizesCurrentUserPreferences(): void
@@ -52,6 +67,9 @@ final class AppearanceServiceTest extends TestCase
             ['ui_accent', 'blue', 'pink'],
             ['ui_direction', 'ltr', 'ltr'],
             ['ui_sidebar', 'default', 'dark'],
+            ['ui_sidebar_types', '', 'mini,hover'],
+            ['ui_sidebar_active', 'rounded-one-side', 'rounded-all'],
+            ['ui_navbar', 'default', 'sticky'],
         ]);
 
         $appearance = (new AppearanceService($user))->forCurrentUser();
@@ -59,6 +77,8 @@ final class AppearanceServiceTest extends TestCase
         self::assertSame('dark', $appearance->scheme);
         self::assertSame('pink', $appearance->accent);
         self::assertSame('dark', $appearance->sidebar);
+        self::assertSame(['mini', 'hover'], $appearance->sidebarTypes);
+        self::assertSame('sticky', $appearance->navbar);
     }
 
     public function testServiceStoresOnlyNormalizedValues(): void
@@ -76,6 +96,9 @@ final class AppearanceServiceTest extends TestCase
             'ui_accent' => 'invalid',
             'ui_direction' => 'rtl',
             'ui_sidebar' => 'dark',
+            'ui_sidebar_types' => ['mini', 'invalid'],
+            'ui_sidebar_active' => 'pill-one-side',
+            'ui_navbar' => 'transparent',
         ]);
 
         self::assertSame([
@@ -83,6 +106,9 @@ final class AppearanceServiceTest extends TestCase
             'ui_accent' => 'blue',
             'ui_direction' => 'rtl',
             'ui_sidebar' => 'dark',
+            'ui_sidebar_types' => 'mini',
+            'ui_sidebar_active' => 'pill-one-side',
+            'ui_navbar' => 'transparent',
         ], $stored);
         self::assertSame('blue', $appearance->accent);
     }

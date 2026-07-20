@@ -31,6 +31,8 @@ namespace psm\Module\User\Controller;
 use psm\Module\AbstractController;
 use psm\Notification\Channel\TelegramChannel;
 use psm\Service\Database;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class ProfileController extends AbstractController
 {
@@ -47,7 +49,7 @@ class ProfileController extends AbstractController
         parent::__construct($db, $twig);
 
         $this->setActions(array(
-            'index', 'save',
+            'index', 'save', 'appearance',
         ), 'index');
         $this->setCSRFKey('profile');
     }
@@ -191,6 +193,19 @@ class ProfileController extends AbstractController
             $this->activateTelegram();
         }
         return $this->executeIndex();
+    }
+
+    protected function executeAppearance(): JsonResponse
+    {
+        if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
+            return new JsonResponse(['ok' => false, 'error' => 'Method not allowed.'], Response::HTTP_METHOD_NOT_ALLOWED, ['Allow' => 'POST']);
+        }
+
+        $appearance = $this->container->get('service.ui.appearance')->saveForCurrentUser($_POST);
+
+        return new JsonResponse(['ok' => true, 'appearance' => $appearance->toArray()], Response::HTTP_OK, [
+            'Cache-Control' => 'no-store, private',
+        ]);
     }
 
     /**
