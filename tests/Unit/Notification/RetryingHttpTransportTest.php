@@ -76,4 +76,20 @@ final class RetryingHttpTransportTest extends TestCase
         self::assertStringNotContainsString('secret-token', $result->message());
         self::assertStringNotContainsString('secret-value', $result->message());
     }
+
+    public function testSuccessfulResponseWithoutJsonStillSendsRequest(): void
+    {
+        $requests = 0;
+        $client = new MockHttpClient(static function () use (&$requests): MockResponse {
+            $requests++;
+            return new MockResponse('', ['http_code' => 204]);
+        });
+
+        $result = (new RetryingHttpTransport($client))
+            ->post('https://example.test/webhook', ['psm_expect_json' => false]);
+
+        self::assertTrue($result->isSuccess());
+        self::assertSame(1, $result->attempts());
+        self::assertSame(1, $requests);
+    }
 }

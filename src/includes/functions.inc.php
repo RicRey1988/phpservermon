@@ -635,9 +635,9 @@ namespace {
     /**
      * Prepare a new SMS util.
      *
-     * @return \psm\Txtmsg\TxtmsgInterface
+     * @return \psm\Txtmsg\TxtmsgInterface|null
      */
-    function psm_build_sms()
+    function psm_build_sms(): ?\psm\Txtmsg\TxtmsgInterface
     {
         $sms = null;
 
@@ -712,11 +712,13 @@ namespace {
                 break;
             case 'ysmal':
                 $sms = new \psm\Txtmsg\Ysmal();
+                break;
             case 'smsapi':
                 $sms = new \psm\Txtmsg\SMSAPI();
                 break;
             case 'promosms':
                 $sms = new \psm\Txtmsg\PromoSMS();
+                break;
             case 'labsmobile':
                 $sms = new \psm\Txtmsg\LabsMobile();
                 break;

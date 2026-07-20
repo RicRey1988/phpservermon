@@ -86,7 +86,17 @@ define('PSM_LOGIN_HASH_COST_FACTOR', '10');
  */
 define('PSM_LOGIN_COOKIE_RUNTIME', 1209600);
 define('PSM_LOGIN_COOKIE_DOMAIN', null);
-define('PSM_LOGIN_COOKIE_SECRET_KEY', '4w900de52e3ap7y77y8675jy6c594286');
+if (!defined('PSM_LOGIN_COOKIE_SECRET_KEY')) {
+    $cookieSecretMaterial = implode("\0", array(
+        defined('PSM_DB_HOST') ? PSM_DB_HOST : '',
+        defined('PSM_DB_NAME') ? PSM_DB_NAME : '',
+        defined('PSM_DB_USER') ? PSM_DB_USER : '',
+        defined('PSM_DB_PASS') ? PSM_DB_PASS : '',
+        defined('PSM_DB_PREFIX') ? PSM_DB_PREFIX : '',
+    ));
+    define('PSM_LOGIN_COOKIE_SECRET_KEY', hash('sha256', 'phpservermon-login-cookie' . $cookieSecretMaterial));
+    unset($cookieSecretMaterial);
+}
 
 /**
  * Number of seconds the reset link is valid after sending it to the user.

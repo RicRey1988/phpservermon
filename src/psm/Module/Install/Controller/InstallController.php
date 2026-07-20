@@ -145,7 +145,7 @@ class InstallController extends AbstractController
                 'db_pass' => '',
                 'db_prefix' => 'psm_',
                 'base_url' => $this->getBaseUrl(),
-				'uptime_archive' => 'weekly',
+                'uptime_archive' => 'weekly',
             );
 
             $changed = false;
@@ -155,6 +155,10 @@ class InstallController extends AbstractController
                     $cvalue = $values[$ckey];
                 }
             }
+            unset($cvalue);
+
+            // Each installation gets an independent remember-me cookie key.
+            $config['login_cookie_secret_key'] = bin2hex(random_bytes(32));
             // add config to template data for prefilling the form
             $tpl_data = $config;
 
@@ -320,13 +324,12 @@ class InstallController extends AbstractController
         $config = "<?php" . PHP_EOL;
 
         foreach ($array_config as $key => $value) {
-            $line = "define('PSM_{key}', '{value}');" . PHP_EOL;
-            $line = str_replace(
-                array('{key}', '{value}'),
-                array(strtoupper($key), $value),
-                $line
+            $config .= sprintf(
+                "define('PSM_%s', %s);%s",
+                strtoupper($key),
+                var_export((string) $value, true),
+                PHP_EOL
             );
-            $config .= $line;
         }
         if (is_writeable($this->path_config)) {
             file_put_contents($this->path_config, $config);

@@ -20,7 +20,9 @@ final class RetryingHttpTransport
         ?callable $sleeper = null
     ) {
         $this->maxAttempts = max(1, min(3, $maxAttempts));
-        $this->sleeper = $sleeper ?? static fn (int $attempt): int => usleep($attempt * 250000);
+        $this->sleeper = $sleeper ?? static function (int $attempt): void {
+            usleep($attempt * 250000);
+        };
     }
 
     private readonly int $maxAttempts;
@@ -32,10 +34,6 @@ final class RetryingHttpTransport
         unset($options['psm_expect_json']);
 
         for ($attempt = 1; $attempt <= $this->maxAttempts; $attempt++) {
-            if (!$expectJson) {
-                return HttpTransportResult::success([], $attempt, $statusCode);
-            }
-
             try {
                 $response = $this->client->request('POST', $url, $options);
                 $statusCode = $response->getStatusCode();
@@ -71,6 +69,10 @@ final class RetryingHttpTransport
                     $attempt,
                     $statusCode
                 );
+            }
+
+            if (!$expectJson) {
+                return HttpTransportResult::success([], $attempt, $statusCode);
             }
 
             try {

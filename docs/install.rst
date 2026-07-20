@@ -26,11 +26,14 @@ To change these values correctly, only update the second parameter of the functi
      define('PSM_DB_HOST', 'db_host');
      define('PSM_DB_NAME', 'db_name');
      define('PSM_DB_USER', 'db_user');
-     define('PSM_DB_PASS', 'db_user_password'); NOTE: password containing '%' will cause an error.
+     define('PSM_DB_PASS', 'db_user_password');
      define('PSM_DB_PORT', 'most likely 3306, may also be empty');
+     define('PSM_LOGIN_COOKIE_SECRET_KEY', 'a unique random value for this installation');
 
 For example: to change your username you should ONLY change the 'db\_user' part.
 Do NOT remove the quotes around your username as that will result in an error.
+Use at least 32 random bytes for ``PSM_LOGIN_COOKIE_SECRET_KEY``. Changing it
+later safely signs out all remembered browser sessions.
 After you have created the config.php, run the install.php again to create the database structure.
 
 Configure your installation

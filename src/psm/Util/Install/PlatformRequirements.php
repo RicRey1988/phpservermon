@@ -32,7 +32,7 @@ final class PlatformRequirements
     public function __construct(?string $phpVersion = null, ?array $extensions = null)
     {
         $this->phpVersion = $phpVersion ?? PHP_VERSION;
-        $this->extensions = array_values(array_map('strtolower', $extensions ?? get_loaded_extensions()));
+        $this->extensions = array_map('strtolower', $extensions ?? get_loaded_extensions());
     }
 
     /** @return list<string> */

@@ -1,0 +1,8 @@
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Composer dependencies are scanned by their own upstream projects"
+paths = [
+  '''^vendor/'''
+]

@@ -27,6 +27,8 @@
 ### Fixed
 - Notification, Telegram profile activation and cron compatibility with PHP 8.5.
 - Multiple notification channels can now reuse the complete recipient set.
+- Webhooks that do not return JSON are now sent before reporting success.
+- Ysmal and PromoSMS no longer fall through to a different SMS gateway.
 - Fresh installations now use the correct `log_discord` configuration key.
 - Symfony 7 container integration in controllers and the update manager.
 
@@ -41,3 +43,5 @@
   explicitly configured key or direct source-IP allowlist when enabled.
 - Database version markers are not rewritten when older application code sees a
   newer database schema.
+- Fresh installations receive an independent remember-me cookie signing key;
+  the shared legacy default was removed.
