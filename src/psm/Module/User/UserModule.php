@@ -48,6 +48,7 @@ class UserModule implements ModuleInterface
             'login' => __NAMESPACE__ . '\Controller\LoginController',
             'profile' => __NAMESPACE__ . '\Controller\ProfileController',
             'notification' => __NAMESPACE__ . '\Controller\NotificationController',
+            'push' => __NAMESPACE__ . '\Controller\PushController',
         );
     }
 }

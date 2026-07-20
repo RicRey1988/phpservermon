@@ -110,6 +110,19 @@ class ProfileController extends AbstractController
             'level' => psm_get_lang('users', 'level_' . $user->level),
             'placeholder_password' => psm_get_lang('users', 'password_leave_blank'),
             'appearance' => $this->container->get('service.ui.appearance')->forCurrentUser()->toArray(),
+            'push_devices' => $this->container->get('service.push.subscription_repository')->forUser(
+                $this->getUser()->getUserId()
+            ),
+            'webpush_enabled' => (bool) psm_get_conf('webpush_status'),
+            'webpush_public_key' => (string) psm_get_conf('webpush_vapid_public_key'),
+            'push_csrf' => hash_hmac(
+                'sha256',
+                'push',
+                $this->getUser()->getSession()->get('csrf_token2')
+            ),
+            'push_subscribe_url' => psm_build_url(['mod' => 'user_push', 'action' => 'subscribe'], true, false),
+            'push_unsubscribe_url' => psm_build_url(['mod' => 'user_push', 'action' => 'unsubscribe'], true, false),
+            'push_test_url' => psm_build_url(['mod' => 'user_push', 'action' => 'test'], true, false),
         );
         foreach ($this->profile_fields as $field) {
             $tpl_data[$field] = (isset($user->$field)) ? $user->$field : '';

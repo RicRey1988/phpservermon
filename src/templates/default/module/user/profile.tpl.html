@@ -57,6 +57,47 @@
 	{{ macro.button_save(null, label_save) }}
 </form>
 
+<section class="card col-12 col-xl-8 p-0 push-device-card"
+	data-push-settings
+	data-enabled="{{ webpush_enabled ? 'true' : 'false' }}"
+	data-public-key="{{ webpush_public_key }}"
+	data-subscribe-url="{{ push_subscribe_url }}"
+	data-unsubscribe-url="{{ push_unsubscribe_url }}"
+	data-test-url="{{ push_test_url }}"
+	data-csrf="{{ push_csrf }}">
+	<div class="card-header d-flex flex-wrap align-items-center justify-content-between gap-3">
+		<div>
+			<h2 class="h5 mb-1">Notificaciones en este dispositivo</h2>
+			<p class="text-muted mb-0">Recibe avisos automáticos cuando un servidor se cae o se recupera.</p>
+		</div>
+		<div class="d-flex gap-2">
+			<button class="btn btn-primary" type="button" data-push-enable{% if not webpush_enabled or webpush_public_key == '' %} disabled{% endif %}>Activar</button>
+			<button class="btn btn-soft-danger" type="button" data-push-disable>Desactivar</button>
+			<button class="btn btn-outline-primary" type="button" data-push-test>Probar</button>
+		</div>
+	</div>
+	<div class="card-body">
+		<div class="alert alert-info mb-4" data-push-feedback role="status" hidden></div>
+		{% if not webpush_enabled or webpush_public_key == '' %}
+			<div class="alert alert-warning">Un administrador debe activar Web Push y generar las claves VAPID.</div>
+		{% endif %}
+		<div class="device-card-grid">
+			{% for device in push_devices %}
+				<article class="card border shadow-none">
+					<div class="card-body">
+						<div class="d-flex align-items-center gap-3">
+							<span class="avatar bg-soft-primary text-primary"><i class="bi bi-display"></i></span>
+							<div><h3 class="h6 mb-1">{{ device.device_name }}</h3><p class="small text-muted mb-0">Último uso: {{ device.last_seen_at }}</p></div>
+						</div>
+					</div>
+				</article>
+			{% else %}
+				<p class="text-muted mb-0" data-push-empty>No hay navegadores registrados todavía.</p>
+			{% endfor %}
+		</div>
+	</div>
+</section>
+
 <form class="card appearance-card col-12 col-xl-8 p-0" action="{{ form_action|raw }}" method="post">
 	{{ macro.input_csrf() }}
 	<div class="card-header">

@@ -81,3 +81,32 @@ self.addEventListener('message', function (event) {
     }));
   }
 });
+
+self.addEventListener('push', function (event) {
+  let payload = { title: 'PHP Server Monitor', body: 'Hay una actualización de estado.', url: './index.php?mod=server_status' };
+  try { payload = Object.assign(payload, event.data ? event.data.json() : {}); } catch (error) { /* use safe defaults */ }
+  event.waitUntil(self.registration.showNotification(payload.title, {
+    body: payload.body,
+    icon: payload.icon || './src/templates/default/static/images/pwa/icon-192.png',
+    badge: payload.badge || './src/templates/default/static/images/pwa/icon-192.png',
+    tag: payload.tag || 'server-monitor-update',
+    renotify: Boolean(payload.critical),
+    requireInteraction: Boolean(payload.critical),
+    data: { url: payload.url || './index.php?mod=server_status' }
+  }));
+});
+
+self.addEventListener('notificationclick', function (event) {
+  event.notification.close();
+  let target = './index.php?mod=server_status';
+  try {
+    const candidate = new URL(event.notification.data.url, self.location.origin);
+    if (candidate.origin === self.location.origin) { target = candidate.href; }
+  } catch (error) { /* keep same-origin fallback */ }
+  event.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function (clients) {
+    for (const client of clients) {
+      if ('focus' in client) { client.navigate(target); return client.focus(); }
+    }
+    return self.clients.openWindow(target);
+  }));
+});

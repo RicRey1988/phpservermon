@@ -8,3 +8,4 @@ parameters:
         - src/psm/Service/Statistics
         - src/psm/Service/Incident
         - src/psm/Service/Notification
+        - src/psm/Service/Push

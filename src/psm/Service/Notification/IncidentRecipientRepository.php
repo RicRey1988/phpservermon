@@ -20,6 +20,7 @@ class IncidentRecipientRepository
         $rows = $this->database->execute(
             'SELECT u.user_id, u.name, u.email, u.mobile, u.discord, u.webhook_url, u.webhook_json, '
             . 'u.pushover_key, u.pushover_device, u.telegram_id, '
+            . 'EXISTS(SELECT 1 FROM `' . $this->table('push_subscriptions') . '` AS ps WHERE ps.user_id = u.user_id) AS has_webpush, '
             . 's.email AS server_email, s.sms AS server_sms, s.discord AS server_discord, '
             . 's.webhook AS server_webhook, s.pushover AS server_pushover, s.telegram AS server_telegram '
             . 'FROM `' . $this->table('users') . '` AS u '
@@ -35,6 +36,9 @@ class IncidentRecipientRepository
                 if ((bool) psm_get_conf($channel . '_status') && ($row['server_' . $channel] ?? 'no') === 'yes') {
                     $channels[] = $channel;
                 }
+            }
+            if ((bool) psm_get_conf('webpush_status') && (bool) ($row['has_webpush'] ?? false)) {
+                $channels[] = 'webpush';
             }
             $recipients[] = new IncidentRecipient(
                 new Recipient((int) $row['user_id'], $this->recipientAttributes($row)),

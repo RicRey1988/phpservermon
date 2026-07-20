@@ -33,6 +33,7 @@ use psm\Notification\DeliveryResult;
 use psm\Notification\NotificationMessage;
 use psm\Notification\Recipient;
 use psm\Service\Database;
+use Minishlink\WebPush\VAPID;
 
 class ConfigController extends AbstractController
 {
@@ -52,6 +53,7 @@ class ConfigController extends AbstractController
         'webhook_status',
         'telegram_status',
         'telegram_add_url',
+        'webpush_status',
         'log_status',
         'log_email',
         'log_sms',
@@ -85,6 +87,8 @@ class ConfigController extends AbstractController
         'webhook_json',
         'pushover_api_token',
         'telegram_api_token',
+        'webpush_vapid_subject',
+        'webpush_vapid_public_key',
         'user_agent',
         'site_title',
         'authdir_host_locn',
@@ -105,7 +109,8 @@ class ConfigController extends AbstractController
      * @var array
      */
     protected $encryptedFields = [
-        'email_smtp_password'
+        'email_smtp_password',
+        'webpush_vapid_private_key',
     ];
 
     private $default_tab = 'general';
@@ -118,7 +123,7 @@ class ConfigController extends AbstractController
         $this->setCSRFKey('config');
 
         $this->setActions(array(
-            'index', 'save',
+            'index', 'save', 'generateVapid',
         ), 'index');
     }
 
@@ -132,6 +137,11 @@ class ConfigController extends AbstractController
         $this->twig->addGlobal('subtitle', psm_get_lang('menu', 'config'));
         $tpl_data = $this->getLabels();
         $tpl_data['php_info'] = $this->container->get('service.php_info')->collect();
+        $tpl_data['vapid_generate_url'] = psm_build_url(
+            ['mod' => 'config', 'action' => 'generateVapid'],
+            true,
+            false
+        );
 
         $config_db = $this->db->select(
             PSM_DB_PREFIX . 'config',
@@ -280,8 +290,8 @@ class ConfigController extends AbstractController
                     in_array($_POST['email_smtp_security'], array('', 'ssl', 'tls'))
                     ? $_POST['email_smtp_security']
                     : '',
-                'auto_refresh_servers' => intval(psm_POST('auto_refresh_servers', 0)),
-                'log_retention_period' => intval(psm_POST('log_retention_period', 365)),
+                'auto_refresh_servers' => intval(psm_POST('auto_refresh_servers', '0')),
+                'log_retention_period' => intval(psm_POST('log_retention_period', '365')),
                 'password_encrypt_key' => psm_POST('password_encrypt_key', sha1(microtime()))
             );
             foreach ($this->checkboxes as $input_key) {
@@ -340,8 +350,43 @@ class ConfigController extends AbstractController
                 $this->default_tab = 'webhook';
             } elseif (isset($_POST['telegram_submit']) || !empty($_POST['test_telegram'])) {
                 $this->default_tab = 'telegram';
+            } elseif (isset($_POST['webpush_submit'])) {
+                $this->default_tab = 'webpush';
             }
         }
+        return $this->runAction('index');
+    }
+
+    protected function executeGenerateVapid()
+    {
+        if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
+            return $this->runAction('index');
+        }
+        $subject = trim((string) psm_POST('webpush_vapid_subject', ''));
+        if ($subject === '') {
+            $user = get_object_vars($this->getUser()->getUser());
+            $email = filter_var((string) ($user['email'] ?? ''), FILTER_VALIDATE_EMAIL);
+            $subject = $email === false ? rtrim(psm_build_url([], true, false), '/') : 'mailto:' . $email;
+        }
+        if (!str_starts_with($subject, 'mailto:') && filter_var($subject, FILTER_VALIDATE_URL) === false) {
+            $this->addMessage('El asunto VAPID debe ser un correo mailto: o una URL HTTPS válida.', 'error');
+            $this->default_tab = 'webpush';
+            return $this->runAction('index');
+        }
+
+        try {
+            $keys = VAPID::createVapidKeys();
+            psm_update_conf('webpush_vapid_subject', $subject);
+            psm_update_conf('webpush_vapid_public_key', $keys['publicKey']);
+            psm_update_conf(
+                'webpush_vapid_private_key',
+                psm_password_encrypt((string) psm_get_conf('password_encrypt_key'), $keys['privateKey'])
+            );
+            $this->addMessage('Claves VAPID generadas y protegidas correctamente.', 'success');
+        } catch (\Throwable) {
+            $this->addMessage('No fue posible generar las claves VAPID. Verifica OpenSSL y los permisos del servidor.', 'error');
+        }
+        $this->default_tab = 'webpush';
         return $this->runAction('index');
     }
 

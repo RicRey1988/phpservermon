@@ -168,7 +168,10 @@ class Router
         if ($request->getMethod() == 'POST') {
             // require CSRF token for all POST calls
             $session = $this->container->get('user')->getSession();
-            $token_in = $request->request->get('csrf', '');
+            $token_in = (string) $request->headers->get(
+                'X-CSRF-Token',
+                $request->request->get('csrf', '')
+            );
             $csrf_key = $controller->getCSRFKey();
 
             if (empty($csrf_key)) {

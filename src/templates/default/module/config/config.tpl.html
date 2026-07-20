@@ -34,6 +34,10 @@
                 label_tab_telegram }}</a>
         </li>
         <li class="nav-item">
+            <a class="nav-link {{ webpush_active }}" id="config-webpush-tab" data-bs-toggle="pill" href="#config-webpush"
+                role="tab" aria-controls="config-webpush" aria-selected="{% if webpush_active %}true{% else %}false{% endif %}">Web Push</a>
+        </li>
+        <li class="nav-item">
             <a class="nav-link {{ discord_active }}" id="config-discord-tab" data-bs-toggle="pill" href="#config-discord" role="tab"
                 aria-controls="config-discord" aria-selected="{% if discord_active %}true{% else %}false{% endif %}">{{
                         label_tab_discord }}</a>
@@ -249,6 +253,20 @@
                 {{ macro.button_test("testWebhook", label_test) }}
                 {{ macro.input_hidden("test_webhook", "0") }}
                 {{ macro.button_save("webhook_submit",  label_save) }}
+            </fieldset>
+        </div>
+        <div class="tab-pane {{ webpush_active }}" id="config-webpush" role="tabpanel" aria-labelledby="config-webpush-tab">
+            <fieldset>
+                <legend>Notificaciones Web Push y PWA</legend>
+                <p class="text-muted">Envía avisos automáticos a cada navegador registrado cuando un servidor se cae o se recupera.</p>
+                {{ macro.input_checkbox("webpush_status", "webpush_status[]", "Habilitar Web Push", webpush_status_checked) }}
+                {{ macro.input_field("text", "webpush_vapid_subject", null, "webpush_vapid_subject", "Contacto VAPID", webpush_vapid_subject, "mailto:admin@example.com", "255", "webpush_subject_help", "Use mailto:correo@dominio o una URL HTTPS.") }}
+                {{ macro.input_field("text", "webpush_vapid_public_key", null, "webpush_vapid_public_key", "Clave pública VAPID", webpush_vapid_public_key, "Genere las claves para completar este campo", "255", "webpush_public_help", "La clave privada se guarda cifrada y nunca se muestra.", null, null, true) }}
+                <div class="d-flex flex-wrap gap-2">
+                    <button type="submit" class="btn btn-outline-primary" formaction="{{ vapid_generate_url }}">Generar nuevas claves VAPID</button>
+                    {{ macro.button_save("webpush_submit", label_save) }}
+                </div>
+                <div class="alert alert-warning mt-3 mb-0"><strong>Importante:</strong> al regenerar las claves, los navegadores ya registrados deberán activar sus notificaciones nuevamente.</div>
             </fieldset>
         </div>
         <div class="tab-pane" id="config-php-info" role="tabpanel" aria-labelledby="config-php-info-tab">
