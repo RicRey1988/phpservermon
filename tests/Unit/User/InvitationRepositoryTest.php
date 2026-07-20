@@ -16,7 +16,7 @@ final class InvitationRepositoryTest extends TestCase
         $database = new InvitationDatabase();
         $repository = new InvitationRepository($database, static fn (): string => str_repeat("\x01", 32));
 
-        $token = $repository->create(' New.User@Example.Test ', 20, 4, new DateTimeImmutable('2026-07-20 10:00:00'));
+        $token = $repository->create(' New.User@Example.Test ', 20, 4, new DateTimeImmutable('+1 day'));
 
         self::assertSame(rtrim(strtr(base64_encode(str_repeat("\x01", 32)), '+/', '-_'), '='), $token);
         self::assertSame('new.user@example.test', $database->queries[0][1]['email']);

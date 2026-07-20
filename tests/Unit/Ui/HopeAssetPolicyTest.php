@@ -19,6 +19,25 @@ final class HopeAssetPolicyTest extends TestCase
         self::assertFileExists($root . '/THIRD_PARTY_NOTICES.md');
     }
 
+    public function testAuthenticHopeUiCustomizerAssetsArePresent(): void
+    {
+        $root = dirname(__DIR__, 3) . '/src/templates/default/static/hope';
+
+        self::assertFileExists($root . '/css/customizer.min.css');
+        self::assertFileExists($root . '/js/hope-ui.js');
+        self::assertFileExists($root . '/js/plugins/setting.js');
+
+        foreach (range(1, 5) as $shape) {
+            self::assertFileExists(sprintf('%s/images/shapes/%02d.png', $root, $shape));
+        }
+
+        foreach (['light', 'dark'] as $scheme) {
+            foreach (range(1, 13) as $preview) {
+                self::assertFileExists(sprintf('%s/images/settings/%s/%02d.png', $root, $scheme, $preview));
+            }
+        }
+    }
+
     public function testTemplatesDoNotInitializeDataTables(): void
     {
         $root = dirname(__DIR__, 3) . '/src/templates/default';
@@ -34,5 +53,14 @@ final class HopeAssetPolicyTest extends TestCase
             self::assertStringNotContainsString('data-toggle="data-table"', $contents);
             self::assertStringNotContainsString('.DataTable(', $contents);
         }
+    }
+
+    public function testHopeRuntimeDoesNotDependOnDataTablesOrJquery(): void
+    {
+        $runtime = file_get_contents(dirname(__DIR__, 3) . '/src/templates/default/static/hope/js/hope-ui.js');
+
+        self::assertIsString($runtime);
+        self::assertStringNotContainsString('DataTable', $runtime);
+        self::assertStringNotContainsString('$.fn', $runtime);
     }
 }

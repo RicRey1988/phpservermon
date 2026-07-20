@@ -1,10 +1,10 @@
 # Third-party notices
 
-PHP Server Monitor 4.1.0-hs includes the following front-end works in source or
+PHP Server Monitor 4.2.0-hs includes the following front-end works in source or
 compiled form. Their licenses are compatible with distribution under this
 project's GPL-3.0-or-later license.
 
-## Hope UI 4.0.0
+## Hope UI HTML 2.0.0
 
 - Project: <https://github.com/iqonicdesignofficial/hope-ui-html-admin-dashboard>
 - Copyright: © 2021 Iqonic Design
