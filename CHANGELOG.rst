@@ -8,6 +8,7 @@ v4.3.1-hs (released July 20, 2026)
 * Fixed server create/edit rendering when notification warnings are active.
 * Removed PHP 8.5 ping-parser warnings from cron when the command returns no
   output or a different iputils line layout.
+* Updated remember-me cookie options for PHP 8.5 without passing a null domain.
 * Rebuilt form section titles and restored transparent Hope UI authentication
   layouts in both light and dark modes.
 * Documented PHP 8.5+, PWA and the complete automatic Web Push incident flow.

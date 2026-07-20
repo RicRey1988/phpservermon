@@ -15,6 +15,8 @@
 - Added Hope-style SVG mappings for status, refresh, layout and form actions.
 - Made Linux ping parsing tolerant of empty and variant PHP 8.5 command output,
   eliminating undefined-offset and null ``preg_match`` warnings from cron.
+- Replaced the legacy positional remember-me cookie call so a null domain no
+  longer produces a PHP 8.5 deprecation during logout.
 
 ### Documentation
 - Expanded the README with PHP 8.5+, PWA installation and the complete Web Push
