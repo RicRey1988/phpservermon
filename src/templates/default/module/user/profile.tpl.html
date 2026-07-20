@@ -1,5 +1,5 @@
 {% import 'main/macros.tpl.html' as macro %}
-<form name="edit_profile" class="col-md-6 pl-0 pr-0" action="{{ form_action|raw }}" id="edit_profile" method="post">
+<form name="edit_profile" class="col-12 col-xl-8" action="{{ form_action|raw }}" id="edit_profile" method="post">
 	{{ macro.input_csrf() }}
 	<!-- General settings -->
 	<fieldset>
@@ -55,4 +55,47 @@
         {{ macro.input_field("text", "webhook_json", null, "webhook_json", label_webhook_json, webhook_json, "{\"text\":\"servermon: #message\"}", "255", "webhook_json_help", label_webhook_json_description) }}
     </fieldset>
 	{{ macro.button_save(null, label_save) }}
+</form>
+
+<form class="card appearance-card col-12 col-xl-8 p-0" action="{{ form_action|raw }}" method="post">
+	{{ macro.input_csrf() }}
+	<div class="card-header">
+		<h2 class="h5 mb-1">Apariencia</h2>
+		<p class="text-muted mb-0">Personaliza el tema, color, dirección y barra lateral para este usuario.</p>
+	</div>
+	<div class="card-body appearance-options">
+		<div>
+			<label class="form-label" for="ui_scheme">Esquema</label>
+			<select class="form-select" id="ui_scheme" name="ui_scheme">
+				<option value="auto"{% if appearance.scheme == 'auto' %} selected{% endif %}>Automático</option>
+				<option value="dark"{% if appearance.scheme == 'dark' %} selected{% endif %}>Oscuro</option>
+				<option value="light"{% if appearance.scheme == 'light' %} selected{% endif %}>Claro</option>
+			</select>
+		</div>
+		<div>
+			<label class="form-label" for="ui_accent">Color principal</label>
+			<select class="form-select" id="ui_accent" name="ui_accent">
+				{% for color, label in {'blue':'Azul','orange':'Naranja','red':'Rojo','purple':'Morado','pink':'Rosa'} %}
+				<option value="{{ color }}"{% if appearance.accent == color %} selected{% endif %}>{{ label }}</option>
+				{% endfor %}
+			</select>
+		</div>
+		<div>
+			<label class="form-label" for="ui_direction">Dirección</label>
+			<select class="form-select" id="ui_direction" name="ui_direction">
+				<option value="ltr"{% if appearance.direction == 'ltr' %} selected{% endif %}>LTR</option>
+				<option value="rtl"{% if appearance.direction == 'rtl' %} selected{% endif %}>RTL</option>
+			</select>
+		</div>
+		<div>
+			<label class="form-label" for="ui_sidebar">Barra lateral</label>
+			<select class="form-select" id="ui_sidebar" name="ui_sidebar">
+				<option value="default"{% if appearance.sidebar == 'default' %} selected{% endif %}>Predeterminada</option>
+				<option value="dark"{% if appearance.sidebar == 'dark' %} selected{% endif %}>Oscura</option>
+			</select>
+		</div>
+	</div>
+	<div class="card-footer text-end">
+		<button class="btn btn-primary" type="submit" name="appearance_submit" value="1">Guardar apariencia</button>
+	</div>
 </form>

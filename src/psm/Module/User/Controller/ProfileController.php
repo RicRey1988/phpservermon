@@ -109,6 +109,7 @@ class ProfileController extends AbstractController
             )),
             'level' => psm_get_lang('users', 'level_' . $user->level),
             'placeholder_password' => psm_get_lang('users', 'password_leave_blank'),
+            'appearance' => $this->container->get('service.ui.appearance')->forCurrentUser()->toArray(),
         );
         foreach ($this->profile_fields as $field) {
             $tpl_data[$field] = (isset($user->$field)) ? $user->$field : '';
@@ -123,6 +124,11 @@ class ProfileController extends AbstractController
     {
         if (empty($_POST)) {
             // dont process anything if no data has been posted
+            return $this->executeIndex();
+        }
+        if (isset($_POST['appearance_submit'])) {
+            $this->container->get('service.ui.appearance')->saveForCurrentUser($_POST);
+            $this->addMessage('Preferencias de apariencia actualizadas.', 'success');
             return $this->executeIndex();
         }
         $validator = $this->container->get('util.user.validator');

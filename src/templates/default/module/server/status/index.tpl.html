@@ -115,12 +115,19 @@
 {% if auto_refresh %}
 <script>
 setInterval(function() {
-	$.ajax({
-		url:"?",
-		success: function(html, status) {
-			$("#content").html(html);
-			psm_setLayout({{ layout }});
-		}
+	fetch(window.location.href, {
+		headers: { 'X-Requested-With': 'XMLHttpRequest' },
+		credentials: 'same-origin',
+		cache: 'no-store'
+	}).then(function(response) {
+		if (!response.ok) { throw new Error('Status refresh failed'); }
+		return response.text();
+	}).then(function(html) {
+		var content = document.getElementById('content');
+		if (content) { content.innerHTML = html; }
+		psm_setLayout({{ layout }});
+	}).catch(function() {
+		// Keep the last known status visible; the next interval retries.
 	});
 }, {{ auto_refresh_seconds }} * 1000);
 </script>

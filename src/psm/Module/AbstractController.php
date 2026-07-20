@@ -29,6 +29,7 @@
 namespace psm\Module;
 
 use psm\Service\Database;
+use psm\Service\Ui\Appearance;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -221,6 +222,15 @@ abstract class AbstractController implements ControllerInterface
     {
         if (!$this->xhr) {
             // in XHR mode, we will not add the main template
+            $userLevel = $this->getUser()->getUserLevel();
+            $appearance = Appearance::fromPreferences([]);
+            if (
+                $userLevel !== PSM_USER_ANONYMOUS
+                && $this->container !== null
+                && $this->container->has('service.ui.appearance')
+            ) {
+                $appearance = $this->container->get('service.ui.appearance')->forCurrentUser();
+            }
             $tpl_data = array(
                 'title' => psm_get_conf('site_title', strtoupper(psm_get_lang('system', 'title'))),
                 'label_back_to_top' => psm_get_lang('system', 'back_to_top'),
@@ -228,6 +238,8 @@ abstract class AbstractController implements ControllerInterface
                 'version' => 'v' . PSM_VERSION,
                 'messages' => $this->getMessages(),
                 'html_content' => $html,
+                'appearance' => $appearance->toArray(),
+                'user_level' => $userLevel,
             );
 
             // add menu to page?
@@ -300,11 +312,20 @@ abstract class AbstractController implements ControllerInterface
                 break;
         }
         $tpl_data['menu'] = array();
+        $icons = array(
+            'server_status' => 'chart-pie',
+            'server' => 'server',
+            'server_log' => 'history',
+            'user' => 'users',
+            'config' => 'sliders-h',
+            'server_update' => 'sync-alt',
+        );
         foreach ($items as $key) {
             $tpl_data['menu'][] = array(
                 'active' => ($key == psm_GET('mod')) ? 'active' : '',
                 'url' => psm_build_url(array('mod' => $key)),
                 'label' => psm_get_lang('menu', $key),
+                'icon' => $icons[$key] ?? 'circle',
             );
         }
 

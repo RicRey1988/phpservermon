@@ -1,0 +1,66 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Tests\Unit\Ui;
+
+use PHPUnit\Framework\TestCase;
+
+final class AppShellTest extends TestCase
+{
+    public function testShellUsesHopeUiBootstrapFiveAndAccessibleLandmarks(): void
+    {
+        $root = dirname(__DIR__, 3);
+        $body = file_get_contents($root . '/src/templates/default/main/body.tpl.html');
+        self::assertIsString($body);
+
+        self::assertStringContainsString('data-bs-theme="{{ appearance.resolved_scheme }}"', $body);
+        self::assertStringContainsString('href="#main-content"', $body);
+        self::assertStringContainsString('<aside class="sidebar', $body);
+        self::assertStringContainsString('<main class="main-content" id="main-content"', $body);
+        self::assertStringContainsString('static/hope/css/hope-ui.min.css?v={{ version|url_encode }}', $body);
+        self::assertStringContainsString('static/hope/js/bootstrap.bundle.min.js?v={{ version|url_encode }}', $body);
+        self::assertStringNotContainsString('bootstrap-select', $body);
+        self::assertStringNotContainsString('jquery-3.5.1', $body);
+    }
+
+    public function testFooterIdentifiesHostingSupremoFork(): void
+    {
+        $body = file_get_contents(dirname(__DIR__, 3) . '/src/templates/default/main/body.tpl.html');
+        self::assertIsString($body);
+
+        self::assertStringContainsString('Mejorado por Hosting Supremo', $body);
+        self::assertStringContainsString('https://github.com/RicRey1988/phpservermon', $body);
+        self::assertStringNotContainsString('https://github.com/phpservermon/phpservermon/', $body);
+    }
+
+    public function testProfileContainsAllAppearanceControls(): void
+    {
+        $profile = file_get_contents(dirname(__DIR__, 3) . '/src/templates/default/module/user/profile.tpl.html');
+        self::assertIsString($profile);
+
+        foreach (['ui_scheme', 'ui_accent', 'ui_direction', 'ui_sidebar', 'appearance_submit'] as $field) {
+            self::assertStringContainsString('name="' . $field . '"', $profile);
+        }
+    }
+
+    public function testModalMarkupUsesBootstrapFiveAttributes(): void
+    {
+        $modal = file_get_contents(dirname(__DIR__, 3) . '/src/templates/default/util/module/modal.tpl.html');
+        self::assertIsString($modal);
+
+        self::assertStringContainsString('data-bs-dismiss="modal"', $modal);
+        self::assertStringNotContainsString('data-dismiss="modal"', $modal);
+    }
+
+    public function testStatusAutoRefreshDoesNotDependOnJquery(): void
+    {
+        $status = file_get_contents(
+            dirname(__DIR__, 3) . '/src/templates/default/module/server/status/index.tpl.html'
+        );
+        self::assertIsString($status);
+
+        self::assertStringContainsString('fetch(window.location.href', $status);
+        self::assertStringNotContainsString('$.ajax', $status);
+    }
+}
