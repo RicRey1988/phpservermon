@@ -349,10 +349,10 @@ abstract class AbstractController implements ControllerInterface
 
         switch ($ulvl) {
             case PSM_USER_ADMIN:
-                $items = array('server_status', 'server', 'server_log', 'user', 'config', 'config_system', 'server_update');
+                $items = array('server_status', 'server_statistics', 'server', 'server_log', 'user', 'config', 'config_system', 'server_update');
                 break;
             case PSM_USER_USER:
-                $items = array('server_status', 'server', 'server_log', 'server_update');
+                $items = array('server_status', 'server_statistics', 'server', 'server_log', 'server_update');
                 break;
             default:
                 $items = array();
@@ -361,6 +361,7 @@ abstract class AbstractController implements ControllerInterface
         $tpl_data['menu'] = array();
         $icons = array(
             'server_status' => 'chart-pie',
+            'server_statistics' => 'chart-line',
             'server' => 'server',
             'server_log' => 'history',
             'user' => 'users',

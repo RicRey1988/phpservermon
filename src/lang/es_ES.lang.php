@@ -95,6 +95,7 @@ $sm_lang = array(
         'server' => 'Servidores',
         'server_log' => 'Registro',
         'server_status' => 'Estado',
+        'server_statistics' => 'Estadísticas',
         'server_update' => 'Actualizar',
         'user' => 'Usuarios',
         'help' => 'Ayuda',

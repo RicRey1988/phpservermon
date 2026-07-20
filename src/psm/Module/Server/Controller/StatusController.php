@@ -32,8 +32,6 @@ namespace psm\Module\Server\Controller;
 use DateTimeImmutable;
 use psm\Service\Database;
 use psm\Service\ServerImage\ServerImageStorage;
-use psm\Service\Statistics\DashboardStatistics;
-use psm\Service\Statistics\StatisticsRange;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -57,11 +55,7 @@ class StatusController extends AbstractServerController
     protected function executeIndex()
     {
         $this->twig->addGlobal('subtitle', psm_get_lang('menu', 'server_status'));
-        $this->twig->addGlobal('needs_charts', true);
-        $this->twig->addGlobal('needs_dashboard', true);
-
-        $range = StatisticsRange::tryFrom((string) psm_GET('range', StatisticsRange::Day->value))
-            ?? StatisticsRange::Day;
+        $this->twig->addGlobal('needs_status', true);
         $layout = $this->getUser()->getUserPref('status_layout', 0);
         $layout_data = array(
             'label_none' => psm_get_lang('system', 'none'),
@@ -77,7 +71,6 @@ class StatusController extends AbstractServerController
             'list_layout_active' => ($layout != 0) ? 'active' : '',
             'label_add_server' => psm_get_lang('system', 'add_new'),
             'layout' => $layout,
-            'range' => $range->value,
             'url_save' => psm_build_url(array('mod' => 'server', 'action' => 'edit')),
             'url_update' => psm_build_url(array('mod' => 'server_update', 'action' => 'run')),
         );
@@ -124,18 +117,6 @@ class StatusController extends AbstractServerController
             $layout_data['servers'][] = $server;
         }
 
-        $snapshot = $this->dashboardStatistics()->snapshot(
-            $range,
-            new DateTimeImmutable(),
-            $this->getUser()->getUserId(),
-            $this->getUser()->getUserLevel() === PSM_USER_ADMIN,
-        )->toArray();
-        $layout_data['dashboard'] = $snapshot;
-        $layout_data['dashboard_json'] = json_encode(
-            $snapshot,
-            JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_THROW_ON_ERROR,
-        );
-
         if ($this->isXHR() || isset($_SERVER["HTTP_X_REQUESTED_WITH"])) {
             $this->xhr = true;
             $layout_data['auto_refresh'] = false;
@@ -176,14 +157,6 @@ class StatusController extends AbstractServerController
         $response->headers->set('Cache-Control', 'no-store, private');
 
         return $response;
-    }
-
-    private function dashboardStatistics(): DashboardStatistics
-    {
-        $service = $this->container?->get('service.dashboard_statistics');
-        assert($service instanceof DashboardStatistics);
-
-        return $service;
     }
 
     private function serverImageStorage(): ServerImageStorage

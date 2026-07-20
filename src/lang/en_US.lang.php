@@ -92,6 +92,7 @@ $sm_lang = array(
         'server' => 'Servers',
         'server_log' => 'Log',
         'server_status' => 'Status',
+        'server_statistics' => 'Statistics',
         'server_update' => 'Update',
         'user' => 'Users',
         'help' => 'Help',

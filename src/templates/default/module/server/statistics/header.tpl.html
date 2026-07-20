@@ -1,0 +1,7 @@
+<form method="get" action="index.php" class="d-flex align-items-center gap-2">
+    <input type="hidden" name="mod" value="server_statistics">
+    <label class="text-white small mb-0" for="statistics-range">Periodo</label>
+    <select class="form-select form-select-sm" id="statistics-range" name="range" onchange="this.form.submit()">
+        <option value="24h"{% if range == '24h' %} selected{% endif %}>24 horas</option><option value="7d"{% if range == '7d' %} selected{% endif %}>7 días</option><option value="30d"{% if range == '30d' %} selected{% endif %}>30 días</option><option value="90d"{% if range == '90d' %} selected{% endif %}>90 días</option>
+    </select>
+</form>

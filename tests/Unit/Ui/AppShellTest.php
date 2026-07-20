@@ -81,7 +81,7 @@ final class AppShellTest extends TestCase
             dirname(__DIR__, 3) . '/src/templates/default/module/server/status/index.tpl.html'
         );
         $javascript = file_get_contents(
-            dirname(__DIR__, 3) . '/src/templates/default/static/js/dashboard.js'
+            dirname(__DIR__, 3) . '/src/templates/default/static/js/status.js'
         );
         self::assertIsString($status);
         self::assertIsString($javascript);

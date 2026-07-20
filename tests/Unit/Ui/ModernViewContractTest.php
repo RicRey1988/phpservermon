@@ -84,6 +84,24 @@ final class ModernViewContractTest extends TestCase
         self::assertStringContainsString('class="php-info-grid', $config);
     }
 
+    public function testEstadoRendersServersWithoutHistoricalStatistics(): void
+    {
+        $status = $this->read('module/server/status/index.tpl.html');
+        self::assertStringContainsString('data-status-board', $status);
+        self::assertStringNotContainsString('uptime-chart', $status);
+        self::assertStringNotContainsString('latency-chart', $status);
+        self::assertStringNotContainsString('dashboard-summary', $status);
+    }
+
+    public function testStatisticsOwnsKpisAndCharts(): void
+    {
+        $statistics = $this->read('module/server/statistics/index.tpl.html');
+        self::assertStringContainsString('data-statistics-dashboard', $statistics);
+        self::assertStringContainsString('uptime-chart', $statistics);
+        self::assertStringContainsString('latency-chart', $statistics);
+        self::assertStringContainsString('dashboard-summary', $statistics);
+    }
+
     public function testServerFormAndInstallerExposeModernSections(): void
     {
         $server = $this->read('module/server/server/update.tpl.html');
