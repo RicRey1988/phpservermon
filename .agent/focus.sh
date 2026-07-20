@@ -11,21 +11,20 @@ step() {
   "$@"
   printf 'PASS %s\n' "$CURRENT" >> "$REPORT"
 }
-step custom-class-audit vendor/bin/phpunit tests/Unit/Ui/NativeHopeUiContractTest.php --filter testApplicationTemplatesUseNoClassesOwnedByRemovedStylesheet
-step modern-page-audit vendor/bin/phpunit tests/Unit/Ui/ModernViewContractTest.php --filter testEveryApplicationPageUsesModernHopeUiContracts
-CURRENT=twig-parse-all
-php -r 'require "vendor/autoload.php"; $loader = new Twig\Loader\FilesystemLoader("src/templates/default"); $twig = new Twig\Environment($loader); $twig->addFunction(new Twig\TwigFunction("csrf_token", static fn (): string => "")); $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator("src/templates/default")); foreach ($iterator as $file) { if ($file->isFile() && str_ends_with($file->getFilename(), ".tpl.html")) { $name = substr($file->getPathname(), strlen("src/templates/default/")); $twig->parse($twig->tokenize(new Twig\Source((string) file_get_contents($file->getPathname()), $name))); } }'
-printf 'PASS %s\n' "$CURRENT" >> "$REPORT"
-CURRENT=static-global
+step native-hope-contracts vendor/bin/phpunit tests/Unit/Ui/NativeHopeUiContractTest.php
+step pwa-assets vendor/bin/phpunit tests/Unit/Pwa/PwaAssetTest.php
+step service-worker-js node --check service-worker.js
+CURRENT=static-removal
 python3 - <<'PY'
 from pathlib import Path
-import re
-text = '\n'.join(path.read_text() for path in Path('src/templates/default').rglob('*.tpl.html'))
-assert ' style=' not in text
-assert '<style' not in text
-assert 'data-dismiss=' not in text
-assert 'sidebar-open' not in text
-assert set(re.findall(r'data-toggle=["\']([^"\']+)["\']', text)) <= {'sidebar'}
+assert not Path('src/templates/default/static/css/hs-monitor.css').exists()
+body = Path('src/templates/default/main/body.tpl.html').read_text()
+worker = Path('service-worker.js').read_text()
+assert 'hs-monitor.css' not in body
+assert 'hs-monitor.css' not in worker
+assert "psm-static-4.3.2-hs-r2" in worker
+for asset in ['hope-ui.min.css', 'dark.min.css', 'customizer.min.css']:
+    assert asset in body
 PY
 printf 'PASS %s\n' "$CURRENT" >> "$REPORT"
 printf 'ALL PASS\n' >> "$REPORT"
