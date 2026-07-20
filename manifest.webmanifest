@@ -1,6 +1,7 @@
 {
   "name": "PHP Server Monitor by Hosting Supremo",
   "short_name": "Server Monitor",
+  "id": "./index.php",
   "description": "Monitoreo de disponibilidad, incidentes y alertas de servidores.",
   "start_url": "./index.php",
   "scope": "./",
@@ -8,6 +9,10 @@
   "orientation": "any",
   "background_color": "#151824",
   "theme_color": "#3a57e8",
+  "shortcuts": [
+    {"name": "Estado", "short_name": "Estado", "url": "./index.php?mod=server_status"},
+    {"name": "Estadísticas", "short_name": "Estadísticas", "url": "./index.php?mod=server_statistics"}
+  ],
   "icons": [
     {
       "src": "./src/templates/default/static/images/pwa/icon-192.png",

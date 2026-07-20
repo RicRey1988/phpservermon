@@ -1,7 +1,7 @@
 PHP Server Monitor HS
 =====================
 
-Version 4.1.0-hs (source version; release package not published yet)
+Version 4.2.0-hs (source version; release package not published yet)
 
 PHP Server Monitor HS checks websites and network services and presents their
 availability, latency and history in a modern web dashboard. This Hosting
@@ -12,9 +12,17 @@ original PHP Server Monitor project.
 Highlights
 ----------
 
-* Responsive Hope UI dashboard with accessible cards instead of DataTables,
-  coordinated light and dark modes, and redesigned login, registration,
-  recovery, configuration and installer screens.
+* Authentic Hope UI 2.0 dashboard with accessible cards, the original visual
+  hierarchy and redesigned login, registration, recovery, configuration and
+  installer screens. DataTables is not loaded.
+* A quick theme toggle in the top bar switches light/dark immediately. The
+  settings gear opens the complete customizer for Auto/Dark/Light, accent,
+  LTR/RTL, sidebar and navbar styles; authenticated preferences are saved per
+  user and anonymous preferences remain local to the browser.
+* Estado is operational-first and shows server cards immediately; the separate Statistics
+  page contains availability/latency KPIs and charts.
+* Responsive contracts cover widths 360, 390, 768, 1024, 1366 and 1600 in
+  both light and dark modes without page overflow.
 * Immediate manual status refresh, uptime and latency statistics, incident
   history, channel delivery state and clear online/offline indicators.
 * Normalized server images uploaded with drag and drop, a safe fixed display
@@ -90,7 +98,7 @@ images and runtime update data, then run::
 The web installer can also apply additive database migrations. The in-app
 updater accepts no arbitrary URL: it can install only a newer stable HS release
 whose three release assets and detached signature pass verification. Because
-4.1.0-hs is currently a source commit and not a GitHub Release, it is not yet
+4.2.0-hs is currently a source commit and not a GitHub Release, it is not yet
 offered by that updater.
 
 More documentation

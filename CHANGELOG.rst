@@ -1,6 +1,18 @@
 Changelog
 =========
 
+v4.2.0-hs (unreleased)
+----------------------
+
+* Integrated the authentic owner-supplied Hope UI 2.0 shell, quick theme
+  control and full settings gear with persisted appearance options.
+* Split live Estado cards from the dedicated Statistics dashboard.
+* Rebuilt server detail/history, user and shared pages with responsive cards,
+  bounded images and Bootstrap 5 controls without DataTables or jQuery.
+* Added light/dark responsive audits for 360 through 1600 pixel viewports.
+* Updated the PWA cache for the complete versioned Hope UI runtime.
+* This source version has not been published as a GitHub Release.
+
 v4.1.0-hs (unreleased)
 ----------------------
 

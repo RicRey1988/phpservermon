@@ -19,10 +19,16 @@ final class DocumentationContractTest extends TestCase
     /** @return iterable<string, array{string}> */
     public static function requiredReadmeTopics(): iterable
     {
-        yield 'version' => ['4.1.0-hs'];
+        yield 'version' => ['4.2.0-hs'];
         yield 'php' => ['PHP 8.5'];
         yield 'images' => ['drag and drop'];
         yield 'cards' => ['Hope UI'];
+        yield 'hope-version' => ['Hope UI 2.0'];
+        yield 'quick-theme' => ['quick theme toggle'];
+        yield 'settings-gear' => ['settings gear'];
+        yield 'separate-statistics' => ['separate Statistics'];
+        yield 'responsive-widths' => ['360, 390, 768, 1024, 1366 and 1600'];
+        yield 'no-datatables' => ['DataTables is not loaded'];
         yield 'statistics' => ['statistics'];
         yield 'pwa' => ['PWA'];
         yield 'web-push' => ['VAPID'];

@@ -1,5 +1,33 @@
 # Changelog
 
+## [4.2.0-hs] - Unreleased
+
+### Added
+- Authentic Hope UI 2.0 shell and customizer using the owner-supplied template
+  assets, with a quick light/dark control and per-user visual preferences.
+- Dedicated Statistics module for KPIs, availability and latency charts.
+- Automated responsive contracts and browser audit coverage for 360, 390, 768,
+  1024, 1366 and 1600 pixel viewports in light and dark modes.
+
+### Changed
+- Estado now opens directly on live server cards; historical charts no longer
+  delay or displace operational status.
+- Server detail, history, user editing, anonymous pages and every shared shell
+  control use responsive Hope UI/Bootstrap 5 markup.
+- Hope UI images have bounded, normalized frames and chart/tool controls wrap
+  instead of overflowing the viewport.
+- The PWA static cache includes the new versioned Hope UI runtime and drops the
+  previous cache on activation.
+
+### Fixed
+- Manual status checks apply returned server colours and values immediately.
+- Light/dark changes redraw statistics charts and remain available on login,
+  installer and error pages.
+
+### Notes
+- DataTables and jQuery demo bundles are intentionally excluded.
+- This source version is not a GitHub Release until separately approved.
+
 ## [4.1.0-hs] - Unreleased
 
 ### Added

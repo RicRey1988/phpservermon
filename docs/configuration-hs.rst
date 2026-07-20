@@ -65,6 +65,6 @@ digest, external and internal package hashes and all ZIP paths. Configuration,
 logs, uploaded images, Git metadata and updater runtime files are protected.
 Concurrent updates are rejected by a global lock.
 
-Version ``4.1.0-hs`` is currently source-only and therefore is not offered by
+Version ``4.2.0-hs`` is currently source-only and therefore is not offered by
 the updater. Signed artifacts are created only through the manual release
 workflow documented in ``releasing-hs.rst``.
