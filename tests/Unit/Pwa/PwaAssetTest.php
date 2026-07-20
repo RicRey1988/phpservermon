@@ -75,6 +75,15 @@ final class PwaAssetTest extends TestCase
         self::assertStringContainsString('pwa.js?v={{ version|url_encode }}', $body);
     }
 
+    public function testApacheServesManifestWithCorrectMimeAndNeverLongCachesTheWorker(): void
+    {
+        $htaccess = $this->read('.htaccess');
+
+        self::assertStringContainsString('AddType application/manifest+json .webmanifest', $htaccess);
+        self::assertStringContainsString('<Files "service-worker.js">', $htaccess);
+        self::assertStringContainsString('Cache-Control "no-cache, no-store, must-revalidate"', $htaccess);
+    }
+
     private function read(string $path): string
     {
         $contents = @file_get_contents($this->root . '/' . $path);

@@ -127,8 +127,8 @@ final class WebPushChannel implements NotificationChannelInterface
         return (string) json_encode([
             'title' => mb_substr($message->subject(), 0, 120),
             'body' => mb_substr($message->body(), 0, 300),
-            'icon' => 'pwa/icon-192.png',
-            'badge' => 'pwa/icon-192.png',
+            'icon' => './src/templates/default/static/images/pwa/icon-192.png',
+            'badge' => './src/templates/default/static/images/pwa/icon-192.png',
             'tag' => 'incident-' . $incident . '-' . $transition,
             'url' => $this->safeUrl($message->url()),
             'critical' => $message->isCritical(),

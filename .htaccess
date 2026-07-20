@@ -1,11 +1,31 @@
 Options -Indexes
 
+<IfModule mod_mime.c>
+ AddType application/manifest+json .webmanifest
+</IfModule>
+
 <IfModule mod_expires.c>
  <FilesMatch "\.(js|jpg|jpeg|gif|png|css)$">
   ExpiresActive on
   ExpiresDefault "access plus 1 month"
  </FilesMatch>
  </IfModule>
+
+<IfModule mod_expires.c>
+ <Files "service-worker.js">
+  ExpiresActive on
+  ExpiresDefault "access plus 0 seconds"
+ </Files>
+</IfModule>
+
+<IfModule mod_headers.c>
+ <Files "service-worker.js">
+  Header set Cache-Control "no-cache, no-store, must-revalidate"
+ </Files>
+ <Files "manifest.webmanifest">
+  Header set Cache-Control "no-cache"
+ </Files>
+</IfModule>
 
 <IfModule mod_deflate.c>
 AddOutputFilterByType DEFLATE text/plain

@@ -46,6 +46,8 @@ final class WebPushChannelTest extends TestCase
         self::assertSame('https://monitor.example.test/index.php?mod=server_status', $sent[0][1]['url']);
         self::assertSame('<b>No disponible</b>', $sent[0][1]['body']);
         self::assertSame('incident-55-down', $sent[0][1]['tag']);
+        self::assertSame('./src/templates/default/static/images/pwa/icon-192.png', $sent[0][1]['icon']);
+        self::assertSame('./src/templates/default/static/images/pwa/icon-192.png', $sent[0][1]['badge']);
     }
 
     public function testDeletesExpiredDevicesAndSurfacesTemporaryFailures(): void

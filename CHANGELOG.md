@@ -38,6 +38,8 @@
   blank authenticated page.
 - System diagnostics ignore older unsigned legacy releases before requiring
   signed updater assets, so an already newer HS installation reports no update.
+- Apache serves the PWA manifest with its correct MIME type, prevents stale
+  service-worker caching and uses reachable icons in Web Push payloads.
 
 ### Security
 - Dynamic authenticated pages and secrets are excluded from PWA caches.
