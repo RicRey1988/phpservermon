@@ -284,6 +284,8 @@ class Installer
                 `last_error_output` TEXT,
                 `last_output` TEXT,
                 `custom_header` TEXT NULL DEFAULT NULL,
+                `image_file` VARCHAR(255) NULL,
+                `image_updated_at` DATETIME NULL,
                 PRIMARY KEY  (`server_id`)
             ) DEFAULT CHARSET=utf8;",
             PSM_DB_PREFIX . 'servers_uptime' => "CREATE TABLE IF NOT EXISTS `" . PSM_DB_PREFIX . "servers_uptime` (
@@ -361,6 +363,9 @@ class Installer
         }
         if (version_compare($version_from, '4.0.0-hs', '<')) {
             $this->upgrade400hs();
+        }
+        if (version_compare($version_from, '4.1.0-hs', '<')) {
+            $this->upgrade410hs();
         }
 
         // Only mark the upgrade complete after every migration statement succeeds.
@@ -801,5 +806,14 @@ class Installer
             "('webhook_status', '0'), " .
             "('log_webhook', '1')"
         );
+    }
+
+    /**
+     * Add image metadata for the 4.1.0-hs dashboard.
+     */
+    protected function upgrade410hs()
+    {
+        $this->addColumnIfMissing('servers', 'image_file', 'VARCHAR(255) NULL AFTER `custom_header`');
+        $this->addColumnIfMissing('servers', 'image_updated_at', 'DATETIME NULL AFTER `image_file`');
     }
 }

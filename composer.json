@@ -8,6 +8,7 @@
 		"ext-ctype": "*",
 		"ext-curl": "*",
 		"ext-filter": "*",
+		"ext-gd": "*",
 		"ext-hash": "*",
 		"ext-intl": "*",
 		"ext-json": "*",

@@ -11,6 +11,7 @@ final class PlatformRequirements
         'ctype',
         'curl',
         'filter',
+        'gd',
         'hash',
         'intl',
         'json',
@@ -45,7 +46,8 @@ final class PlatformRequirements
     public function isSatisfied(): bool
     {
         return version_compare($this->phpVersion, self::MIN_PHP, '>=')
-            && $this->missingExtensions() === [];
+            && $this->missingExtensions() === []
+            && function_exists('imagewebp');
     }
 
     /**

@@ -47,4 +47,19 @@ final class PlatformRequirementsTest extends TestCase
             'satisfied' => true,
         ], $requirements->evaluate());
     }
+
+    public function testRequiresGdWithWebpSupportForServerImages(): void
+    {
+        self::assertContains('gd', PlatformRequirements::REQUIRED_EXTENSIONS);
+
+        $extensions = array_values(array_diff(PlatformRequirements::REQUIRED_EXTENSIONS, ['gd']));
+        $requirements = new PlatformRequirements('8.5.0', $extensions);
+
+        self::assertContains('gd', $requirements->missingExtensions());
+        self::assertFalse($requirements->isSatisfied());
+
+        $source = file_get_contents(dirname(__DIR__, 4) . '/src/psm/Util/Install/PlatformRequirements.php');
+        self::assertIsString($source);
+        self::assertStringContainsString("function_exists('imagewebp')", $source);
+    }
 }

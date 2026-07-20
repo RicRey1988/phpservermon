@@ -25,6 +25,8 @@ final class InstallerSchemaTest extends TestCase
         self::assertIsString($installSource);
         self::assertStringContainsString('`label` varchar(255)', $installSource);
         self::assertStringContainsString('`custom_header` TEXT', $installSource);
+        self::assertStringContainsString('`image_file` VARCHAR(255) NULL', $installSource);
+        self::assertStringContainsString('`image_updated_at` DATETIME NULL', $installSource);
         self::assertStringContainsString("('log_discord', '1')", $installSource);
         self::assertStringNotContainsString('jabber', strtolower($installSource));
         self::assertStringNotContainsString('log_jdiscord', $installSource);
@@ -49,5 +51,19 @@ final class InstallerSchemaTest extends TestCase
             strpos($upgradeSource, '$this->upgrade400hs();'),
             strpos($upgradeSource, "psm_update_conf('version', \$version_to);")
         );
+    }
+
+    public function test410HsAddsServerImagesIdempotently(): void
+    {
+        self::assertStringContainsString("version_compare(\$version_from, '4.1.0-hs', '<')", $this->source);
+        self::assertStringContainsString('protected function upgrade410hs()', $this->source);
+
+        $migrationStart = strpos($this->source, 'protected function upgrade410hs()');
+        self::assertIsInt($migrationStart);
+        $migrationSource = substr($this->source, $migrationStart);
+
+        self::assertStringContainsString("addColumnIfMissing('servers', 'image_file'", $migrationSource);
+        self::assertStringContainsString("addColumnIfMissing('servers', 'image_updated_at'", $migrationSource);
+        self::assertDoesNotMatchRegularExpression('/\b(?:DROP|DELETE|TRUNCATE)\b/i', $migrationSource);
     }
 }
