@@ -1,4 +1,16 @@
 {% import 'main/icons.tpl.html' as hope %}
-<section class="error-state-card card col-12 col-lg-8 col-xl-6 mx-auto text-center" role="alert" aria-labelledby="error-title">
-    <div class="card-body p-4 p-md-5"><span class="avatar bg-soft-warning text-warning mx-auto mb-4">{{ hope.icon('lock') }}</span><p class="text-primary fw-semibold mb-2">Error 401</p><h2 class="h3" id="error-title">{{ label_title }}</h2><p class="text-muted mb-4">{{ label_description }}</p><a class="btn btn-primary" href="index.php">{{ hope.icon('arrow-left','me-2') }}Volver al inicio</a></div>
-</section>
+<div class="container py-5" data-error-state>
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-xl-6">
+            <section class="card text-center" role="alert" aria-labelledby="error-title">
+                <div class="card-body p-4 p-md-5">
+                    <span class="avatar-80 rounded-circle bg-soft-warning text-warning d-inline-flex align-items-center justify-content-center mb-4">{{ hope.icon('lock','icon-32') }}</span>
+                    <p class="text-primary fw-semibold mb-2">Error 401</p>
+                    <h2 class="h3" id="error-title">{{ label_title }}</h2>
+                    <p class="text-muted mb-4">{{ label_description }}</p>
+                    <a class="btn btn-primary" href="index.php">{{ hope.icon('arrow-left','me-2') }}Volver al inicio</a>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
