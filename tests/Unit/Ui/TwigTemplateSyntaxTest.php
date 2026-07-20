@@ -25,6 +25,7 @@ final class TwigTemplateSyntaxTest extends TestCase
             'module/server/log.tpl.html',
             'module/server/server/list.tpl.html',
             'module/server/status/index.tpl.html',
+            'module/server/status/cards.tpl.html',
             'module/server/server/update.tpl.html',
             'module/server/server/view.tpl.html',
             'module/server/history.tpl.html',

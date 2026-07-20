@@ -103,5 +103,6 @@
 	<script defer src="src/templates/default/static/plugin/font-awesome/js/fontawesome.min.js" data-auto-replace-svg="nest"></script>
 	<script defer src="src/templates/default/static/plugin/font-awesome/js/brands.min.js"></script>
 	<script src="src/templates/default/static/js/app-shell.js?v={{ version|url_encode }}"></script>
+	{% if needs_dashboard|default(false) %}<script src="src/templates/default/static/js/dashboard.js?v={{ version|url_encode }}"></script>{% endif %}
 </body>
 </html>

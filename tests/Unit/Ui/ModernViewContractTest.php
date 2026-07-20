@@ -72,7 +72,7 @@ final class ModernViewContractTest extends TestCase
     public function testServerAndConfigurationViewsUseCardsAndAccessibleTabs(): void
     {
         $servers = $this->read('module/server/server/list.tpl.html');
-        $status = $this->read('module/server/status/index.tpl.html');
+        $status = $this->read('module/server/status/index.tpl.html') . $this->read('module/server/status/cards.tpl.html');
         $config = $this->read('module/config/config.tpl.html');
 
         self::assertStringContainsString('<article class="card server-admin-card', $servers);

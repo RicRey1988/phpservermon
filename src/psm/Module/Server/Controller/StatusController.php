@@ -29,7 +29,11 @@
 
 namespace psm\Module\Server\Controller;
 
+use DateTimeImmutable;
 use psm\Service\Database;
+use psm\Service\ServerImage\ServerImageStorage;
+use psm\Service\Statistics\DashboardStatistics;
+use psm\Service\Statistics\StatisticsRange;
 
 /**
  * Status module
@@ -50,11 +54,12 @@ class StatusController extends AbstractServerController
      */
     protected function executeIndex()
     {
-        // set background color to black
-        $this->black_background = true;
         $this->twig->addGlobal('subtitle', psm_get_lang('menu', 'server_status'));
+        $this->twig->addGlobal('needs_charts', true);
+        $this->twig->addGlobal('needs_dashboard', true);
 
-        // add header accessories
+        $range = StatisticsRange::tryFrom((string) psm_GET('range', StatisticsRange::Day->value))
+            ?? StatisticsRange::Day;
         $layout = $this->getUser()->getUserPref('status_layout', 0);
         $layout_data = array(
             'label_none' => psm_get_lang('system', 'none'),
@@ -63,35 +68,28 @@ class StatusController extends AbstractServerController
             'label_last_offline' => psm_get_lang('servers', 'last_offline'),
             'label_online' => psm_get_lang('servers', 'online'),
             'label_offline' => psm_get_lang('servers', 'offline'),
+            'label_warning' => 'Atención',
+            'label_paused' => 'Pausado',
             'label_rtime' => psm_get_lang('servers', 'latency'),
             'block_layout_active' => ($layout == 0) ? 'active' : '',
             'list_layout_active' => ($layout != 0) ? 'active' : '',
             'label_add_server' => psm_get_lang('system', 'add_new'),
             'layout' => $layout,
+            'range' => $range->value,
             'url_save' => psm_build_url(array('mod' => 'server', 'action' => 'edit')),
         );
 
         $auto_refresh_seconds = psm_get_conf('auto_refresh_servers');
         if (intval($auto_refresh_seconds) > 0) {
-            $this->twig->addGlobal('auto_refresh', true);
-            $this->twig->addGlobal('auto_refresh_seconds', $auto_refresh_seconds);
+            $layout_data['auto_refresh'] = true;
+            $layout_data['auto_refresh_seconds'] = (int) $auto_refresh_seconds;
         }
 
         $this->setHeaderAccessories($this->twig->render('module/server/status/header.tpl.html', $layout_data));
-
-        $this->addFooter(false);
-
-        // get the active servers from database
         $servers = $this->getServers();
-
-        $layout_data['servers_offline'] = array();
-        $layout_data['servers_warning'] = array();
-        $layout_data['servers_online'] = array();
+        $layout_data['servers'] = array();
 
         foreach ($servers as $server) {
-            if ($server['active'] == 'no') {
-                continue;
-            }
             $server['last_checked_nice'] = psm_timespan($server['last_check']);
             $server['last_online_nice'] = psm_timespan($server['last_online']);
             $server['last_offline_nice'] = psm_timespan($server['last_offline']);
@@ -102,22 +100,42 @@ class StatusController extends AbstractServerController
             $server['url_view'] = psm_build_url(
                 array('mod' => 'server', 'action' => 'view', 'id' => $server['server_id'], 'back_to' => 'server_status')
             );
+            $server['image_url'] = $this->serverImageStorage()->urlFor($server['image_file'] ?? null);
 
-            if ($server['status'] == "off") {
-                $layout_data['servers_offline'][] = $server;
+            if ($server['active'] === 'no') {
+                $server['status_tone'] = 'paused';
+                $server['status_label'] = $layout_data['label_paused'];
+            } elseif ($server['status'] === 'off') {
+                $server['status_tone'] = 'offline';
+                $server['status_label'] = $layout_data['label_offline'];
             } elseif ($server['warning_threshold_counter'] > 0) {
-                $layout_data['servers_warning'][] = $server;
+                $server['status_tone'] = 'warning';
+                $server['status_label'] = $layout_data['label_warning'];
             } elseif ($server['ssl_cert_expired_time'] !== null && $server['ssl_cert_expiry_days'] > 0) {
-                $layout_data['servers_warning'][] = $server;
+                $server['status_tone'] = 'warning';
+                $server['status_label'] = $layout_data['label_warning'];
             } else {
-                $layout_data['servers_online'][] = $server;
+                $server['status_tone'] = 'online';
+                $server['status_label'] = $layout_data['label_online'];
             }
+            $layout_data['servers'][] = $server;
         }
+
+        $snapshot = $this->dashboardStatistics()->snapshot(
+            $range,
+            new DateTimeImmutable(),
+            $this->getUser()->getUserId(),
+            $this->getUser()->getUserLevel() === PSM_USER_ADMIN,
+        )->toArray();
+        $layout_data['dashboard'] = $snapshot;
+        $layout_data['dashboard_json'] = json_encode(
+            $snapshot,
+            JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_THROW_ON_ERROR,
+        );
 
         if ($this->isXHR() || isset($_SERVER["HTTP_X_REQUESTED_WITH"])) {
             $this->xhr = true;
-            //disable auto refresh in ajax return html
-            $layout_data["auto_refresh"] = 0;
+            $layout_data['auto_refresh'] = false;
         }
 
         return $this->twig->render('module/server/status/index.tpl.html', $layout_data);
@@ -135,5 +153,21 @@ class StatusController extends AbstractServerController
             ));
             return $response;
         }
+    }
+
+    private function dashboardStatistics(): DashboardStatistics
+    {
+        $service = $this->container?->get('service.dashboard_statistics');
+        assert($service instanceof DashboardStatistics);
+
+        return $service;
+    }
+
+    private function serverImageStorage(): ServerImageStorage
+    {
+        $service = $this->container?->get('service.server_image.storage');
+        assert($service instanceof ServerImageStorage);
+
+        return $service;
     }
 }
