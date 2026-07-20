@@ -1,6 +1,14 @@
 Changelog
 =========
 
+v4.2.1-hs (released July 20, 2026)
+----------------------------------
+
+* Fixed per-user appearance persistence so updating light/dark and customizer
+  preferences targets only the selected preference instead of conflicting with
+  the user's other stored settings.
+* Added a regression test for the composite preference key used by production.
+
 v4.2.0-hs (released July 20, 2026)
 ----------------------------------
 

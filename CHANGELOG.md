@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.2.1-hs] - 2026-07-20
+
+### Fixed
+- Per-user appearance persistence now updates only the selected preference,
+  preventing the composite-key conflict that reverted quick light/dark changes.
+- Added a regression test for updating an existing user preference without
+  modifying any other stored setting.
+
 ## [4.2.0-hs] - 2026-07-20
 
 ### Added

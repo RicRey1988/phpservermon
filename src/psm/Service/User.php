@@ -563,12 +563,15 @@ class User
                 if ($this->user_preferences[$key] == $value) {
                     return; // no change
                 }
-                $sql = 'UPDATE `' . PSM_DB_PREFIX . 'users_preferences` SET `key` = ?, `value` = ? WHERE `user_id` = ?';
+                $sql = 'UPDATE `' . PSM_DB_PREFIX . 'users_preferences` SET `value` = ? WHERE `user_id` = ? AND `key` = ?';
             } else {
                 $sql = 'INSERT INTO `' . PSM_DB_PREFIX . 'users_preferences` SET `key` = ?, `value` = ?, `user_id` = ?';
             }
             $sth = $this->db_connection->prepare($sql);
-            $sth->execute(array($key, $value, $this->user_id));
+            $parameters = isset($this->user_preferences[$key])
+                ? array($value, $this->user_id, $key)
+                : array($key, $value, $this->user_id);
+            $sth->execute($parameters);
             $this->user_preferences[$key] = $value;
         }
     }
