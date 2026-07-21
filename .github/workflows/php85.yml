@@ -30,7 +30,9 @@ jobs:
       - run: composer install --no-dev --classmap-authoritative --no-interaction --prefer-dist
 
   vps_probe:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.actor != 'github-actions[bot]'
+    if: >-
+      (github.event_name == 'push' && github.ref == 'refs/heads/main' && github.actor != 'github-actions[bot]') ||
+      (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: ubuntu-latest
     env:
       VPS_HOST: 147.135.112.18
@@ -136,8 +138,17 @@ REMOTE
           echo "ssh_probe_exit=$ssh_code" >> "$REPORT"
           exit "$ssh_code"
 
-      - name: Persist probe report
+      - name: Upload probe report
         if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vps-ssh-probe
+          path: ${{ env.REPORT }}
+          retention-days: 1
+          if-no-files-found: error
+
+      - name: Persist probe report
+        if: always() && github.event_name == 'push'
         run: |
           set -euo pipefail
           git config user.name 'Hosting Supremo Deployment Probe'
