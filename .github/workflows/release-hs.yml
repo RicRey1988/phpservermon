@@ -6,38 +6,45 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: HS tag to create or refresh (vX.Y.Z-hs)
+        description: HS tag to publish (vX.Y.Z-hs)
         required: false
-        default: v4.3.2-hs
+        default: v4.3.3-hs
         type: string
 
 permissions:
   contents: write
-  issues: write
-  pull-requests: write
 
 jobs:
   release:
-    if: github.event_name == 'workflow_dispatch' || github.event.head_commit.message == 'release: v4.3.2-hs'
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.event.head_commit.message, 'release: v')
     runs-on: ubuntu-latest
-    env:
-      RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || 'v4.3.2-hs' }}
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Validate release identity
+      - name: Determine and validate release identity
         id: identity
+        env:
+          DISPATCH_TAG: ${{ inputs.tag }}
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
         run: |
           set -euo pipefail
-          if [[ ! "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+-hs$ ]]; then
-            echo "Invalid HS tag" >&2
+          if [[ "$GITHUB_EVENT_NAME" == 'workflow_dispatch' ]]; then
+            release_tag="$DISPATCH_TAG"
+          else
+            first_line="${COMMIT_MESSAGE%%$'\n'*}"
+            release_tag="${first_line#release: }"
+          fi
+          if [[ ! "$release_tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+-hs$ ]]; then
+            echo "Invalid HS tag: $release_tag" >&2
             exit 2
           fi
-          version="${RELEASE_TAG#v}"
+          version="${release_tag#v}"
           grep -F "define('PSM_VERSION', '$version')" src/includes/psmconfig.inc.php
-          test -f "docs/releases/$RELEASE_TAG.md"
+          test -f "docs/releases/$release_tag.md"
+          echo "RELEASE_TAG=$release_tag" >> "$GITHUB_ENV"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
 
       - uses: shivammathur/setup-php@v2
         with:
@@ -69,7 +76,7 @@ jobs:
           RELEASE_SIGNING_PRIVATE_KEY: ${{ secrets.RELEASE_SIGNING_PRIVATE_KEY }}
         run: |
           set -euo pipefail
-          version="${RELEASE_TAG#v}"
+          version="${{ steps.identity.outputs.version }}"
           test -n "$RELEASE_SIGNING_PRIVATE_KEY"
           composer install --no-dev --classmap-authoritative --no-interaction --prefer-dist
           mkdir -p dist
@@ -85,7 +92,7 @@ jobs:
             -signature "$RUNNER_TEMP/verify.sig" "dist/phpservermon-$version.json"
           rm -f "$RUNNER_TEMP/release-private.pem" "$RUNNER_TEMP/manifest.sig" "$RUNNER_TEMP/verify.sig"
 
-      - name: Point release tag at verified main
+      - name: Create immutable release tag
         id: tag
         run: |
           set -euo pipefail
@@ -94,8 +101,8 @@ jobs:
           if git rev-parse "$RELEASE_TAG" >/dev/null 2>&1; then
             tagged_sha="$(git rev-list -n 1 "$RELEASE_TAG")"
             if [[ "$tagged_sha" != "$GITHUB_SHA" ]]; then
-              git tag -fa "$RELEASE_TAG" "$GITHUB_SHA" -m "PHP Server Monitor $RELEASE_TAG"
-              git push --force origin "refs/tags/$RELEASE_TAG"
+              echo "Tag $RELEASE_TAG already points to $tagged_sha, expected $GITHUB_SHA" >&2
+              exit 1
             fi
           else
             git tag -a "$RELEASE_TAG" "$GITHUB_SHA" -m "PHP Server Monitor $RELEASE_TAG"
@@ -109,7 +116,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          version="${RELEASE_TAG#v}"
+          version="${{ steps.identity.outputs.version }}"
           assets=(
             "dist/phpservermon-$version.zip"
             "dist/phpservermon-$version.json"
@@ -131,29 +138,24 @@ jobs:
           done
           release_url="$(gh release view "$RELEASE_TAG" --json url --jq '.url')"
           {
-            echo "Release $RELEASE_TAG publicada y verificada."
+            echo "## Release $RELEASE_TAG publicada"
             echo
-            echo "Commit: $GITHUB_SHA"
-            echo "URL: $release_url"
-            echo "Assets: phpservermon-$version.zip, phpservermon-$version.json, phpservermon-$version.json.sig"
-          } > "$RUNNER_TEMP/release-comment.md"
-          gh pr comment 1 --body-file "$RUNNER_TEMP/release-comment.md"
+            echo "- Commit: \`$GITHUB_SHA\`"
+            echo "- URL: $release_url"
+            echo "- Assets: \`phpservermon-$version.zip\`, \`phpservermon-$version.json\`, \`phpservermon-$version.json.sig\`"
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Report release workflow result
         if: always()
-        continue-on-error: true
-        env:
-          GH_TOKEN: ${{ github.token }}
         run: |
           {
-            echo "Resultado del workflow de release $RELEASE_TAG"
+            echo "## Resultado del workflow de release"
             echo
-            echo "Commit: $GITHUB_SHA"
-            echo "Identidad: ${{ steps.identity.outcome }}"
-            echo "Verificación: ${{ steps.verify.outcome }}"
-            echo "Assets firmados: ${{ steps.assets.outcome }}"
-            echo "Tag: ${{ steps.tag.outcome }}"
-            echo "Publicación: ${{ steps.publish.outcome }}"
-            echo "Run: https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
-          } > "$RUNNER_TEMP/release-result.md"
-          gh pr comment 1 --body-file "$RUNNER_TEMP/release-result.md" || true
+            echo "- Tag: \`${RELEASE_TAG:-no determinado}\`"
+            echo "- Commit: \`$GITHUB_SHA\`"
+            echo "- Identidad: \`${{ steps.identity.outcome }}\`"
+            echo "- Verificación: \`${{ steps.verify.outcome }}\`"
+            echo "- Assets firmados: \`${{ steps.assets.outcome }}\`"
+            echo "- Tag: \`${{ steps.tag.outcome }}\`"
+            echo "- Publicación: \`${{ steps.publish.outcome }}\`"
+          } >> "$GITHUB_STEP_SUMMARY"
