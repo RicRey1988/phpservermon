@@ -1,5 +1,6 @@
 name: One-shot VPS SSH probe
 
+# Triggered after initial workflow registration.
 on:
   push:
     branches: [main]
