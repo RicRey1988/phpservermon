@@ -1,0 +1,40 @@
+name: Apply workflow YAML hotfix
+
+on:
+  push:
+    branches: [fix/workflow-yaml-v4.3.3]
+    paths: ['.agent/workflow-yaml-fix.patch']
+
+permissions:
+  contents: write
+
+concurrency:
+  group: workflow-yaml-hotfix
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/workflow-yaml-v4.3.3
+          fetch-depth: 0
+      - uses: actions/setup-go@v5
+        with:
+          go-version: 'stable'
+      - name: Apply and validate fixes
+        run: |
+          set -euo pipefail
+          git apply --index --whitespace=error-all .agent/workflow-yaml-fix.patch
+          git rm .agent/workflow-yaml-fix.patch
+          go install github.com/rhysd/actionlint/cmd/actionlint@latest
+          "$(go env GOPATH)/bin/actionlint" -color=false .github/workflows/*.yml
+      - name: Commit repaired workflows
+        run: |
+          set -euo pipefail
+          git config user.name 'Hosting Supremo Automation'
+          git config user.email 'noreply@hostingsupremo.org'
+          git commit -m 'ci: repair release and VPS workflows'
+          git push origin HEAD:fix/workflow-yaml-v4.3.3
