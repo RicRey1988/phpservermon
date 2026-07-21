@@ -39,6 +39,7 @@
 		function isOpen() { return !sidebar.classList.contains('sidebar-mini'); }
 		function sync() {
 			var open = isOpen();
+			sidebar.classList.toggle('overflow-hidden', isMobile() && !open);
 			toggles.forEach(function (toggle) {
 				toggle.setAttribute('aria-expanded', String(open));
 				toggle.setAttribute('aria-label', open ? 'Contraer menú' : 'Abrir menú');
@@ -360,6 +361,8 @@
 	};
 
 	document.addEventListener('DOMContentLoaded', function () {
+		var headerImage = document.querySelector('.iq-header-img');
+		if (headerImage) { headerImage.classList.add('start-0'); }
 		initializeTheme();
 		initializeSidebarAccessibility();
 		initializeModals();

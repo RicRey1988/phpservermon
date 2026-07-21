@@ -135,7 +135,7 @@ jobs:
       VPS_HOST: 147.135.112.18
       VPS_PORT: '8615'
       VPS_USER: root
-      VERSION: 4.3.4-hs
+      VERSION: 4.3.5-hs
     steps:
       - uses: actions/checkout@v4
         with:
@@ -350,7 +350,7 @@ jobs:
             exit 1
           fi
           curl -fsS --retry 3 https://monitoreo.hostingsupremo.org/service-worker.js -o /tmp/monitor-service-worker.js
-          grep -q 'psm-static-4.3.4-hs-r1' /tmp/monitor-service-worker.js
+          grep -q 'psm-static-4.3.5-hs-r1' /tmp/monitor-service-worker.js
 
           echo "deployed_commit=$SOURCE_SHA"
           echo "deployed_version=$VERSION"

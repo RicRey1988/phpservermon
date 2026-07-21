@@ -1,5 +1,34 @@
 # Changelog
 
+## [4.3.5-hs] - 2026-07-21
+
+### Fixed
+- Clips the translated Hope UI sidebar with its native `overflow-hidden`
+  utility while it is closed on mobile, so hidden brand content cannot cover
+  the navbar menu button.
+- Keeps the sidebar fully interactive after opening and preserves outside-click
+  and Escape-key closing behavior across responsive breakpoints.
+- Anchors the decorative Hope UI header image with the native `start-0` utility,
+  and has the shell enforce it on startup, removing a 16-pixel horizontal
+  overflow on narrow viewports.
+
+### Changed
+- Rotated the PWA cache to `psm-static-4.3.5-hs-r1` so browsers receive the
+  corrected responsive shell immediately.
+- The authenticated responsive audit can optionally intercept the deployed
+  shell with a local candidate through `PSM_APP_SHELL_OVERRIDE`.
+- Its outside-click scenario now targets the visible right edge of the viewport
+  instead of a coordinate occupied by the open sidebar.
+- Service workers are blocked during that code audit so cached assets cannot
+  replace the candidate under test.
+- Overflow diagnostics ignore descendants clipped by a closed sidebar or a
+  hidden offcanvas, fixed ancestors and intentional horizontal scroll regions
+  while retaining the document-wide scroll-width gate.
+- Sidebar checks wait for both the CSS transition and synchronized ARIA state,
+  eliminating timing-dependent audit results.
+- Non-rendered zero-size or transparent SVG helper nodes are excluded from
+  visual overflow diagnostics.
+
 ## [4.3.4-hs] - 2026-07-21
 
 ### Fixed

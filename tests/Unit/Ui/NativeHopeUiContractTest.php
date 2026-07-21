@@ -48,6 +48,8 @@ final class NativeHopeUiContractTest extends TestCase
         self::assertStringNotContainsString('url_profile', $menu);
         self::assertStringNotContainsString('url_logout', $menu);
         self::assertStringContainsString("classList.add('sidebar-mini')", $javascript);
+        self::assertStringContainsString("classList.toggle('overflow-hidden', isMobile() && !open)", $javascript);
+        self::assertStringContainsString("classList.add('start-0')", $javascript);
         self::assertStringContainsString("event.key === 'Escape'", $javascript);
         self::assertStringContainsString("classList.toggle('d-none'", $javascript);
         self::assertStringNotContainsString('sidebar-open', $body . $navbar . $javascript);

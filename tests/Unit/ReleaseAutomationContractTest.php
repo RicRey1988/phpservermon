@@ -28,9 +28,9 @@ final class ReleaseAutomationContractTest extends TestCase
         $release = $this->read('.github/workflows/release-hs.yml');
         $deployment = $this->read('.github/workflows/vps-ops-chatops.yml');
 
-        self::assertStringContainsString('default: v4.3.4-hs', $release);
-        self::assertStringContainsString('VERSION: 4.3.4-hs', $deployment);
-        self::assertStringContainsString('psm-static-4.3.4-hs-r1', $deployment);
+        self::assertStringContainsString('default: v4.3.5-hs', $release);
+        self::assertStringContainsString('VERSION: 4.3.5-hs', $deployment);
+        self::assertStringContainsString('psm-static-4.3.5-hs-r1', $deployment);
         self::assertStringNotContainsString('VERSION: 4.3.2-hs', $deployment);
         self::assertDoesNotMatchRegularExpression(
             '/(?:^|\R)REMOTE(?:\R|$)/',
