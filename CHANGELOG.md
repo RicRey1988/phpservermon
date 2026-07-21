@@ -1,5 +1,21 @@
 # Changelog
 
+## [4.3.3-hs] - 2026-07-21
+
+### Changed
+- Published the complete native Hope UI migration as a newer signed release so
+  installations on `4.3.2-hs` can receive it through the built-in updater.
+- Runtime pages continue to load only the bundled `hope-ui.min.css`,
+  `dark.min.css` and `customizer.min.css` stylesheets; `hs-monitor.css` remains
+  removed.
+- Rotated the PWA cache to `psm-static-4.3.3-hs-r1` and versioned every cached
+  Hope UI and application asset for immediate client refresh.
+
+### Fixed
+- Carries the corrected search field, aligned light/dark control, native sidebar
+  arrow behavior, removal of the duplicate sidebar session block and responsive
+  mobile navigation into an updater-visible version.
+
 ## [4.3.2-hs] - 2026-07-20
 
 ### Added
