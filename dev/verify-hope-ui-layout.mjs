@@ -17,6 +17,75 @@ const routes = [
   'index.php?mod=user_notification',
 ];
 
+async function auditNavigationChrome(page, route, width, theme) {
+  const evidence = await page.evaluate(() => {
+    const centerY = (element) => {
+      const box = element?.getBoundingClientRect();
+      return box ? box.top + box.height / 2 : null;
+    };
+    const quick = document.querySelector('[data-theme-quick-toggle]');
+    const settings = document.querySelector('[data-bs-target="#hope-ui-settings"]');
+    const notifications = document.querySelector('[data-notification-navbar] button');
+    const centers = [quick, settings, notifications].filter(Boolean).map(centerY);
+    const visibleThemeIcons = quick ? [...quick.querySelectorAll('[data-theme-icon]')].filter((element) => {
+      const style = getComputedStyle(element);
+      const box = element.getBoundingClientRect();
+      return style.display !== 'none' && style.visibility !== 'hidden' && Number(style.opacity) > 0 && box.width > 0 && box.height > 0;
+    }).length : 0;
+    const search = document.querySelector('.search-input');
+    const searchInput = search?.querySelector('input.form-control');
+    const searchStyle = searchInput ? getComputedStyle(searchInput) : null;
+    return {
+      visibleThemeIcons,
+      duplicateSidebarSession: document.querySelectorAll('.sidebar-user').length,
+      alignedNavbarControls: centers.length >= 2 && Math.max(...centers) - Math.min(...centers) <= 2,
+      searchStructure: !search || Boolean(search.querySelector('.input-group-text') && searchInput),
+      searchThemeSafe: !searchStyle || (searchStyle.backgroundColor !== 'rgba(0, 0, 0, 0)' && searchStyle.color !== searchStyle.backgroundColor),
+    };
+  });
+
+  const issues = [];
+  if (evidence.visibleThemeIcons !== 1) issues.push('visibleThemeIcons');
+  if (evidence.duplicateSidebarSession !== 0) issues.push('duplicateSidebarSession');
+  if (!evidence.alignedNavbarControls) issues.push('alignedNavbarControls');
+  if (!evidence.searchStructure) issues.push('searchStructure');
+  if (!evidence.searchThemeSafe) issues.push('searchThemeSafe');
+
+  if (width < 1200) {
+    const mobileToggle = page.locator('.iq-navbar [data-toggle="sidebar"]').first();
+    const sidebar = page.locator('.sidebar-default').first();
+    if (!await mobileToggle.count() || !await sidebar.count()) {
+      issues.push('mobileSidebar');
+    } else {
+      await mobileToggle.click();
+      await page.waitForFunction(() => !document.querySelector('.sidebar-default')?.classList.contains('sidebar-mini'));
+      if (await mobileToggle.getAttribute('aria-expanded') !== 'true') issues.push('mobileSidebar');
+      await page.locator('#main-content').click({ position: { x: 5, y: 5 } });
+      await page.waitForFunction(() => document.querySelector('.sidebar-default')?.classList.contains('sidebar-mini'));
+      await mobileToggle.click();
+      await page.waitForFunction(() => !document.querySelector('.sidebar-default')?.classList.contains('sidebar-mini'));
+      await page.keyboard.press('Escape');
+      await page.waitForFunction(() => document.querySelector('.sidebar-default')?.classList.contains('sidebar-mini'));
+      if (await mobileToggle.getAttribute('aria-expanded') !== 'false') issues.push('mobileSidebar');
+    }
+  } else {
+    const desktopToggle = page.locator('.sidebar-header [data-toggle="sidebar"]').first();
+    if (!await desktopToggle.count()) {
+      issues.push('desktopSidebar');
+    } else {
+      const expandedTransform = await desktopToggle.locator('.icon').evaluate((element) => getComputedStyle(element).transform);
+      await desktopToggle.click();
+      await page.waitForFunction(() => document.querySelector('.sidebar-default')?.classList.contains('sidebar-mini'));
+      const collapsedTransform = await desktopToggle.locator('.icon').evaluate((element) => getComputedStyle(element).transform);
+      if (expandedTransform === collapsedTransform) issues.push('desktopSidebarArrow');
+      await desktopToggle.click();
+      await page.waitForFunction(() => !document.querySelector('.sidebar-default')?.classList.contains('sidebar-mini'));
+    }
+  }
+
+  return issues.map((type) => ({ type, route, width, theme, ...evidence }));
+}
+
 const browser = await chromium.launch({ headless: true });
 const page = await browser.newPage({ viewport: { width: 1366, height: 900 } });
 const failures = [];
@@ -52,6 +121,7 @@ try {
         if (result.scrollWidth > result.viewport || result.overflows.length || /error|fatal/i.test(result.title)) {
           failures.push({ route, width, theme: expectedTheme, ...result });
         }
+        failures.push(...await auditNavigationChrome(page, route, width, expectedTheme));
         console.log(JSON.stringify({ route, width, theme: expectedTheme, ...result }));
       }
     }

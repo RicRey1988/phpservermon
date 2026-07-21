@@ -46,5 +46,10 @@ final class ResponsiveLayoutContractTest extends TestCase
         self::assertStringContainsString('scrollWidth', $script);
         self::assertStringContainsString('[data-theme-quick-toggle]', $script);
         self::assertStringContainsString('#hope-ui-settings', $script);
+        foreach (['auditNavigationChrome', 'visibleThemeIcons', 'duplicateSidebarSession', 'alignedNavbarControls', 'mobileSidebar', 'desktopSidebarArrow'] as $contract) {
+            self::assertStringContainsString($contract, $script);
+        }
+        self::assertStringContainsString('.sidebar-header [data-toggle="sidebar"]', $script);
+        self::assertStringContainsString('.iq-navbar [data-toggle="sidebar"]', $script);
     }
 }

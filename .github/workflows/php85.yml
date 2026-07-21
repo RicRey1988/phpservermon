@@ -10,6 +10,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Install actionlint
+        run: |
+          mkdir -p "$RUNNER_TEMP/actionlint-bin"
+          bash <(curl -fsSL https://raw.githubusercontent.com/rhysd/actionlint/v1.7.12/scripts/download-actionlint.bash) 1.7.12 "$RUNNER_TEMP/actionlint-bin"
+          echo "$RUNNER_TEMP/actionlint-bin" >> "$GITHUB_PATH"
+      - name: Validate GitHub Actions workflows
+        run: actionlint -color -shellcheck= -pyflakes=
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.5'
