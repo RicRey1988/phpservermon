@@ -8,7 +8,7 @@ on:
       tag:
         description: HS tag to publish (vX.Y.Z-hs)
         required: false
-        default: v4.3.3-hs
+        default: v4.3.4-hs
         type: string
 
 permissions:

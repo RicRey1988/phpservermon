@@ -51,5 +51,6 @@ final class ResponsiveLayoutContractTest extends TestCase
         }
         self::assertStringContainsString('.sidebar-header [data-toggle="sidebar"]', $script);
         self::assertStringContainsString('.iq-navbar [data-toggle="sidebar"]', $script);
+        self::assertStringContainsString('PSM_BROWSER_EXECUTABLE', $script);
     }
 }

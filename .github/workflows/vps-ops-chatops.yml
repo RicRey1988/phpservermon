@@ -135,7 +135,7 @@ jobs:
       VPS_HOST: 147.135.112.18
       VPS_PORT: '8615'
       VPS_USER: root
-      VERSION: 4.3.3-hs
+      VERSION: 4.3.4-hs
     steps:
       - uses: actions/checkout@v4
         with:
@@ -290,13 +290,16 @@ jobs:
           test -s "$BACKUP"
 
           DB_BACKUP="/root/phpservermon-db-before-$STAMP-${SOURCE_SHA:0:12}.sql.gz"
+          CONFIG_FILE="$APP_ROOT/src/config/config.php"
+          if ! test -f "$CONFIG_FILE"; then CONFIG_FILE="$APP_ROOT/config.php"; fi
+          test -f "$CONFIG_FILE"
           eval "$(php -r '
               require $argv[1];
               foreach (["PSM_DB_HOST" => "DB_HOST", "PSM_DB_USER" => "DB_USER", "PSM_DB_PASS" => "DB_PASS", "PSM_DB_NAME" => "DB_NAME"] as $constant => $variable) {
                   if (!defined($constant)) { exit(2); }
-                  printf("%s=%s\\n", $variable, escapeshellarg((string) constant($constant)));
+                  printf("%s=%s\n", $variable, escapeshellarg((string) constant($constant)));
               }
-          ' "$APP_ROOT/src/config/config.php")"
+          ' "$CONFIG_FILE")"
           MYSQL_PWD="$DB_PASS" mariadb-dump --single-transaction --routines --triggers --hex-blob \
             -h "$DB_HOST" -u "$DB_USER" "$DB_NAME" | gzip -9 > "$DB_BACKUP"
           test -s "$DB_BACKUP"
@@ -347,7 +350,7 @@ jobs:
             exit 1
           fi
           curl -fsS --retry 3 https://monitoreo.hostingsupremo.org/service-worker.js -o /tmp/monitor-service-worker.js
-          grep -q 'psm-static-4.3.3-hs-r1' /tmp/monitor-service-worker.js
+          grep -q 'psm-static-4.3.4-hs-r1' /tmp/monitor-service-worker.js
 
           echo "deployed_commit=$SOURCE_SHA"
           echo "deployed_version=$VERSION"

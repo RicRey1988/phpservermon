@@ -28,15 +28,18 @@ final class ReleaseAutomationContractTest extends TestCase
         $release = $this->read('.github/workflows/release-hs.yml');
         $deployment = $this->read('.github/workflows/vps-ops-chatops.yml');
 
-        self::assertStringContainsString('default: v4.3.3-hs', $release);
-        self::assertStringContainsString('VERSION: 4.3.3-hs', $deployment);
-        self::assertStringContainsString('psm-static-4.3.3-hs-r1', $deployment);
+        self::assertStringContainsString('default: v4.3.4-hs', $release);
+        self::assertStringContainsString('VERSION: 4.3.4-hs', $deployment);
+        self::assertStringContainsString('psm-static-4.3.4-hs-r1', $deployment);
         self::assertStringNotContainsString('VERSION: 4.3.2-hs', $deployment);
         self::assertDoesNotMatchRegularExpression(
             '/(?:^|\R)REMOTE(?:\R|$)/',
             $release . $deployment . $this->read('.github/workflows/php85.yml'),
         );
         self::assertStringContainsString('mariadb-dump --single-transaction', $deployment);
+        self::assertStringContainsString('CONFIG_FILE="$APP_ROOT/config.php"', $deployment);
+        self::assertStringContainsString('printf("%s=%s\n"', $deployment);
+        self::assertStringNotContainsString('printf("%s=%s\\\\n"', $deployment);
         self::assertStringContainsString('php bin/psm migrate', $deployment);
         self::assertStringContainsString('php bin/psm health', $deployment);
         self::assertStringContainsString('test "$HEALTH_CODE" -eq 0', $deployment);

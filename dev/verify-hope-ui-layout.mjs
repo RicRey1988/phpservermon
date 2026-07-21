@@ -86,7 +86,10 @@ async function auditNavigationChrome(page, route, width, theme) {
   return issues.map((type) => ({ type, route, width, theme, ...evidence }));
 }
 
-const browser = await chromium.launch({ headless: true });
+const browser = await chromium.launch({
+  headless: true,
+  executablePath: process.env.PSM_BROWSER_EXECUTABLE || undefined,
+});
 const page = await browser.newPage({ viewport: { width: 1366, height: 900 } });
 const failures = [];
 try {

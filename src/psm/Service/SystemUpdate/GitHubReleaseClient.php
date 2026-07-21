@@ -10,7 +10,11 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final class GitHubReleaseClient
 {
-    private const API_URL = 'https://api.github.com/repos/RicRey1988/phpservermon/releases/latest';
+    private const API_URL = 'https://api.github.com/repos/RicRey1988/phpservermon-Redesigned-by-hostingsupremo/releases/latest';
+    private const DOWNLOAD_URL_PREFIXES = [
+        'https://github.com/RicRey1988/phpservermon-Redesigned-by-hostingsupremo/releases/download/',
+        'https://github.com/RicRey1988/phpservermon/releases/download/',
+    ];
 
     private HttpClientInterface $http;
 
@@ -67,7 +71,7 @@ final class GitHubReleaseClient
             $url = (string) ($candidate['browser_download_url'] ?? '');
             $digest = (string) ($candidate['digest'] ?? '');
             if (
-                !str_starts_with($url, 'https://github.com/RicRey1988/phpservermon/releases/download/')
+                !array_any(self::DOWNLOAD_URL_PREFIXES, static fn (string $prefix): bool => str_starts_with($url, $prefix))
                 || preg_match('/^sha256:([a-f0-9]{64})$/', $digest, $matches) !== 1
             ) {
                 throw new RuntimeException('The release asset does not provide a trusted SHA-256 digest.');
