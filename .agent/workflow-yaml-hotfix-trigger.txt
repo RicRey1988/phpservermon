@@ -1,1 +1,0 @@
-Apply the queued workflow YAML repair after classifying SC2129 as non-blocking style.
