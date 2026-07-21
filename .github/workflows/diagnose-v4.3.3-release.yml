@@ -6,6 +6,7 @@ on:
 
 permissions:
   actions: read
+  checks: read
   contents: read
 
 jobs:
@@ -17,18 +18,42 @@ jobs:
       GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v4
-      - name: Inspect workflow runs and release state
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Lint main workflows
         run: |
           set -euo pipefail
           mkdir -p /tmp/release-diagnostics
+          go install github.com/rhysd/actionlint/cmd/actionlint@latest
+          set +e
+          "$(go env GOPATH)/bin/actionlint" -color=false .github/workflows/*.yml > /tmp/release-diagnostics/actionlint.txt 2>&1
+          echo "actionlint_exit=$?" > /tmp/release-diagnostics/actionlint-status.txt
+          set -e
+          cat /tmp/release-diagnostics/actionlint.txt
+      - name: Inspect workflow runs, checks and release state
+        run: |
+          set -euo pipefail
           gh api "repos/$GITHUB_REPOSITORY/actions/runs?head_sha=$TARGET_SHA&per_page=100" > /tmp/release-diagnostics/runs.json
+          gh api -H 'Accept: application/vnd.github+json' "repos/$GITHUB_REPOSITORY/commits/$TARGET_SHA/check-runs?per_page=100" > /tmp/release-diagnostics/check-runs.json
+          gh api "repos/$GITHUB_REPOSITORY/commits/$TARGET_SHA/check-suites?per_page=100" > /tmp/release-diagnostics/check-suites.json
           {
             echo "target_sha=$TARGET_SHA"
             echo "target_tag=$TARGET_TAG"
             echo "checked_at_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
             echo
+            echo 'actionlint:'
+            cat /tmp/release-diagnostics/actionlint-status.txt
+            cat /tmp/release-diagnostics/actionlint.txt
+            echo
             echo 'workflow_runs:'
             jq -r '.workflow_runs[] | [.id,.name,.event,.status,(.conclusion // ""),.head_sha,.html_url] | @tsv' /tmp/release-diagnostics/runs.json
+            echo
+            echo 'check_runs:'
+            jq -r '.check_runs[] | [.id,.name,.status,(.conclusion // ""),(.output.title // ""),(.output.summary // ""),.html_url] | @tsv' /tmp/release-diagnostics/check-runs.json
+            echo
+            echo 'check_suites:'
+            jq -r '.check_suites[] | [.id,.status,(.conclusion // ""),.app.slug,.url] | @tsv' /tmp/release-diagnostics/check-suites.json
             echo
             echo 'release:'
             if gh api "repos/$GITHUB_REPOSITORY/releases/tags/$TARGET_TAG" > /tmp/release-diagnostics/release.json 2>/tmp/release-diagnostics/release-error.txt; then
@@ -41,10 +66,6 @@ jobs:
           while read -r run_id; do
             test -n "$run_id" || continue
             gh api "repos/$GITHUB_REPOSITORY/actions/runs/$run_id/jobs?per_page=100" > "/tmp/release-diagnostics/jobs-$run_id.json"
-            jq -r '.jobs[] | "job\t" + (.id|tostring) + "\t" + .name + "\t" + .status + "\t" + (.conclusion // "")' "/tmp/release-diagnostics/jobs-$run_id.json" >> /tmp/release-diagnostics/summary.txt
-            jq -r '.jobs[] | .id' "/tmp/release-diagnostics/jobs-$run_id.json" | while read -r job_id; do
-              gh api "repos/$GITHUB_REPOSITORY/actions/jobs/$job_id/logs" > "/tmp/release-diagnostics/job-$job_id.log" || true
-            done
           done < <(jq -r '.workflow_runs[].id' /tmp/release-diagnostics/runs.json)
       - uses: actions/upload-artifact@v4
         with:
