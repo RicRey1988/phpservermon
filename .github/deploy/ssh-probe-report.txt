@@ -1,5 +1,5 @@
-commit=564cf969d00902c367d3c6eed4d7c1c016ca7585
-checked_at_utc=2026-07-21T02:41:13Z
+commit=4ddfcd1e81dc4a8974cd293d70982e4ab22bfced
+checked_at_utc=2026-07-21T03:17:45Z
 target=147.135.112.18:8615
 credential_decrypt=ok
 Connection to 147.135.112.18 8615 port [tcp/*] succeeded!
@@ -19,7 +19,7 @@ vhost_file=/etc/httpd/conf.d/monitoreo.conf
 app_root=/home/hostin/public_html
 app_owner_group=hostin:apache
 app_mode=2775
-deployed_define('PSM_VERSION', '4.3.2-hs');
+deployed_define('PSM_VERSION', '4.3.4-hs');
 app_top_level_begin
 .github
 .gitleaks.toml
