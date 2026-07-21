@@ -1,1 +1,1 @@
-Trigger same-repository pull request checks for the one-shot VPS SSH probe.
+Trigger same-repository pull request checks for the one-shot VPS SSH probe and deployment workflow.
