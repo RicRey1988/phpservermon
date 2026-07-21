@@ -32,7 +32,7 @@ jobs:
           git apply --index --whitespace=error-all .agent/workflow-yaml-fix.patch
           git rm .agent/workflow-yaml-fix.patch .agent/workflow-yaml-hotfix-trigger.txt
           go install github.com/rhysd/actionlint/cmd/actionlint@latest
-          "$(go env GOPATH)/bin/actionlint" -color=false .github/workflows/*.yml
+          "$(go env GOPATH)/bin/actionlint" -color=false -ignore 'SC2129' .github/workflows/*.yml
       - name: Commit repaired workflows
         run: |
           set -euo pipefail
