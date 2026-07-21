@@ -94,7 +94,7 @@ jobs:
             find "$APP_ROOT" -mindepth 1 -maxdepth 1 -printf '%f\n' | sort
             echo 'app_top_level_end'
           fi
-REMOTE
+          REMOTE
           code=$?
           set -e
           echo "ssh_probe_exit=$code" >> "$REPORT"
@@ -135,7 +135,7 @@ REMOTE
       VPS_HOST: 147.135.112.18
       VPS_PORT: '8615'
       VPS_USER: root
-      VERSION: 4.3.2-hs
+      VERSION: 4.3.3-hs
     steps:
       - uses: actions/checkout@v4
         with:
@@ -320,7 +320,7 @@ REMOTE
             exit 1
           fi
           curl -fsS --retry 3 https://monitoreo.hostingsupremo.org/service-worker.js -o /tmp/monitor-service-worker.js
-          grep -q 'psm-static-4.3.2-hs-r2' /tmp/monitor-service-worker.js
+          grep -q 'psm-static-4.3.3-hs-r1' /tmp/monitor-service-worker.js
 
           echo "deployed_commit=$SOURCE_SHA"
           echo "deployed_version=$VERSION"
@@ -331,7 +331,7 @@ REMOTE
           rm -rf "$STAGE"
           rm -f "$ARCHIVE_PATH"
           trap - EXIT
-REMOTE
+          REMOTE
 
       - name: Upload deployment report
         if: always()
@@ -354,7 +354,7 @@ REMOTE
           set -euo pipefail
           REPORT="$RUNNER_TEMP/vps-deploy.txt"
           {
-            echo '### VPS deployment v4.3.2-hs'
+            echo "### VPS deployment $VERSION"
             echo
             echo "Build: **$BUILD_OUTCOME**"
             echo "Credential: **$DECRYPT_OUTCOME**"
