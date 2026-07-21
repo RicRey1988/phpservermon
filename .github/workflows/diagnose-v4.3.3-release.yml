@@ -1,0 +1,53 @@
+name: Diagnose v4.3.3 release
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    env:
+      TARGET_SHA: 8e80d3d66316f56e8ab27582ee66c1de6b2d16c4
+      TARGET_TAG: v4.3.3-hs
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect workflow runs and release state
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/release-diagnostics
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs?head_sha=$TARGET_SHA&per_page=100" > /tmp/release-diagnostics/runs.json
+          {
+            echo "target_sha=$TARGET_SHA"
+            echo "target_tag=$TARGET_TAG"
+            echo "checked_at_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            echo
+            echo 'workflow_runs:'
+            jq -r '.workflow_runs[] | [.id,.name,.event,.status,(.conclusion // ""),.head_sha,.html_url] | @tsv' /tmp/release-diagnostics/runs.json
+            echo
+            echo 'release:'
+            if gh api "repos/$GITHUB_REPOSITORY/releases/tags/$TARGET_TAG" > /tmp/release-diagnostics/release.json 2>/tmp/release-diagnostics/release-error.txt; then
+              jq -r '[.tag_name,.target_commitish,.html_url,([.assets[].name]|join(","))] | @tsv' /tmp/release-diagnostics/release.json
+            else
+              cat /tmp/release-diagnostics/release-error.txt
+            fi
+          } | tee /tmp/release-diagnostics/summary.txt
+
+          while read -r run_id; do
+            test -n "$run_id" || continue
+            gh api "repos/$GITHUB_REPOSITORY/actions/runs/$run_id/jobs?per_page=100" > "/tmp/release-diagnostics/jobs-$run_id.json"
+            jq -r '.jobs[] | "job\t" + (.id|tostring) + "\t" + .name + "\t" + .status + "\t" + (.conclusion // "")' "/tmp/release-diagnostics/jobs-$run_id.json" >> /tmp/release-diagnostics/summary.txt
+            jq -r '.jobs[] | .id' "/tmp/release-diagnostics/jobs-$run_id.json" | while read -r job_id; do
+              gh api "repos/$GITHUB_REPOSITORY/actions/jobs/$job_id/logs" > "/tmp/release-diagnostics/job-$job_id.log" || true
+            done
+          done < <(jq -r '.workflow_runs[].id' /tmp/release-diagnostics/runs.json)
+      - uses: actions/upload-artifact@v4
+        with:
+          name: v4.3.3-release-diagnostics
+          path: /tmp/release-diagnostics
+          retention-days: 1
