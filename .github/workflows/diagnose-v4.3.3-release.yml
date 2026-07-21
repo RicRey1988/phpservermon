@@ -13,7 +13,7 @@ jobs:
   inspect:
     runs-on: ubuntu-latest
     env:
-      TARGET_SHA: 8e80d3d66316f56e8ab27582ee66c1de6b2d16c4
+      TARGET_SHA: 1198268118469ce02d05fd53eb9e262edacc98e3
       TARGET_TAG: v4.3.3-hs
       GH_TOKEN: ${{ github.token }}
     steps:
