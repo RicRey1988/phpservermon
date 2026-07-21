@@ -1,0 +1,77 @@
+diff --git a/.github/workflows/php85.yml b/.github/workflows/php85.yml
+index a6b8d9d..b171359 100644
+--- a/.github/workflows/php85.yml
++++ b/.github/workflows/php85.yml
+@@ -132,7 +132,7 @@ jobs:
+             find "$APP_ROOT" -mindepth 1 -maxdepth 1 -printf '%f\n' | sort
+             echo 'app_top_level_end'
+           fi
+-REMOTE
++          REMOTE
+           ssh_code=$?
+           set -e
+           echo "ssh_probe_exit=$ssh_code" >> "$REPORT"
+diff --git a/.github/workflows/release-hs.yml b/.github/workflows/release-hs.yml
+index 1e3d777..5187fc4 100644
+--- a/.github/workflows/release-hs.yml
++++ b/.github/workflows/release-hs.yml
+@@ -16,7 +16,9 @@ permissions:
+ 
+ jobs:
+   release:
+-    if: github.event_name == 'workflow_dispatch' || startsWith(github.event.head_commit.message, 'release: v')
++    if: >-
++      github.event_name == 'workflow_dispatch' ||
++      startsWith(github.event.head_commit.message, 'release: v')
+     runs-on: ubuntu-latest
+     steps:
+       - uses: actions/checkout@v4
+diff --git a/.github/workflows/vps-ops-chatops.yml b/.github/workflows/vps-ops-chatops.yml
+index 4f6772d..0e5b9a9 100644
+--- a/.github/workflows/vps-ops-chatops.yml
++++ b/.github/workflows/vps-ops-chatops.yml
+@@ -94,7 +94,7 @@ jobs:
+             find "$APP_ROOT" -mindepth 1 -maxdepth 1 -printf '%f\n' | sort
+             echo 'app_top_level_end'
+           fi
+-REMOTE
++          REMOTE
+           code=$?
+           set -e
+           echo "ssh_probe_exit=$code" >> "$REPORT"
+@@ -135,7 +135,7 @@ REMOTE
+       VPS_HOST: 147.135.112.18
+       VPS_PORT: '8615'
+       VPS_USER: root
+-      VERSION: 4.3.2-hs
++      VERSION: 4.3.3-hs
+     steps:
+       - uses: actions/checkout@v4
+         with:
+@@ -320,7 +320,7 @@ REMOTE
+             exit 1
+           fi
+           curl -fsS --retry 3 https://monitoreo.hostingsupremo.org/service-worker.js -o /tmp/monitor-service-worker.js
+-          grep -q 'psm-static-4.3.2-hs-r2' /tmp/monitor-service-worker.js
++          grep -q 'psm-static-4.3.3-hs-r1' /tmp/monitor-service-worker.js
+ 
+           echo "deployed_commit=$SOURCE_SHA"
+           echo "deployed_version=$VERSION"
+@@ -331,7 +331,7 @@ REMOTE
+           rm -rf "$STAGE"
+           rm -f "$ARCHIVE_PATH"
+           trap - EXIT
+-REMOTE
++          REMOTE
+ 
+       - name: Upload deployment report
+         if: always()
+@@ -354,7 +354,7 @@ REMOTE
+           set -euo pipefail
+           REPORT="$RUNNER_TEMP/vps-deploy.txt"
+           {
+-            echo '### VPS deployment v4.3.2-hs'
++            echo "### VPS deployment $VERSION"
+             echo
+             echo "Build: **$BUILD_OUTCOME**"
+             echo "Credential: **$DECRYPT_OUTCOME**"
