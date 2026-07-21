@@ -1,6 +1,5 @@
 name: PHP 8.5
 
-# Release v4.3.3 authenticated VPS probe trigger.
 on: [push, pull_request]
 
 permissions:
