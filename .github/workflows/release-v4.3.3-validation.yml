@@ -50,4 +50,9 @@ jobs:
             tests/Unit/DocumentationContractTest.php \
             README.rst \
             .github/workflows/release-hs.yml
+      - name: Verify public endpoints
+        run: |
+          set -euo pipefail
+          timeout 15 bash -c '</dev/tcp/147.135.112.18/8615'
+          curl -fsSIL --max-time 20 https://monitoreo.hostingsupremo.org/ >/dev/null
       - run: composer install --no-dev --classmap-authoritative --no-interaction --prefer-dist
