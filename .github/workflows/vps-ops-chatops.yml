@@ -218,9 +218,17 @@ jobs:
             -o PreferredAuthentications=password
             -o PubkeyAuthentication=no
           )
+          SCP_OPTS=(
+            -4 -P "$VPS_PORT"
+            -o ConnectTimeout=25
+            -o ConnectionAttempts=2
+            -o StrictHostKeyChecking=accept-new
+            -o PreferredAuthentications=password
+            -o PubkeyAuthentication=no
+          )
 
           timeout 20 nc -4 -vz "$VPS_HOST" "$VPS_PORT" >> "$REPORT" 2>&1
-          sshpass -f "$RUNNER_TEMP/vps-password.txt" scp "${SSH_OPTS[@]}" "$PACKAGE" "$VPS_USER@$VPS_HOST:$REMOTE_ARCHIVE"
+          sshpass -f "$RUNNER_TEMP/vps-password.txt" scp "${SCP_OPTS[@]}" "$PACKAGE" "$VPS_USER@$VPS_HOST:$REMOTE_ARCHIVE"
 
           sshpass -f "$RUNNER_TEMP/vps-password.txt" ssh "${SSH_OPTS[@]}" "$VPS_USER@$VPS_HOST" \
             "ARCHIVE_PATH='$REMOTE_ARCHIVE' EXPECTED_SHA='$PACKAGE_SHA' SOURCE_SHA='$GITHUB_SHA' VERSION='$VERSION' bash -s" \
