@@ -21,10 +21,11 @@ jobs:
         with:
           ref: main
           fetch-depth: 0
-      - name: Lint main workflows
+      - name: Lint and export main workflows
         run: |
           set -euo pipefail
-          mkdir -p /tmp/release-diagnostics
+          mkdir -p /tmp/release-diagnostics/workflows
+          cp -a .github/workflows/. /tmp/release-diagnostics/workflows/
           go install github.com/rhysd/actionlint/cmd/actionlint@latest
           set +e
           "$(go env GOPATH)/bin/actionlint" -color=false .github/workflows/*.yml > /tmp/release-diagnostics/actionlint.txt 2>&1
