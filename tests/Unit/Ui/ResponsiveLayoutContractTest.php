@@ -22,6 +22,7 @@ final class ResponsiveLayoutContractTest extends TestCase
         self::assertIsString($config);
         self::assertFileDoesNotExist($root . '/src/templates/default/static/css/hs-monitor.css');
         self::assertStringContainsString('container-fluid content-inner', $body);
+        self::assertStringContainsString('iq-header-img start-0', $body);
         self::assertStringContainsString('row row-cols-1 row-cols-md-2 row-cols-xl-3', $status);
         self::assertStringContainsString('flex-nowrap overflow-auto', $detail);
         self::assertStringContainsString('text-break', $detail);
@@ -52,5 +53,15 @@ final class ResponsiveLayoutContractTest extends TestCase
         self::assertStringContainsString('.sidebar-header [data-toggle="sidebar"]', $script);
         self::assertStringContainsString('.iq-navbar [data-toggle="sidebar"]', $script);
         self::assertStringContainsString('PSM_BROWSER_EXECUTABLE', $script);
+        self::assertStringContainsString('PSM_APP_SHELL_OVERRIDE', $script);
+        self::assertStringContainsString('page.mouse.click(width - 5, 200)', $script);
+        self::assertStringContainsString("serviceWorkers: 'block'", $script);
+        self::assertStringContainsString("closest('.sidebar-mini.overflow-hidden, .offcanvas:not(.show)')", $script);
+        self::assertStringContainsString("['auto', 'clip', 'hidden', 'scroll'].includes(ancestorStyle.overflowX)", $script);
+        self::assertStringContainsString('page.waitForTimeout(450)', $script);
+        self::assertStringContainsString("toggle?.getAttribute('aria-expanded') === 'true'", $script);
+        self::assertStringContainsString('PSM_AUDIT_VERBOSE', $script);
+        self::assertStringContainsString("status: 'ok', auditedCases", $script);
+        self::assertStringContainsString('Number(style.opacity) === 0 || box.width === 0 || box.height === 0', $script);
     }
 }

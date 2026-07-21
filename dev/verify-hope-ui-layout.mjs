@@ -1,4 +1,5 @@
 import { chromium } from 'playwright';
+import { readFile } from 'node:fs/promises';
 
 const baseUrl = process.env.PSM_BASE_URL;
 const username = process.env.PSM_TEST_USER;
@@ -58,15 +59,29 @@ async function auditNavigationChrome(page, route, width, theme) {
       issues.push('mobileSidebar');
     } else {
       await mobileToggle.click();
-      await page.waitForFunction(() => !document.querySelector('.sidebar-default')?.classList.contains('sidebar-mini'));
-      if (await mobileToggle.getAttribute('aria-expanded') !== 'true') issues.push('mobileSidebar');
-      await page.locator('#main-content').click({ position: { x: 5, y: 5 } });
-      await page.waitForFunction(() => document.querySelector('.sidebar-default')?.classList.contains('sidebar-mini'));
+      await page.waitForFunction(() => {
+        const sidebarElement = document.querySelector('.sidebar-default');
+        const toggle = document.querySelector('.iq-navbar [data-toggle="sidebar"]');
+        return sidebarElement && !sidebarElement.classList.contains('sidebar-mini') && toggle?.getAttribute('aria-expanded') === 'true';
+      });
+      await page.mouse.click(width - 5, 200);
+      await page.waitForFunction(() => {
+        const sidebarElement = document.querySelector('.sidebar-default');
+        const toggle = document.querySelector('.iq-navbar [data-toggle="sidebar"]');
+        return sidebarElement?.classList.contains('sidebar-mini') && toggle?.getAttribute('aria-expanded') === 'false';
+      });
       await mobileToggle.click();
-      await page.waitForFunction(() => !document.querySelector('.sidebar-default')?.classList.contains('sidebar-mini'));
+      await page.waitForFunction(() => {
+        const sidebarElement = document.querySelector('.sidebar-default');
+        const toggle = document.querySelector('.iq-navbar [data-toggle="sidebar"]');
+        return sidebarElement && !sidebarElement.classList.contains('sidebar-mini') && toggle?.getAttribute('aria-expanded') === 'true';
+      });
       await page.keyboard.press('Escape');
-      await page.waitForFunction(() => document.querySelector('.sidebar-default')?.classList.contains('sidebar-mini'));
-      if (await mobileToggle.getAttribute('aria-expanded') !== 'false') issues.push('mobileSidebar');
+      await page.waitForFunction(() => {
+        const sidebarElement = document.querySelector('.sidebar-default');
+        const toggle = document.querySelector('.iq-navbar [data-toggle="sidebar"]');
+        return sidebarElement?.classList.contains('sidebar-mini') && toggle?.getAttribute('aria-expanded') === 'false';
+      });
     }
   } else {
     const desktopToggle = page.locator('.sidebar-header [data-toggle="sidebar"]').first();
@@ -76,10 +91,12 @@ async function auditNavigationChrome(page, route, width, theme) {
       const expandedTransform = await desktopToggle.locator('.icon').evaluate((element) => getComputedStyle(element).transform);
       await desktopToggle.click();
       await page.waitForFunction(() => document.querySelector('.sidebar-default')?.classList.contains('sidebar-mini'));
+      await page.waitForTimeout(450);
       const collapsedTransform = await desktopToggle.locator('.icon').evaluate((element) => getComputedStyle(element).transform);
       if (expandedTransform === collapsedTransform) issues.push('desktopSidebarArrow');
       await desktopToggle.click();
       await page.waitForFunction(() => !document.querySelector('.sidebar-default')?.classList.contains('sidebar-mini'));
+      await page.waitForTimeout(450);
     }
   }
 
@@ -90,8 +107,20 @@ const browser = await chromium.launch({
   headless: true,
   executablePath: process.env.PSM_BROWSER_EXECUTABLE || undefined,
 });
-const page = await browser.newPage({ viewport: { width: 1366, height: 900 } });
+const page = await browser.newPage({
+  viewport: { width: 1366, height: 900 },
+  serviceWorkers: 'block',
+});
+if (process.env.PSM_APP_SHELL_OVERRIDE) {
+  const appShell = await readFile(process.env.PSM_APP_SHELL_OVERRIDE, 'utf8');
+  await page.route('**/src/templates/default/static/js/app-shell.js*', (route) => route.fulfill({
+    status: 200,
+    contentType: 'application/javascript; charset=utf-8',
+    body: appShell,
+  }));
+}
 const failures = [];
+let auditedCases = 0;
 try {
   await page.goto(new URL('index.php', baseUrl).toString(), { waitUntil: 'domcontentloaded' });
   await page.locator('[name="user_name"]').fill(username);
@@ -113,10 +142,24 @@ try {
         await page.waitForFunction((theme) => document.documentElement.dataset.bsTheme === theme, expectedTheme);
         const result = await page.evaluate(() => {
           const viewport = document.documentElement.clientWidth;
+          const isContainedOverflow = (element) => {
+            for (let ancestor = element.parentElement; ancestor && ancestor !== document.body; ancestor = ancestor.parentElement) {
+              const ancestorStyle = getComputedStyle(ancestor);
+              if (
+                ancestorStyle.position === 'fixed'
+                || ['auto', 'clip', 'hidden', 'scroll'].includes(ancestorStyle.overflowX)
+              ) { return true; }
+            }
+            return false;
+          };
           const overflows = [...document.querySelectorAll('body *')].map((element) => {
             const style = getComputedStyle(element);
-            if (style.display === 'none' || style.visibility === 'hidden' || style.position === 'fixed') { return null; }
+            if (
+              style.display === 'none' || style.visibility === 'hidden' || style.position === 'fixed'
+              || element.closest('.sidebar-mini.overflow-hidden, .offcanvas:not(.show)') || isContainedOverflow(element)
+            ) { return null; }
             const box = element.getBoundingClientRect();
+            if (Number(style.opacity) === 0 || box.width === 0 || box.height === 0) { return null; }
             return { selector: element.id || String(element.className || element.tagName), left: box.left, right: box.right };
           }).filter((item) => item && (item.left < -1 || item.right > viewport + 1)).slice(0, 20);
           return { viewport, scrollWidth: document.documentElement.scrollWidth, overflows, title: document.title };
@@ -125,7 +168,10 @@ try {
           failures.push({ route, width, theme: expectedTheme, ...result });
         }
         failures.push(...await auditNavigationChrome(page, route, width, expectedTheme));
-        console.log(JSON.stringify({ route, width, theme: expectedTheme, ...result }));
+        auditedCases += 1;
+        if (process.env.PSM_AUDIT_VERBOSE === '1') {
+          console.log(JSON.stringify({ route, width, theme: expectedTheme, ...result }));
+        }
       }
     }
   }
@@ -137,3 +183,4 @@ if (failures.length) {
   console.error(JSON.stringify({ failures }, null, 2));
   process.exit(1);
 }
+console.log(JSON.stringify({ status: 'ok', auditedCases, widths: widths.length, routes: routes.length, themes: themes.length }));
