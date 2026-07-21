@@ -1,0 +1,58 @@
+name: Release 4.3.3 validation
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: curl, gd, intl, mbstring, openssl, pdo_mysql, xml, zip
+          tools: composer:v2
+          coverage: none
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: composer validate --strict
+      - run: composer install --no-interaction --prefer-dist
+      - run: composer check-platform-reqs
+      - run: composer audit
+      - run: vendor/bin/phpunit
+      - run: vendor/bin/phpstan analyse --no-progress
+      - name: Validate JavaScript
+        run: |
+          node --check service-worker.js
+          node --check src/templates/default/static/js/app-shell.js
+          node --check src/templates/default/static/js/status.js
+          node --check src/templates/default/static/js/dashboard.js
+          node --check src/templates/default/static/js/history.js
+          node --check src/templates/default/static/js/notifications.js
+      - name: Validate release identity
+        run: |
+          set -euo pipefail
+          grep -F "define('PSM_VERSION', '4.3.3-hs')" src/includes/psmconfig.inc.php
+          grep -F 'psm-static-4.3.3-hs-r1' service-worker.js
+          grep -F 'releases/tag/v4.3.3-hs' README.rst
+          test -f docs/releases/v4.3.3-hs.md
+          ! grep -RIn '4\.3\.2-hs' \
+            src/includes/psmconfig.inc.php \
+            service-worker.js \
+            tests/Unit/VersionTest.php \
+            tests/Unit/Pwa/PwaAssetTest.php \
+            tests/Unit/DocumentationContractTest.php \
+            README.rst \
+            .github/workflows/release-hs.yml
+      - name: Verify public endpoints
+        run: |
+          set -euo pipefail
+          timeout 15 bash -c '</dev/tcp/147.135.112.18/8615'
+          curl -fsSIL --max-time 20 https://monitoreo.hostingsupremo.org/ >/dev/null
+      - run: composer install --no-dev --classmap-authoritative --no-interaction --prefer-dist
