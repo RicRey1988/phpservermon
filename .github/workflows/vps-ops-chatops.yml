@@ -1,0 +1,126 @@
+name: VPS operations chatops
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  probe:
+    if: >-
+      github.event.issue.pull_request &&
+      github.event.comment.user.login == 'RicRey1988' &&
+      contains(github.event.comment.body, '/vps-probe')
+    runs-on: ubuntu-latest
+    env:
+      VPS_HOST: 147.135.112.18
+      VPS_PORT: '8615'
+      VPS_USER: root
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Install SSH tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq openssh-client sshpass netcat-openbsd
+
+      - name: Decrypt one-shot credential
+        env:
+          RELEASE_SIGNING_PRIVATE_KEY: ${{ secrets.RELEASE_SIGNING_PRIVATE_KEY }}
+        run: |
+          set -euo pipefail
+          test -n "$RELEASE_SIGNING_PRIVATE_KEY"
+          printf '%s' "$RELEASE_SIGNING_PRIVATE_KEY" > "$RUNNER_TEMP/release-private.pem"
+          chmod 600 "$RUNNER_TEMP/release-private.pem"
+          base64 -d .github/deploy/vps-password.enc.b64 > "$RUNNER_TEMP/vps-password.enc"
+          openssl pkeyutl -decrypt \
+            -inkey "$RUNNER_TEMP/release-private.pem" \
+            -in "$RUNNER_TEMP/vps-password.enc" \
+            -out "$RUNNER_TEMP/vps-password.txt" \
+            -pkeyopt rsa_padding_mode:oaep \
+            -pkeyopt rsa_oaep_md:sha256 \
+            -pkeyopt rsa_mgf1_md:sha256
+          chmod 600 "$RUNNER_TEMP/vps-password.txt"
+          echo "::add-mask::$(cat "$RUNNER_TEMP/vps-password.txt")"
+
+      - name: Probe SSH
+        id: probe
+        continue-on-error: true
+        run: |
+          set -u
+          REPORT="$RUNNER_TEMP/vps-probe.txt"
+          {
+            echo "checked_at_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            echo "target=$VPS_HOST:$VPS_PORT"
+          } > "$REPORT"
+          set +e
+          timeout 15 nc -4 -vz "$VPS_HOST" "$VPS_PORT" >> "$REPORT" 2>&1
+          echo "tcp_probe_exit=$?" >> "$REPORT"
+          sshpass -f "$RUNNER_TEMP/vps-password.txt" ssh -4 \
+            -p "$VPS_PORT" \
+            -o ConnectTimeout=20 \
+            -o ConnectionAttempts=2 \
+            -o StrictHostKeyChecking=accept-new \
+            -o PreferredAuthentications=password \
+            -o PubkeyAuthentication=no \
+            "$VPS_USER@$VPS_HOST" 'bash -s' >> "$REPORT" 2>&1 <<'REMOTE'
+          set -u
+          echo 'ssh_connection=ok'
+          echo "hostname=$(hostname -f 2>/dev/null || hostname)"
+          if test -r /etc/os-release; then . /etc/os-release; echo "os=${PRETTY_NAME:-unknown}"; fi
+          echo "php=$(php -r 'echo PHP_VERSION;' 2>/dev/null || true)"
+          echo "composer=$(composer --version 2>/dev/null | head -n1 || true)"
+          echo "httpd=$(systemctl is-active httpd 2>/dev/null || true)"
+          echo "php_fpm=$(systemctl is-active php-fpm 2>/dev/null || true)"
+          echo "mariadb=$(systemctl is-active mariadb 2>/dev/null || true)"
+          VHOST_FILE=$(grep -RilE '^[[:space:]]*ServerName[[:space:]]+monitoreo\.hostingsupremo\.org([[:space:]]|$)' /etc/httpd/conf /etc/httpd/conf.d 2>/dev/null | head -n1)
+          echo "vhost_file=$VHOST_FILE"
+          APP_ROOT=''
+          if test -n "$VHOST_FILE"; then APP_ROOT=$(awk 'tolower($1)=="documentroot" {gsub(/"/,"",$2); print $2; exit}' "$VHOST_FILE"); fi
+          echo "app_root=$APP_ROOT"
+          if test -n "$APP_ROOT" && test -d "$APP_ROOT"; then
+            echo "app_owner_group=$(stat -c '%U:%G' "$APP_ROOT")"
+            if test -f "$APP_ROOT/src/includes/psmconfig.inc.php"; then
+              grep -E "define\('PSM_VERSION'" "$APP_ROOT/src/includes/psmconfig.inc.php" | head -n1 | sed 's/^/deployed_/'
+            fi
+            echo 'app_top_level_begin'
+            find "$APP_ROOT" -mindepth 1 -maxdepth 1 -printf '%f\n' | sort
+            echo 'app_top_level_end'
+          fi
+REMOTE
+          code=$?
+          set -e
+          echo "ssh_probe_exit=$code" >> "$REPORT"
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+
+      - name: Report result on pull request
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          set -euo pipefail
+          REPORT="$RUNNER_TEMP/vps-probe.txt"
+          {
+            echo '### VPS SSH probe'
+            echo
+            echo '```text'
+            if test -f "$REPORT"; then cat "$REPORT"; else echo 'Probe did not produce a report.'; fi
+            echo '```'
+          } > "$RUNNER_TEMP/vps-probe-comment.md"
+          gh pr comment "$PR_NUMBER" --body-file "$RUNNER_TEMP/vps-probe-comment.md"
+
+      - name: Remove decrypted credential
+        if: always()
+        run: rm -f "$RUNNER_TEMP/release-private.pem" "$RUNNER_TEMP/vps-password.enc" "$RUNNER_TEMP/vps-password.txt"
+
+      - name: Preserve probe result
+        if: steps.probe.outputs.code != '0'
+        run: exit 1
