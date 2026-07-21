@@ -1,5 +1,17 @@
 # Changelog
 
+## [4.3.4-hs] - 2026-07-21
+
+### Fixed
+- Accepts release assets returned under the repository's canonical renamed URL
+  while retaining compatibility with the former redirecting repository slug.
+- Makes fallback VPS database backups work with both supported configuration
+  locations and emits shell assignments with real line endings.
+
+### Changed
+- Rotated the PWA cache to `psm-static-4.3.4-hs-r1` and added an optional
+  browser executable override to the authenticated responsive audit.
+
 ## [4.3.3-hs] - 2026-07-21
 
 ### Changed
