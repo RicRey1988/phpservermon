@@ -19,7 +19,7 @@ final class DocumentationContractTest extends TestCase
     /** @return iterable<string, array{string}> */
     public static function requiredReadmeTopics(): iterable
     {
-        yield 'version' => ['4.3.2-hs'];
+        yield 'version' => ['4.3.3-hs'];
         yield 'php' => ['PHP 8.5'];
         yield 'images' => ['drag and drop'];
         yield 'cards' => ['Hope UI'];
@@ -37,7 +37,7 @@ final class DocumentationContractTest extends TestCase
         yield 'invitations' => ['invitation'];
         yield 'diagnostics' => ['diagnostics'];
         yield 'updater' => ['signed updater'];
-        yield 'release' => ['releases/tag/v4.3.2-hs'];
+        yield 'release' => ['releases/tag/v4.3.3-hs'];
         yield 'fork' => ['RicRey1988/phpservermon'];
         yield 'gd' => ['ext-gd'];
         yield 'zip' => ['ext-zip'];
@@ -72,5 +72,4 @@ final class DocumentationContractTest extends TestCase
         self::assertIsString($runtimeSource);
         self::assertStringContainsString('github.com/RicRey1988/phpservermon', $runtimeSource);
     }
-
 }
