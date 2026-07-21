@@ -132,7 +132,7 @@ jobs:
             find "$APP_ROOT" -mindepth 1 -maxdepth 1 -printf '%f\n' | sort
             echo 'app_top_level_end'
           fi
-REMOTE
+          REMOTE
           ssh_code=$?
           set -e
           echo "ssh_probe_exit=$ssh_code" >> "$REPORT"
