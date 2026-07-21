@@ -100,7 +100,7 @@ REMOTE
           echo "ssh_probe_exit=$code" >> "$REPORT"
           echo "code=$code" >> "$GITHUB_OUTPUT"
 
-      - name: Report result on pull request
+      - name: Report probe result
         if: always()
         env:
           GH_TOKEN: ${{ github.token }}
@@ -123,4 +123,253 @@ REMOTE
 
       - name: Preserve probe result
         if: steps.probe.outputs.code != '0'
+        run: exit 1
+
+  deploy:
+    if: >-
+      github.event.issue.pull_request &&
+      github.event.comment.user.login == 'RicRey1988' &&
+      contains(github.event.comment.body, '/vps-deploy')
+    runs-on: ubuntu-latest
+    env:
+      VPS_HOST: 147.135.112.18
+      VPS_PORT: '8615'
+      VPS_USER: root
+      VERSION: 4.3.2-hs
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: curl, gd, intl, mbstring, openssl, pdo_mysql, xml, zip
+          tools: composer:v2
+          coverage: none
+
+      - name: Install deployment tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq openssh-client sshpass netcat-openbsd
+
+      - name: Initialize deployment report
+        run: |
+          {
+            echo "source_commit=$(git rev-parse HEAD)"
+            echo "started_at_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            echo "target=$VPS_HOST:$VPS_PORT"
+            echo "version=$VERSION"
+          } > "$RUNNER_TEMP/vps-deploy.txt"
+
+      - name: Build verified production package
+        id: build
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          composer validate --strict > "$RUNNER_TEMP/composer-validate.log" 2>&1
+          composer install --no-dev --classmap-authoritative --no-interaction --prefer-dist > "$RUNNER_TEMP/composer-install.log" 2>&1
+          rm -rf "$RUNNER_TEMP/dist"
+          mkdir -p "$RUNNER_TEMP/dist"
+          php dev/build-hs-release.php "$VERSION" "$RUNNER_TEMP/dist"
+          PACKAGE="$RUNNER_TEMP/dist/phpservermon-$VERSION.zip"
+          test -s "$PACKAGE"
+          echo "package_sha256=$(sha256sum "$PACKAGE" | awk '{print $1}')" >> "$RUNNER_TEMP/vps-deploy.txt"
+
+      - name: Decrypt one-shot credential
+        id: decrypt
+        if: steps.build.outcome == 'success'
+        continue-on-error: true
+        env:
+          RELEASE_SIGNING_PRIVATE_KEY: ${{ secrets.RELEASE_SIGNING_PRIVATE_KEY }}
+        run: |
+          set -euo pipefail
+          test -n "$RELEASE_SIGNING_PRIVATE_KEY"
+          printf '%s' "$RELEASE_SIGNING_PRIVATE_KEY" > "$RUNNER_TEMP/release-private.pem"
+          chmod 600 "$RUNNER_TEMP/release-private.pem"
+          base64 -d .github/deploy/vps-password.enc.b64 > "$RUNNER_TEMP/vps-password.enc"
+          openssl pkeyutl -decrypt \
+            -inkey "$RUNNER_TEMP/release-private.pem" \
+            -in "$RUNNER_TEMP/vps-password.enc" \
+            -out "$RUNNER_TEMP/vps-password.txt" \
+            -pkeyopt rsa_padding_mode:oaep \
+            -pkeyopt rsa_oaep_md:sha256 \
+            -pkeyopt rsa_mgf1_md:sha256
+          chmod 600 "$RUNNER_TEMP/vps-password.txt"
+          echo "::add-mask::$(cat "$RUNNER_TEMP/vps-password.txt")"
+
+      - name: Backup, deploy and validate VPS
+        id: deploy
+        if: steps.build.outcome == 'success' && steps.decrypt.outcome == 'success'
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -euo pipefail
+          REPORT="$RUNNER_TEMP/vps-deploy.txt"
+          PACKAGE="$RUNNER_TEMP/dist/phpservermon-$VERSION.zip"
+          PACKAGE_SHA=$(sha256sum "$PACKAGE" | awk '{print $1}')
+          REMOTE_ARCHIVE="/root/phpservermon-$VERSION-${GITHUB_SHA:0:12}.zip"
+          SSH_OPTS=(
+            -4 -p "$VPS_PORT"
+            -o ConnectTimeout=25
+            -o ConnectionAttempts=2
+            -o StrictHostKeyChecking=accept-new
+            -o PreferredAuthentications=password
+            -o PubkeyAuthentication=no
+          )
+
+          timeout 20 nc -4 -vz "$VPS_HOST" "$VPS_PORT" >> "$REPORT" 2>&1
+          sshpass -f "$RUNNER_TEMP/vps-password.txt" scp "${SSH_OPTS[@]}" "$PACKAGE" "$VPS_USER@$VPS_HOST:$REMOTE_ARCHIVE"
+
+          sshpass -f "$RUNNER_TEMP/vps-password.txt" ssh "${SSH_OPTS[@]}" "$VPS_USER@$VPS_HOST" \
+            "ARCHIVE_PATH='$REMOTE_ARCHIVE' EXPECTED_SHA='$PACKAGE_SHA' SOURCE_SHA='$GITHUB_SHA' VERSION='$VERSION' bash -s" \
+            >> "$REPORT" 2>&1 <<'REMOTE'
+          set -Eeuo pipefail
+
+          command -v rsync >/dev/null 2>&1 || dnf install -y -q rsync
+          command -v unzip >/dev/null 2>&1 || dnf install -y -q unzip
+
+          VHOST_FILE=$(grep -RilE '^[[:space:]]*ServerName[[:space:]]+monitoreo\.hostingsupremo\.org([[:space:]]|$)' /etc/httpd/conf /etc/httpd/conf.d 2>/dev/null | head -n1)
+          test -n "$VHOST_FILE"
+          APP_ROOT=$(awk 'tolower($1)=="documentroot" {gsub(/"/,"",$2); print $2; exit}' "$VHOST_FILE")
+          test -n "$APP_ROOT"
+          test "$APP_ROOT" != '/'
+          test -d "$APP_ROOT"
+          test -f "$APP_ROOT/index.php"
+
+          APP_OWNER=$(stat -c '%U' "$APP_ROOT/index.php")
+          APP_GROUP=$(stat -c '%G' "$APP_ROOT/index.php")
+          STAMP=$(date -u +%Y%m%dT%H%M%SZ)
+          BACKUP="/root/phpservermon-before-$STAMP-${SOURCE_SHA:0:12}.tgz"
+          STAGE="/root/phpservermon-stage-${SOURCE_SHA:0:12}"
+
+          echo "vhost_file=$VHOST_FILE"
+          echo "app_root=$APP_ROOT"
+          echo "app_owner_group=$APP_OWNER:$APP_GROUP"
+          echo "backup=$BACKUP"
+
+          ACTIVATE_STARTED=0
+          rollback() {
+            code=$?
+            if test "$code" -ne 0 && test "$ACTIVATE_STARTED" -eq 1 && test -s "$BACKUP"; then
+              echo "rollback_started=1"
+              find "$APP_ROOT" -mindepth 1 -maxdepth 1 -exec rm -rf -- {} +
+              tar -C "$APP_ROOT" -xzf "$BACKUP"
+              restorecon -RF "$APP_ROOT" >/dev/null 2>&1 || true
+              systemctl restart php-fpm httpd >/dev/null 2>&1 || true
+              echo "rollback_completed=1"
+            fi
+            rm -rf "$STAGE"
+            rm -f "$ARCHIVE_PATH"
+            exit "$code"
+          }
+          trap rollback EXIT
+
+          test "$(sha256sum "$ARCHIVE_PATH" | awk '{print $1}')" = "$EXPECTED_SHA"
+          rm -rf "$STAGE"
+          mkdir -p "$STAGE"
+          unzip -q "$ARCHIVE_PATH" -d "$STAGE"
+          test -f "$STAGE/.hs-release.json"
+          php -r '$m=json_decode(file_get_contents($argv[1]), true, 512, JSON_THROW_ON_ERROR); if (($m["version"] ?? "") !== $argv[2]) { exit(1); }' "$STAGE/.hs-release.json" "$VERSION"
+          grep -F "define('PSM_VERSION', '$VERSION')" "$STAGE/src/includes/psmconfig.inc.php"
+
+          tar -C "$APP_ROOT" -czf "$BACKUP" .
+          test -s "$BACKUP"
+          ACTIVATE_STARTED=1
+
+          rsync -rlptD --delete \
+            --exclude='/config.php' \
+            --exclude='/src/config/config.php' \
+            --exclude='/logs/' \
+            --exclude='/public/' \
+            --exclude='/.psm-update/' \
+            --exclude='/uploads/' \
+            --chown="$APP_OWNER:$APP_GROUP" \
+            "$STAGE/" "$APP_ROOT/"
+
+          test -f "$APP_ROOT/config.php" || test -f "$APP_ROOT/src/config/config.php"
+          grep -F "define('PSM_VERSION', '$VERSION')" "$APP_ROOT/src/includes/psmconfig.inc.php"
+
+          PHP_USER=$(awk -F= '/^[[:space:]]*user[[:space:]]*=/{gsub(/[[:space:]]/,"",$2); print $2; exit}' /etc/php-fpm.d/www.conf 2>/dev/null || true)
+          PHP_GROUP=$(awk -F= '/^[[:space:]]*group[[:space:]]*=/{gsub(/[[:space:]]/,"",$2); print $2; exit}' /etc/php-fpm.d/www.conf 2>/dev/null || true)
+          PHP_USER=${PHP_USER:-$APP_OWNER}
+          PHP_GROUP=${PHP_GROUP:-$APP_GROUP}
+          mkdir -p "$APP_ROOT/public/server-images" "$APP_ROOT/public/user-media"
+          chown -R "$PHP_USER:$PHP_GROUP" "$APP_ROOT/public/server-images" "$APP_ROOT/public/user-media"
+          chmod 2775 "$APP_ROOT/public/server-images" "$APP_ROOT/public/user-media"
+
+          find "$APP_ROOT/src" "$APP_ROOT/bin" "$APP_ROOT/cron" -name '*.php' -type f -print0 | xargs -0 -n1 php -l >/tmp/phpservermon-deploy-lint.log
+          restorecon -RF "$APP_ROOT" >/dev/null 2>&1 || true
+          systemctl restart php-fpm httpd
+          systemctl is-active --quiet php-fpm
+          systemctl is-active --quiet httpd
+
+          cd "$APP_ROOT"
+          php bin/psm version
+          set +e
+          php bin/psm health >/tmp/phpservermon-health.log 2>&1
+          HEALTH_CODE=$?
+          set -e
+          echo "health_exit=$HEALTH_CODE"
+
+          curl -fsS --retry 3 --retry-delay 2 https://monitoreo.hostingsupremo.org/ -o /tmp/monitor-login.html
+          grep -q 'hope-ui.min.css' /tmp/monitor-login.html
+          if grep -q 'hs-monitor.css' /tmp/monitor-login.html; then
+            echo 'obsolete_stylesheet_detected=1'
+            exit 1
+          fi
+          curl -fsS --retry 3 https://monitoreo.hostingsupremo.org/service-worker.js -o /tmp/monitor-service-worker.js
+          grep -q 'psm-static-4.3.2-hs-r2' /tmp/monitor-service-worker.js
+
+          echo "deployed_commit=$SOURCE_SHA"
+          echo "deployed_version=$VERSION"
+          echo "http_validation=ok"
+          echo "services=active"
+
+          ACTIVATE_STARTED=0
+          rm -rf "$STAGE"
+          rm -f "$ARCHIVE_PATH"
+          trap - EXIT
+REMOTE
+
+      - name: Upload deployment report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vps-deployment-report
+          path: ${{ runner.temp }}/vps-deploy.txt
+          retention-days: 3
+          if-no-files-found: warn
+
+      - name: Report deployment result
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.issue.number }}
+          BUILD_OUTCOME: ${{ steps.build.outcome }}
+          DECRYPT_OUTCOME: ${{ steps.decrypt.outcome }}
+          DEPLOY_OUTCOME: ${{ steps.deploy.outcome }}
+        run: |
+          set -euo pipefail
+          REPORT="$RUNNER_TEMP/vps-deploy.txt"
+          {
+            echo '### VPS deployment v4.3.2-hs'
+            echo
+            echo "Build: **$BUILD_OUTCOME**"
+            echo "Credential: **$DECRYPT_OUTCOME**"
+            echo "Deployment: **$DEPLOY_OUTCOME**"
+            echo
+            echo '```text'
+            if test -f "$REPORT"; then tail -n 120 "$REPORT"; else echo 'Deployment did not produce a report.'; fi
+            echo '```'
+          } > "$RUNNER_TEMP/vps-deploy-comment.md"
+          gh pr comment "$PR_NUMBER" --body-file "$RUNNER_TEMP/vps-deploy-comment.md"
+
+      - name: Remove decrypted credential
+        if: always()
+        run: rm -f "$RUNNER_TEMP/release-private.pem" "$RUNNER_TEMP/vps-password.enc" "$RUNNER_TEMP/vps-password.txt"
+
+      - name: Preserve deployment result
+        if: steps.build.outcome != 'success' || steps.decrypt.outcome != 'success' || steps.deploy.outcome != 'success'
         run: exit 1
