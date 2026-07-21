@@ -56,3 +56,77 @@ jobs:
           timeout 15 bash -c '</dev/tcp/147.135.112.18/8615'
           curl -fsSIL --max-time 20 https://monitoreo.hostingsupremo.org/ >/dev/null
       - run: composer install --no-dev --classmap-authoritative --no-interaction --prefer-dist
+
+  vps_probe:
+    runs-on: ubuntu-latest
+    env:
+      VPS_HOST: 147.135.112.18
+      VPS_PORT: '8615'
+      VPS_USER: root
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install SSH tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq openssh-client sshpass netcat-openbsd
+      - name: Decrypt one-shot credential
+        env:
+          RELEASE_SIGNING_PRIVATE_KEY: ${{ secrets.RELEASE_SIGNING_PRIVATE_KEY }}
+        run: |
+          set -euo pipefail
+          test -n "$RELEASE_SIGNING_PRIVATE_KEY"
+          printf '%s' "$RELEASE_SIGNING_PRIVATE_KEY" > "$RUNNER_TEMP/release-private.pem"
+          chmod 600 "$RUNNER_TEMP/release-private.pem"
+          base64 -d .github/deploy/vps-password.enc.b64 > "$RUNNER_TEMP/vps-password.enc"
+          openssl pkeyutl -decrypt \
+            -inkey "$RUNNER_TEMP/release-private.pem" \
+            -in "$RUNNER_TEMP/vps-password.enc" \
+            -out "$RUNNER_TEMP/vps-password.txt" \
+            -pkeyopt rsa_padding_mode:oaep \
+            -pkeyopt rsa_oaep_md:sha256 \
+            -pkeyopt rsa_mgf1_md:sha256
+          chmod 600 "$RUNNER_TEMP/vps-password.txt"
+          echo "::add-mask::$(cat "$RUNNER_TEMP/vps-password.txt")"
+      - name: Probe SSH and application
+        run: |
+          set -euo pipefail
+          REPORT="$RUNNER_TEMP/vps-probe-report.txt"
+          {
+            echo "checked_at_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            echo "target=$VPS_HOST:$VPS_PORT"
+          } > "$REPORT"
+          timeout 15 nc -4 -vz "$VPS_HOST" "$VPS_PORT" >> "$REPORT" 2>&1
+          sshpass -f "$RUNNER_TEMP/vps-password.txt" ssh -4 \
+            -p "$VPS_PORT" \
+            -o ConnectTimeout=20 \
+            -o StrictHostKeyChecking=accept-new \
+            -o PreferredAuthentications=password \
+            -o PubkeyAuthentication=no \
+            "$VPS_USER@$VPS_HOST" 'bash -s' >> "$REPORT" 2>&1 <<'REMOTE'
+          set -euo pipefail
+          echo 'ssh_connection=ok'
+          echo "hostname=$(hostname -f 2>/dev/null || hostname)"
+          . /etc/os-release
+          echo "os=${PRETTY_NAME:-unknown}"
+          echo "sshd_port=$(sshd -T | awk '$1=="port" {print $2; exit}')"
+          echo "php=$(php -r 'echo PHP_VERSION;')"
+          echo "httpd=$(systemctl is-active httpd || true)"
+          echo "php_fpm=$(systemctl is-active php-fpm || true)"
+          echo "mariadb=$(systemctl is-active mariadb || true)"
+          VHOST_FILE=$(grep -RilE '^[[:space:]]*ServerName[[:space:]]+monitoreo\.hostingsupremo\.org([[:space:]]|$)' /etc/httpd/conf /etc/httpd/conf.d | head -n1)
+          echo "vhost_file=$VHOST_FILE"
+          APP_ROOT=$(awk 'tolower($1)=="documentroot" {gsub(/"/,"",$2); print $2; exit}' "$VHOST_FILE")
+          echo "app_root=$APP_ROOT"
+          echo "app_owner_group=$(stat -c '%U:%G' "$APP_ROOT")"
+          grep -E "define\('PSM_VERSION'" "$APP_ROOT/src/includes/psmconfig.inc.php" | head -n1 | sed 's/^/deployed_/'
+REMOTE
+          cat "$REPORT"
+          cp "$REPORT" vps-probe-report.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: vps-authenticated-probe
+          path: vps-probe-report.txt
+          retention-days: 1
+      - name: Remove decrypted credential
+        if: always()
+        run: rm -f "$RUNNER_TEMP/release-private.pem" "$RUNNER_TEMP/vps-password.enc" "$RUNNER_TEMP/vps-password.txt"
