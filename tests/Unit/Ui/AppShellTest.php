@@ -76,6 +76,8 @@ final class AppShellTest extends TestCase
         self::assertStringNotContainsString('sidebar-user', $menu);
         self::assertStringNotContainsString('body.sidebar-open', $styles);
         self::assertStringNotContainsString('sidebar-collapsed', $javascript);
+        self::assertStringContainsString('max-width: var(--psm-sidebar-width)', $styles);
+        self::assertStringContainsString('pointer-events: none', $styles);
     }
 
     public function testNavbarUsesHopeAlignedThemeAndSearchComponents(): void
