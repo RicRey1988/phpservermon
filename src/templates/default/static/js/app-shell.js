@@ -244,7 +244,12 @@
 		}
 
 		toggles.forEach(function (button) {
-			button.addEventListener('click', function () { window.setTimeout(sync, 0); });
+			button.addEventListener('click', function (event) {
+				event.preventDefault();
+				event.stopImmediatePropagation();
+				sidebar.classList.toggle('sidebar-mini');
+				sync();
+			}, true);
 		});
 		backdrop.addEventListener('click', closeMobile);
 		document.querySelectorAll('#sidebar-menu a').forEach(function (link) { link.addEventListener('click', closeMobile); });
