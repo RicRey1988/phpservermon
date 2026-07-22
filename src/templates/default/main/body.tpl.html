@@ -15,7 +15,7 @@
     <link href="src/templates/default/static/hope/css/hope-ui.min.css?v={{ version|url_encode }}" rel="stylesheet">
     <link href="src/templates/default/static/hope/css/dark.min.css?v={{ version|url_encode }}" rel="stylesheet">
     <link href="src/templates/default/static/hope/css/customizer.min.css?v={{ version|url_encode }}" rel="stylesheet">
-    <link href="src/templates/default/static/css/hs-monitor.css?v={{ version|url_encode }}&ui=3" rel="stylesheet">
+    <link href="src/templates/default/static/css/hs-monitor.css?v={{ version|url_encode }}&ui=4" rel="stylesheet">
 </head>
 <body class="{{ appearance.body_classes }}{% if html_menu is not defined or not html_menu %} no-menu{% endif %}" data-authenticated="{{ user_level != 30 ? 'true' : 'false' }}" data-appearance-url="{{ appearance_save_url|default('')|raw }}" data-appearance-csrf="{{ appearance_csrf|default('') }}">
     <a class="visually-hidden-focusable skip-link" href="#main-content">Ir al contenido principal</a>
@@ -32,7 +32,6 @@
         <div class="sidebar-body pt-0 data-scrollbar"><div class="sidebar-list">{{ html_menu|raw }}</div></div>
         <div class="sidebar-footer"></div>
     </aside>
-    <button type="button" class="sidebar-backdrop" data-sidebar-backdrop aria-label="Cerrar menú" aria-hidden="true" tabindex="-1" hidden></button>
     {% endif %}
 
     <main class="main-content" id="main-content">
@@ -63,6 +62,8 @@
         <div id="content" class="auth-page-content">{{ html_content|raw }}</div>
         {% endif %}
     </main>
+
+    {% if html_menu is defined and html_menu %}<button type="button" class="sidebar-backdrop" data-sidebar-backdrop aria-label="Cerrar menú" aria-hidden="true" tabindex="-1" hidden></button>{% endif %}
 
     {% if html_menu is defined and html_menu %}{% include 'main/appearance-customizer.tpl.html' %}{% endif %}
     {{ html_modal|default('')|raw }}

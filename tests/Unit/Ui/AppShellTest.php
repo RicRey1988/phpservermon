@@ -63,6 +63,7 @@ final class AppShellTest extends TestCase
         self::assertStringNotContainsString('<span class="icon">', $menu);
         self::assertStringContainsString('<i class="icon">', $body);
         self::assertStringContainsString('data-sidebar-backdrop', $body);
+        self::assertGreaterThan(strpos($body, '</main>'), strpos($body, 'data-sidebar-backdrop'));
         self::assertStringContainsString('data-sidebar-primary-toggle', $body);
         self::assertStringContainsString('data-sidebar-mobile-toggle', $navbar);
         self::assertStringContainsString('function initializeSidebar()', $javascript);

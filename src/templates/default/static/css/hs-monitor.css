@@ -109,7 +109,7 @@ fieldset > legend + * { clear: both; }
     .sidebar.sidebar-base { width: var(--psm-sidebar-width); max-width: var(--psm-sidebar-width); transform: translateX(0) !important; transition: transform .2s ease; box-shadow: 0 0 2rem rgba(17, 24, 39, .18); }
     .sidebar.sidebar-base.sidebar-mini { transform: translateX(-100%) !important; pointer-events: none; }
     [dir="rtl"] .sidebar.sidebar-base.sidebar-mini { transform: translateX(100%) !important; }
-    .sidebar-default + .sidebar-backdrop + .main-content,.sidebar-default.sidebar-mini + .sidebar-backdrop + .main-content { width: 100%; margin: 0 !important; }
+    .sidebar-default + .main-content,.sidebar-default.sidebar-mini + .main-content { width: 100%; margin: 0 !important; }
     .sidebar-backdrop { position: fixed; inset: 0; z-index: 1035; display: block; width: 100%; height: 100%; padding: 0; border: 0; background: rgba(16, 24, 40, .48); }
     .sidebar-backdrop[hidden] { display: none !important; }
     .content-inner { padding-inline: 1rem; }
