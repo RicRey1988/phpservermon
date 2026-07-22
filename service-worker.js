@@ -1,6 +1,6 @@
 'use strict';
 
-const STATIC_CACHE = 'psm-static-4.3.6-hs-r3';
+const STATIC_CACHE = 'psm-static-4.3.6-hs-r4';
 const STATIC_ROOT = '/src/templates/default/static/';
 const STATIC_ASSETS = [
   './offline.html',
@@ -13,7 +13,7 @@ const STATIC_ASSETS = [
   './src/templates/default/static/hope/js/plugins/setting.js?v=4.3.6-hs',
   './src/templates/default/static/css/hs-monitor.css?v=4.3.6-hs&ui=2',
   './src/templates/default/static/hope/images/auth/01.png',
-  './src/templates/default/static/js/app-shell.js?v=4.3.6-hs&shell=2',
+  './src/templates/default/static/js/app-shell.js?v=4.3.6-hs&shell=3',
   './src/templates/default/static/js/status.js?v=4.3.6-hs',
   './src/templates/default/static/js/dashboard.js?v=4.3.6-hs',
   './src/templates/default/static/js/pwa.js?v=4.3.6-hs',

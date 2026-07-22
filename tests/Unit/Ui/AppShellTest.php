@@ -69,6 +69,8 @@ final class AppShellTest extends TestCase
         self::assertStringContainsString("event.key === 'Escape'", $javascript);
         self::assertStringContainsString('event.stopImmediatePropagation()', $javascript);
         self::assertStringContainsString("sidebar.classList.toggle('sidebar-mini')", $javascript);
+        self::assertStringContainsString('var mobileOpen = false', $javascript);
+        self::assertStringContainsString("sidebar.classList.toggle('sidebar-mini', !mobileOpen)", $javascript);
         self::assertStringContainsString("'[data-sidebar-backdrop]'", $javascript);
         self::assertStringContainsString("'#sidebar-menu a'", $javascript);
         self::assertStringNotContainsString('sidebar-user', $menu);
