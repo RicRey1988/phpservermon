@@ -210,6 +210,58 @@
 		});
 	}
 
+	function initializeSidebar() {
+		var sidebar = document.querySelector('.sidebar-default');
+		var backdrop = document.querySelector('[data-sidebar-backdrop]');
+		var toggles = document.querySelectorAll('[data-toggle="sidebar"]');
+		var mobileQuery = window.matchMedia('(max-width: 1199.98px)');
+		if (!sidebar || !backdrop || toggles.length === 0) { return; }
+		var wasMobile = mobileQuery.matches;
+		if (wasMobile) { sidebar.classList.add('sidebar-mini'); }
+
+		function isOpen() { return !sidebar.classList.contains('sidebar-mini'); }
+		function sync() {
+			var mobile = mobileQuery.matches;
+			var open = isOpen();
+			var drawerOpen = mobile && open;
+			document.body.classList.toggle('sidebar-drawer-open', drawerOpen);
+			backdrop.hidden = !drawerOpen;
+			backdrop.setAttribute('aria-hidden', String(!drawerOpen));
+			backdrop.tabIndex = drawerOpen ? 0 : -1;
+			toggles.forEach(function (button) {
+				var primary = button.hasAttribute('data-sidebar-primary-toggle');
+				button.setAttribute('aria-expanded', String(open));
+				button.setAttribute('aria-label', mobile
+					? (open ? 'Cerrar menú' : 'Abrir menú')
+					: (open ? 'Contraer menú' : 'Expandir menú'));
+				if (primary) { button.dataset.active = String(open); }
+			});
+		}
+		function closeMobile() {
+			if (!mobileQuery.matches) { return; }
+			sidebar.classList.add('sidebar-mini');
+			sync();
+		}
+
+		toggles.forEach(function (button) {
+			button.addEventListener('click', function () { window.setTimeout(sync, 0); });
+		});
+		backdrop.addEventListener('click', closeMobile);
+		document.querySelectorAll('#sidebar-menu a').forEach(function (link) { link.addEventListener('click', closeMobile); });
+		document.addEventListener('keydown', function (event) {
+			if (event.key === 'Escape' && mobileQuery.matches && isOpen()) { closeMobile(); }
+		});
+		window.addEventListener('resize', function () {
+			window.setTimeout(function () {
+				var mobile = mobileQuery.matches;
+				if (mobile && !wasMobile) { sidebar.classList.add('sidebar-mini'); }
+				wasMobile = mobile;
+				sync();
+			}, 0);
+		});
+		sync();
+	}
+
 	function initializePasswordToggles() {
 		each('[data-password-toggle]', function (button) {
 			button.addEventListener('click', function () {
@@ -292,6 +344,7 @@
 
 	document.addEventListener('DOMContentLoaded', function () {
 		initializeTheme();
+		initializeSidebar();
 		initializeModals();
 		initializeConditionalForms();
 		initializeCardSearch();

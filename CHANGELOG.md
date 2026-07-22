@@ -1,5 +1,25 @@
 # Changelog
 
+## [4.3.6-hs] - 2026-07-21
+
+### Changed
+- Reworked the authenticated shell around Hope UI's native single sidebar
+  state instead of maintaining a competing legacy mobile state.
+- Restyled the top search field and aligned the theme, settings, notification
+  and install actions across light and dark modes.
+- Removed the duplicate profile and logout block from the bottom of the
+  sidebar; those actions remain available from the top account menu.
+
+### Fixed
+- Restored the mobile navigation drawer, including its backdrop, Escape key
+  dismissal and close-on-navigation behavior.
+- Corrected the collapsed sidebar arrow placement and orientation to match the
+  supplied Hope UI 2.0 template.
+- Made the sun/moon control clearly visible in the light theme and normalized
+  all top-bar icon hit areas to the same size and vertical alignment.
+- Prevented the responsive shell from shifting or clipping page content when
+  the sidebar changes state.
+
 ## [4.3.2-hs] - 2026-07-20
 
 ### Added

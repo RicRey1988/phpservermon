@@ -27,11 +27,12 @@
             <a href="index.php" class="navbar-brand d-flex align-items-center gap-2">
                 {% if site_logo_url %}<img class="brand-logo" src="{{ site_logo_url }}" alt=""><span class="visually-hidden">{{ title }}</span>{% else %}<span class="brand-mark" aria-hidden="true">HS</span>{% endif %}<h4 class="logo-title mb-0">{{ title }}</h4>
             </a>
-            <button type="button" class="sidebar-toggle btn btn-icon" data-toggle="sidebar" data-active="true" aria-label="Contraer menú" aria-expanded="true"><i class="icon">{{ hope.icon('arrow-left', 'icon-20') }}</i></button>
+            <button type="button" class="sidebar-toggle" data-toggle="sidebar" data-sidebar-primary-toggle data-active="true" aria-label="Contraer menú" aria-expanded="true"><i class="icon">{{ hope.icon('arrow-left', 'icon-20') }}</i></button>
         </div>
         <div class="sidebar-body pt-0 data-scrollbar"><div class="sidebar-list">{{ html_menu|raw }}</div></div>
         <div class="sidebar-footer"></div>
     </aside>
+    <button type="button" class="sidebar-backdrop" data-sidebar-backdrop aria-label="Cerrar menú" aria-hidden="true" tabindex="-1" hidden></button>
     {% endif %}
 
     <main class="main-content" id="main-content">
@@ -56,7 +57,7 @@
             <div id="content" class="app-content">{{ html_content|raw }}</div>
         </div>
 
-        {% if add_footer %}<footer class="footer app-footer" role="contentinfo"><div class="container-fluid d-flex flex-wrap justify-content-between gap-2"><span>PHP Server Monitor {{ version }} · <a href="https://github.com/RicRey1988/phpservermon" target="_blank" rel="noopener noreferrer">Mejorado por Hosting Supremo</a> <span class="text-danger">{{ update_available|raw }}</span></span><a href="#main-content">{{ label_back_to_top }}</a></div></footer>{% endif %}
+        {% if add_footer %}<footer class="footer app-footer" role="contentinfo"><div class="container-fluid d-flex flex-wrap justify-content-between gap-2"><span>PHP Server Monitor {{ version }} · <a href="https://github.com/RicRey1988/phpservermon-Redesigned-by-hostingsupremo" target="_blank" rel="noopener noreferrer">Mejorado por Hosting Supremo</a> <span class="text-danger">{{ update_available|raw }}</span></span><a href="#main-content">{{ label_back_to_top }}</a></div></footer>{% endif %}
         {% else %}
         <div class="auth-messages position-fixed top-0 start-50 translate-middle-x mt-3" aria-live="polite">{% for msg in messages %}<div class="alert alert-{{ msg.class }} alert-dismissible fade show shadow" role="alert"><strong>{{ msg.message|raw }}</strong><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button></div>{% endfor %}</div>
         <div id="content" class="auth-page-content">{{ html_content|raw }}</div>

@@ -50,16 +50,46 @@ final class AppShellTest extends TestCase
         $root = dirname(__DIR__, 3) . '/src/templates/default/';
         $menu = file_get_contents($root . 'main/menu.tpl.html');
         $body = file_get_contents($root . 'main/body.tpl.html');
+        $navbar = file_get_contents($root . 'main/app-navbar.tpl.html');
         $javascript = file_get_contents($root . 'static/js/app-shell.js');
+        $styles = file_get_contents($root . 'static/css/hs-monitor.css');
 
         self::assertIsString($menu);
         self::assertIsString($body);
+        self::assertIsString($navbar);
         self::assertIsString($javascript);
+        self::assertIsString($styles);
         self::assertStringContainsString('<i class="icon">', $menu);
         self::assertStringNotContainsString('<span class="icon">', $menu);
         self::assertStringContainsString('<i class="icon">', $body);
-        self::assertStringNotContainsString('function initializeSidebar()', $javascript);
+        self::assertStringContainsString('data-sidebar-backdrop', $body);
+        self::assertStringContainsString('data-sidebar-primary-toggle', $body);
+        self::assertStringContainsString('data-sidebar-mobile-toggle', $navbar);
+        self::assertStringContainsString('function initializeSidebar()', $javascript);
+        self::assertStringContainsString("event.key === 'Escape'", $javascript);
+        self::assertStringContainsString("'[data-sidebar-backdrop]'", $javascript);
+        self::assertStringContainsString("'#sidebar-menu a'", $javascript);
+        self::assertStringNotContainsString('sidebar-user', $menu);
+        self::assertStringNotContainsString('body.sidebar-open', $styles);
         self::assertStringNotContainsString('sidebar-collapsed', $javascript);
+    }
+
+    public function testNavbarUsesHopeAlignedThemeAndSearchComponents(): void
+    {
+        $root = dirname(__DIR__, 3) . '/src/templates/default/';
+        $navbar = file_get_contents($root . 'main/app-navbar.tpl.html');
+        $styles = file_get_contents($root . 'static/css/hs-monitor.css');
+
+        self::assertIsString($navbar);
+        self::assertIsString($styles);
+        self::assertStringContainsString('hope-search', $navbar);
+        self::assertGreaterThanOrEqual(2, substr_count($navbar, 'topbar-icon-button'));
+        self::assertStringContainsString('.topbar-icon-button', $styles);
+        self::assertStringContainsString('width: 2.75rem', $styles);
+        self::assertStringContainsString('height: 2.75rem', $styles);
+        self::assertStringContainsString('.hope-search', $styles);
+        self::assertStringContainsString('html[data-bs-theme="light"] .hope-search', $styles);
+        self::assertStringContainsString('html[data-bs-theme="dark"] .hope-search', $styles);
     }
 
     public function testLightNavbarAndAuthenticationHaveExplicitThemeSafeSurfaces(): void

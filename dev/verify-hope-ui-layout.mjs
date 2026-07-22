@@ -27,6 +27,53 @@ try {
   await Promise.all([page.waitForLoadState('domcontentloaded'), page.locator('button[type="submit"]').click()]);
   if (await page.locator('[name="user_password"]').count()) { throw new Error('Login failed.'); }
 
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(new URL('index.php?mod=server_status', baseUrl).toString(), { waitUntil: 'networkidle' });
+  const mobileToggle = page.locator('[data-sidebar-mobile-toggle]');
+  const mobileSidebar = page.locator('.sidebar.sidebar-base');
+  const mobileBackdrop = page.locator('[data-sidebar-backdrop]');
+  await mobileToggle.click();
+  await page.waitForFunction(() => !document.body.classList.contains('sidebar-mini'));
+  const openedDrawer = await page.evaluate(() => {
+    const sidebar = document.querySelector('.sidebar.sidebar-base');
+    const backdrop = document.querySelector('[data-sidebar-backdrop]');
+    const box = sidebar.getBoundingClientRect();
+    return {
+      left: box.left,
+      right: box.right,
+      backdropHidden: backdrop.hidden,
+      expanded: document.querySelector('[data-sidebar-mobile-toggle]').getAttribute('aria-expanded'),
+      duplicateAccount: Boolean(document.querySelector('.sidebar-user')),
+    };
+  });
+  if (openedDrawer.left < -1 || openedDrawer.right <= 1 || openedDrawer.backdropHidden || openedDrawer.expanded !== 'true' || openedDrawer.duplicateAccount) {
+    failures.push({ route: 'mobile-drawer-open', width: 390, ...openedDrawer });
+  }
+  await mobileBackdrop.click({ position: { x: 385, y: 420 } });
+  await page.waitForFunction(() => document.body.classList.contains('sidebar-mini'));
+  const closedDrawer = await page.evaluate(() => ({
+    right: document.querySelector('.sidebar.sidebar-base').getBoundingClientRect().right,
+    backdropHidden: document.querySelector('[data-sidebar-backdrop]').hidden,
+    expanded: document.querySelector('[data-sidebar-mobile-toggle]').getAttribute('aria-expanded'),
+  }));
+  if (closedDrawer.right > 1 || !closedDrawer.backdropHidden || closedDrawer.expanded !== 'false') {
+    failures.push({ route: 'mobile-drawer-closed', width: 390, ...closedDrawer });
+  }
+
+  await page.setViewportSize({ width: 1366, height: 900 });
+  await page.goto(new URL('index.php?mod=server_status', baseUrl).toString(), { waitUntil: 'networkidle' });
+  const topbarAlignment = await page.evaluate(() => {
+    const boxes = [...document.querySelectorAll('.topbar-icon-button')]
+      .filter((element) => getComputedStyle(element).display !== 'none')
+      .map((element) => element.getBoundingClientRect())
+      .map((box) => ({ width: box.width, height: box.height, middle: box.top + (box.height / 2) }));
+    const middle = boxes[0]?.middle || 0;
+    return { boxes, maxMiddleDelta: Math.max(0, ...boxes.map((box) => Math.abs(box.middle - middle))) };
+  });
+  if (!topbarAlignment.boxes.length || topbarAlignment.boxes.some((box) => Math.abs(box.width - 44) > 1 || Math.abs(box.height - 44) > 1) || topbarAlignment.maxMiddleDelta > 1) {
+    failures.push({ route: 'topbar-alignment', width: 1366, ...topbarAlignment });
+  }
+
   for (const width of widths) {
     await page.setViewportSize({ width, height: 900 });
     for (const route of routes) {
