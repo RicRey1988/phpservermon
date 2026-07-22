@@ -112,7 +112,6 @@ fieldset > legend + * { clear: both; }
     .sidebar-default + .sidebar-backdrop + .main-content,.sidebar-default.sidebar-mini + .sidebar-backdrop + .main-content { width: 100%; margin: 0 !important; }
     .sidebar-backdrop { position: fixed; inset: 0; z-index: 1035; display: block; width: 100%; height: 100%; padding: 0; border: 0; background: rgba(16, 24, 40, .48); }
     .sidebar-backdrop[hidden] { display: none !important; }
-    body.sidebar-drawer-open { overflow: hidden; }
     .content-inner { padding-inline: 1rem; }
     .config-layout { grid-template-columns:1fr; }.config-tabs{position:static;display:flex;overflow-x:auto}.config-tabs .nav-link{white-space:nowrap}.auth-layout{grid-template-columns:1fr}.auth-visual{display:none}
 }
